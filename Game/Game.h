@@ -62,7 +62,6 @@ private:
     Character* m_pPlayer = nullptr;
     std::vector<Monster*> m_vMonsters;
 
-    ColliderManager m_colliderManager;
 };
 
 extern CGame* g_pGame;

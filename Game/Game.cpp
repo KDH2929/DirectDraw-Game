@@ -74,7 +74,7 @@ BOOL CGame::Initialize(HWND hWnd)
 
     // 플레이어 캐릭터 생성
     m_pPlayer = new Character(m_pPlayerImgData, static_cast<float>(playerPosX), static_cast<float>(playerPosY));
-    m_colliderManager.AddCollider(m_pPlayer->GetCollider());
+    ColliderManager::GetInstance().AddCollider(m_pPlayer->GetCollider());
 
 
     // 몬스터 관련
@@ -95,7 +95,7 @@ BOOL CGame::Initialize(HWND hWnd)
     m_vMonsters.push_back(new Centipede(pCentipedeImgData, 700.0f, 400.0f));
     
     for (auto monster : m_vMonsters) {
-        m_colliderManager.AddCollider(monster->GetCollider());
+        ColliderManager::GetInstance().AddCollider(monster->GetCollider());
     }
 
     return TRUE;
@@ -156,14 +156,17 @@ void CGame::Cleanup()
 
 void CGame::UpdateGameFrame(ULONGLONG currentTick)
 {
+
     int screenWidth = static_cast<int>(m_pDrawDevice->GetWidth());
     int screenHeight = static_cast<int>(m_pDrawDevice->GetHeight());
 
     UpdatePosition(m_fTicksPerFrame, screenWidth, screenHeight);
     
-    m_colliderManager.ProcessCollisions();
+    ColliderManager::GetInstance().ProcessCollisions();
 
     DebugManager::GetInstance().Update(m_fTicksPerFrame);
+
+    InputManager::GetInstance().Update();
 }
 
 
