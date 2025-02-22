@@ -150,6 +150,9 @@
     <ClInclude Include="Centipede.h">
       <Filter>Game\GameObject</Filter>
     </ClInclude>
+    <ClInclude Include="Raycast.h">
+      <Filter>Game\Collider</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ResourceCompile Include="DDrawSample.rc">
@@ -230,6 +233,9 @@
     </ClCompile>
     <ClCompile Include="Centipede.cpp">
       <Filter>Game\GameObject</Filter>
+    </ClCompile>
+    <ClCompile Include="Raycast.cpp">
+      <Filter>Game\Collider</Filter>
     </ClCompile>
   </ItemGroup>
 </Project>

@@ -41,7 +41,7 @@ public:
     int GetSpriteFrameHeight() const;
 
 
-    virtual void OnCollision(GameObject* other, CollisionResponse response) override;
+    virtual void OnCollision(const CollisionInfo& collisionInfo) override;
 
 
 private:
@@ -58,6 +58,7 @@ private:
 
     // 캐릭터 전용 중력 변수
     float m_verticalVelocity;
+    bool m_isGrounded;
 
     // 월드 경계 (클램핑용)
     int m_worldWidth;

@@ -274,6 +274,7 @@
     <ClInclude Include="CentipedeAnim.h" />
     <ClInclude Include="Monster.h" />
     <ClInclude Include="OBBCollider.h" />
+    <ClInclude Include="Raycast.h" />
     <ClInclude Include="Resource.h" />
     <ClInclude Include="SpriteAnim.h" />
     <ClInclude Include="SpriteManager.h" />
@@ -301,6 +302,7 @@
     <ClCompile Include="MathUtils.cpp" />
     <ClCompile Include="Monster.cpp" />
     <ClCompile Include="OBBCollider.cpp" />
+    <ClCompile Include="Raycast.cpp" />
     <ClCompile Include="SpriteManager.cpp" />
     <ClCompile Include="stdafx.cpp">
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Create</PrecompiledHeader>

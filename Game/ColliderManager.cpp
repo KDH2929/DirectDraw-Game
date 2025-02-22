@@ -71,37 +71,61 @@ void ColliderManager::ProcessCollisions() {
             else if (responseA == CollisionResponse::Overlap || responseB == CollisionResponse::Overlap)
                 finalResponse = CollisionResponse::Overlap;
 
+
+            Vector2 mtv = ComputeAABBMTV(colliderA, colliderB);
+
+            // Block와 Overlap 인 경우 이벤트 발생
+            if (finalResponse != CollisionResponse::Ignore) {                
+
+                // MTV의 방향을 법선, 길이를 침투 깊이로 사용
+                Vector2 normal = mtv;
+                float penetrationDepth = normal.Length();
+                if (penetrationDepth > 0.0f)
+                    normal = normal / penetrationDepth;
+
+                // 두 객체의 중간 위치를 충돌 지점으로 사용
+                Vector2 collisionPoint = (objA->GetPosition() + objB->GetPosition()) * 0.5f;
+
+
+                // CollisionInfo 구조체 생성
+                CollisionInfo infoA{ objB, finalResponse, normal, collisionPoint, penetrationDepth };
+                CollisionInfo infoB{ objA, finalResponse, -normal, collisionPoint, penetrationDepth };
+
+                objA->OnCollision(infoA);
+                objB->OnCollision(infoB);
+            }
+
+
             if (finalResponse == CollisionResponse::Block) {
-                // ComputeAABBMTV()는 두 Collider 간의 최소 이동 벡터(MTV)를 계산하는 함수
-                Vector2 mtv = ComputeAABBMTV(colliderA, colliderB);
 
                 // 각 객체의 질량의 역수를 가져옴
                 // 질량의 역수를 쓰면 고정된 물체나 질량이 매우 큰(무한한 질량) 물체에 대해 계산할 때 용이
                 // 이 경우, 고정된 물체와 질량이 매우 큰 물체의 경우 질량의 역수는 0으로 처리가능
                 float invMassA = objA->GetInvMass();
                 float invMassB = objB->GetInvMass();
-                float invMassSum = invMassA + invMassB;
-
 
                 //  m1/(m1+m2) 대신 역질량 사용
                 // 역질량 합이 0인 경우는 둘 다 정적이거나 충돌 처리를 할 필요 없는 경우
-                if (invMassSum > 0.0f) {
-                    // 각 객체에 대해 MTV를 질량 비율에 따라 분담하여 보정값 계산
-                    Vector2 correctionA = mtv * (invMassA / invMassSum);
-                    Vector2 correctionB = mtv * (invMassB / invMassSum);
-                    mtvMap[objA] = mtvMap[objA] + correctionA;
-                    mtvMap[objB] = mtvMap[objB] - correctionB;
+                if ((invMassA + invMassB) > 0.0f) {
+                    // 각 객체에 대해 MTV를 질량 비율에 따라 분담하여 밀어냄
+                    Vector2 positionOffsetA = mtv * (invMassA / (invMassA + invMassB));
+                    Vector2 positionOffsetB = mtv * (invMassB / (invMassA + invMassB));
+                    mtvMap[objA] = mtvMap[objA] + positionOffsetA;
+                    mtvMap[objB] = mtvMap[objB] - positionOffsetB;
                 }
             }
         }
     }
 
-    // 누적된 MTV를 각 GameObject에 한 번에 적용함
+    // 누적된 MTV를 각 GameObject에 한 번에 적용함 (Block 충돌에 한해)
     for (auto& entry : mtvMap) {
         GameObject* obj = entry.first;
         Vector2 totalMTV = entry.second;
         obj->SetPosition(obj->GetPosition() + totalMTV);
     }
+
+
+    collisions.clear();
 }
 
 
@@ -155,4 +179,9 @@ Vector2 ColliderManager::ComputeAABBMTV(Collider* a, Collider* b) {
         mtv.y = (diff.y < 0) ? -overlapY : overlapY;
     }
     return mtv;
+}
+
+const std::vector<Collider*>& ColliderManager::GetColliders() const
+{
+    return m_colliders;
 }

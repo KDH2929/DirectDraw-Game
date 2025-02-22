@@ -9,10 +9,11 @@
 #include "DebugManager.h"
 #include "SpriteManager.h"
 #include "CharacterAnim.h"
+#include "Raycast.h"
 
 
 Character::Character(CImageData* pPlayerImgData, float startX, float startY)
-    : m_health(100), m_speed(8), m_verticalVelocity(0.0f), 
+    : m_health(100), m_speed(8), m_verticalVelocity(0.0f), m_isGrounded(false),
     m_worldWidth(0), m_worldHeight(0), m_renderPosition(Vector2{0,0}),
     m_spriteManager(nullptr), m_anim(nullptr)
 {
@@ -39,40 +40,81 @@ Character::~Character()
 
 void Character::Update(float deltaTime)
 {
-    // 현재 위치를 가져옴
     Vector2 pos = GetTransform().position;
 
     if (InputManager::GetInstance().IsKeyDown(VK_LEFT))
         pos.x -= GetSpeed();
-
     if (InputManager::GetInstance().IsKeyDown(VK_RIGHT))
         pos.x += GetSpeed();
 
-    if (InputManager::GetInstance().IsKeyDown(VK_UP))
-        pos.y -= GetSpeed();
 
-    if (InputManager::GetInstance().IsKeyDown(VK_DOWN))
-        pos.y += GetSpeed();
+    // Raycast를 통한 지면과의 충돌검사
+    Collider* curCollider = GetCollider();
+    bool isGrounded = false;
+    const float rayOffset = 1.0f;
+    const float groundThreshold = 5.0f;
+    float hitDistance = 0.0f;
+
+    if (curCollider) {
+        if (AABBCollider* aabb = dynamic_cast<AABBCollider*>(curCollider)) {
+            int left = aabb->GetX();
+            int right = aabb->GetX() + aabb->GetWidth();
+            int bottom = aabb->GetY() + aabb->GetHeight();
+
+            // 직사각형 양 끝에서 raycast 수행
+            Vector2 leftOrigin(static_cast<float>(left), static_cast<float>(bottom));
+            Vector2 rightOrigin(static_cast<float>(right), static_cast<float>(bottom));
+            leftOrigin.y += rayOffset;
+            rightOrigin.y += rayOffset;
+
+            Ray leftRay(leftOrigin, Vector2(0.0f, 1.0f));
+            Ray rightRay(rightOrigin, Vector2(0.0f, 1.0f));
+
+            const auto& colliders = ColliderManager::GetInstance().GetColliders();
+            for (Collider* collider : colliders) {
+                if (collider == curCollider)
+                    continue;
+
+                if (Raycast::IntersectCollider(leftRay, collider, hitDistance) && hitDistance <= groundThreshold) {
+                    isGrounded = true;
+                    break;
+                }
+                if (Raycast::IntersectCollider(rightRay, collider, hitDistance) && hitDistance <= groundThreshold) {
+                    isGrounded = true;
+                    break;
+                }
+            }
+        }
+    }
+    m_isGrounded = isGrounded;
 
 
-    
-    // 중력 적용
+    // 점프 입력 처리: 땅에 닿아있을 때만 점프를 허용 (예: VK_SPACE)
+    if (InputManager::GetInstance().IsKeyPressed(VK_SPACE) && m_isGrounded) {
+        
+        // 점프 초기 힘을 수직 속도에 적용 (위 방향으로 음수 값)
+        m_verticalVelocity = -0.8;
+        m_isGrounded = false;                   // 점프 후에는 공중 상태로 전환
+    }
+
+
+
     const float GRAVITY_ACCEL = 0.0015f;
-    m_verticalVelocity += GRAVITY_ACCEL * deltaTime;
-    pos.y += m_verticalVelocity * deltaTime;
-    
+    if (!m_isGrounded) {
+        m_verticalVelocity += GRAVITY_ACCEL * deltaTime;
+        pos.y += m_verticalVelocity * deltaTime;
+    }
+    else {
+        m_verticalVelocity = 0;
+    }
 
-    // SetPosition을 통해 업데이트된 위치를 확정짓고 Clamp처리
     SetPosition(pos);
-
     Transform updatedTransform = GetTransform();
     updatedTransform.position = pos;
-    if (GetCollider())
-        GetCollider()->Update(updatedTransform);
-
-    if (m_anim) {
+    if (curCollider)
+        curCollider->Update(updatedTransform);
+    if (m_anim)
         m_anim->Update(deltaTime);
-    }
 
     GameObject::Update(deltaTime);
 }
@@ -132,9 +174,9 @@ int Character::GetSpriteFrameHeight() const {
     return m_spriteManager ? m_spriteManager->GetFrameHeight() : 0;
 }
 
-void Character::OnCollision(GameObject* other, CollisionResponse response)
+void Character::OnCollision(const CollisionInfo& collisionInfo)
 {
-
+    
 }
 
 
