@@ -649,6 +649,11 @@ lb_return:
 	return bResult;
 }
 
+BOOL CDDrawDevice::DrawSpriteWorld(int sx, int sy, const CImageData* pImgData, const RECT& srcRect)
+{
+	return 0;
+}
+
 
 void CDDrawDevice::UpdateInfoTxt()
 {

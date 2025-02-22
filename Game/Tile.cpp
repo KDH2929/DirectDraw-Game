@@ -2,7 +2,7 @@
 #include "Tile.h"
 #include "../DDrawLib/DDrawDevice.h"
 
-Tile::Tile(int id = 0)
+Tile::Tile(int id)
     : m_id(id)
 {
 }

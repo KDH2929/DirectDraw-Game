@@ -9,18 +9,12 @@ enum class ETileLayer
 
 class Tile : public GameObject {
 public:
-    Tile(int id = 0);
+    Tile(int id);
     Tile(Tile& tile);
 
-    int GetTileID();
-    void SetTileID(int tile);
-
 public:
-//    int m_spriteID;
-//    int m_tileID;
+
     int m_id;
     
     ETileLayer m_tileLayer;
- //   bool b_IsAnim;
- //   int m_spriteIDEnd;
 };

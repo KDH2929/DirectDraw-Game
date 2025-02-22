@@ -61,8 +61,16 @@ BOOL CGame::Initialize(HWND hWnd)
     pPlayerImage = nullptr;
 
     // 배경 이미지 로드
+    /*
     m_pBackgroundImage = new CTGAImage;
     m_pBackgroundImage->Load24BitsTGA("./data/Background_01.tga", 4);
+    */
+
+    m_TileMap = new TileMap2D(16,16);
+    m_TileMap->ReadTileMap("./data/level.tilemap");
+
+    m_TileMap->worldposx = 0;
+    m_TileMap->worldposy = 3000;
 
 
     // 플레이어 초기 위치 (화면 중앙)
@@ -113,11 +121,13 @@ void CGame::Cleanup()
         m_pPlayerImgData = nullptr;
     }
 
+    /*
     if (m_pBackgroundImage)
     {
         delete m_pBackgroundImage;
         m_pBackgroundImage = nullptr;
     }
+    */
 
     if (m_pDrawDevice)
     {
@@ -144,8 +154,11 @@ void CGame::UpdateGameFrame(ULONGLONG currentTick)
 void CGame::UpdatePosition(float deltaTime, int screenWidth, int screenHeight)
 {
  
-    int bgWidth = static_cast<int>(m_pBackgroundImage->GetWidth());
-    int bgHeight = static_cast<int>(m_pBackgroundImage->GetHeight());
+    //int bgWidth = static_cast<int>(m_pBackgroundImage->GetWidth());
+    //int bgHeight = static_cast<int>(m_pBackgroundImage->GetHeight());
+
+    int bgWidth = 30000;
+    int bgHeight = 3000;
 
     int playerWidth = 0;
     int playerHeight = 0;
@@ -185,13 +198,21 @@ void CGame::UpdateCamera(int screenWidth, int screenHeight)
     int computedOffsetX = playerPos.x - cameraCenterX;
     int computedOffsetY = playerPos.y - cameraCenterY;
 
-    int bgWidth = static_cast<int>(m_pBackgroundImage->GetWidth());
-    int bgHeight = static_cast<int>(m_pBackgroundImage->GetHeight());
+   // int bgWidth = static_cast<int>(m_pBackgroundImage->GetWidth());
+   // int bgHeight = static_cast<int>(m_pBackgroundImage->GetHeight());
+
+    int bgWidth = 30000;
+    int bgHeight = 3000;
+
+
     int clampedOffsetX = std::max<int>(0, std::min<int>(computedOffsetX, bgWidth - screenWidth));
     int clampedOffsetY = std::max<int>(0, std::min<int>(computedOffsetY, bgHeight - screenHeight));
 
     m_backgroundPosX = -clampedOffsetX;
     m_backgroundPosY = -clampedOffsetY;
+
+    m_TileMap->posx = -clampedOffsetX;
+    m_TileMap->posy = -clampedOffsetY;
 
     m_playerRenderX = cameraCenterX - (clampedOffsetX - computedOffsetX);
     m_playerRenderY = cameraCenterY - (clampedOffsetY - computedOffsetY);
@@ -219,6 +240,7 @@ void CGame::DrawScene()
     // DirectDraw Device로 Bitmap 이미지들 Render
     m_pDrawDevice->BeginDraw();
 
+    /*
     if (m_pBackgroundImage)
     {
         m_pDrawDevice->DrawBitmap(m_backgroundPosX, m_backgroundPosY,
@@ -229,12 +251,22 @@ void CGame::DrawScene()
     else {
         m_pDrawDevice->Clear();
     }
+    */
+    m_pDrawDevice->Clear();
 
+    if (m_TileMap)
+    {
+        m_TileMap->Render(m_pDrawDevice);
+    }
 
     if (m_pPlayer)
     {
         m_pPlayer->Render(m_pDrawDevice);
     }
+
+    
+
+    
 
 
     m_pDrawDevice->EndDraw();

@@ -47,7 +47,7 @@ private:
     LARGE_INTEGER m_prevCounter = {};
 
     CImageData* m_pPlayerImgData = nullptr;
-    CTGAImage* m_pBackgroundImage = nullptr;
+//    CTGAImage* m_pBackgroundImage = nullptr;
 
     // 카메라 처리
     int m_cameraOffsetX = 0;
