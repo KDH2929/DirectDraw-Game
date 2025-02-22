@@ -1,13 +1,15 @@
 #pragma once
 #include "DebugManager.h"
+#include "Monster.h"
 #include "MathUtils.h"
+#include "ColliderManager.h"
 
 // 전방 선언
 class CTGAImage;
 class CImageData;
 class Character;   // 플레이어 캐릭터
 class CDDrawDevice;
-class TileMap2D;
+
 
 class CGame
 {
@@ -47,7 +49,7 @@ private:
     LARGE_INTEGER m_prevCounter = {};
 
     CImageData* m_pPlayerImgData = nullptr;
-//    CTGAImage* m_pBackgroundImage = nullptr;
+    CTGAImage* m_pBackgroundImage = nullptr;
 
     // 카메라 처리
     int m_cameraOffsetX = 0;
@@ -58,8 +60,9 @@ private:
     int m_backgroundPosY = 0;
 
     Character* m_pPlayer = nullptr;
+    std::vector<Monster*> m_vMonsters;
 
-    TileMap2D* m_TileMap;
+    ColliderManager m_colliderManager;
 };
 
 extern CGame* g_pGame;

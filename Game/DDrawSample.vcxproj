@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="utf-8"?>
+﻿<?xml version="1.0" encoding="utf-8"?>
 <Project DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <ItemGroup Label="ProjectConfigurations">
     <ProjectConfiguration Include="Debug|ARM64">
@@ -260,6 +260,7 @@
     <ClInclude Include="..\Util\Util.h" />
     <ClInclude Include="TileMap2D.h" />
     <ClInclude Include="AABBCollider.h" />
+    <ClInclude Include="Centipede.h" />
     <ClInclude Include="Character.h" />
     <ClInclude Include="CharacterAnim.h" />
     <ClInclude Include="Collider.h" />
@@ -270,8 +271,11 @@
     <ClInclude Include="GameObject.h" />
     <ClInclude Include="InputManager.h" />
     <ClInclude Include="MathUtils.h" />
+    <ClInclude Include="CentipedeAnim.h" />
+    <ClInclude Include="Monster.h" />
     <ClInclude Include="OBBCollider.h" />
     <ClInclude Include="Resource.h" />
+    <ClInclude Include="SpriteAnim.h" />
     <ClInclude Include="SpriteManager.h" />
     <ClInclude Include="stdafx.h" />
     <ClInclude Include="targetver.h" />
@@ -286,8 +290,8 @@
     <ClCompile Include="..\Util\Util.cpp" />
     <ClCompile Include="TileMap2D.cpp" />
     <ClCompile Include="AABBCollider.cpp" />
+    <ClCompile Include="Centipede.cpp" />
     <ClCompile Include="Character.cpp" />
-    <ClCompile Include="CharacterAnim.cpp" />
     <ClCompile Include="ColliderManager.cpp" />
     <ClCompile Include="DebugManager.cpp" />
     <ClCompile Include="Game.cpp" />
@@ -295,6 +299,7 @@
     <ClCompile Include="InputManager.cpp" />
     <ClCompile Include="main.cpp" />
     <ClCompile Include="MathUtils.cpp" />
+    <ClCompile Include="Monster.cpp" />
     <ClCompile Include="OBBCollider.cpp" />
     <ClCompile Include="SpriteManager.cpp" />
     <ClCompile Include="stdafx.cpp">

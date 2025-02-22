@@ -1,10 +1,10 @@
 #pragma once
 #include "GameObject.h"
+#include "CharacterAnim.h"
 
 // 전방 선언
 class CImageData;
 class SpriteManager;
-class CharacterAnim;
 
 class Character : public GameObject {
 public:
@@ -39,6 +39,9 @@ public:
 
     int GetSpriteFrameWidth() const;
     int GetSpriteFrameHeight() const;
+
+
+    virtual void OnCollision(GameObject* other, CollisionResponse response) override;
 
 
 private:

@@ -10,6 +10,7 @@
 #include "../Util/Util.h"
 #include "../ImageData/ImageData.h"
 #include "../Util/TGAImage.h"
+#include "../Game/DebugManager.h"
 
 
 //////////////////////////////////////////////////////////////////////
@@ -294,7 +295,7 @@ BOOL CDDrawDevice::CalcSpriteClipArea(
 	int clippedHeight = destEndY - destStartY;
 
 	if (clippedWidth <= 0 || clippedHeight <= 0)
-		return FALSE; // 렌더링할 영역이 없음
+		return FALSE;			// 렌더링할 영역이 없음
 
 	// 3. 스프라이트 시트 내 소스 시작 좌표 계산:
 	// 화면상의 시작 좌표와 원래 destPos의 차이를 srcRect의 좌측/상단에 더함
@@ -307,6 +308,7 @@ BOOL CDDrawDevice::CalcSpriteClipArea(
 	pivOutDestStart->y = destStartY;
 	pivOutDestSize->x = clippedWidth;
 	pivOutDestSize->y = clippedHeight;
+
 
 	return TRUE;
 }
@@ -528,9 +530,11 @@ BOOL CDDrawDevice::DrawSprite(int screenX, int screenY, const CImageData* pImgDa
 	int frameWidth = srcRect.right - srcRect.left;
 	int frameHeight = srcRect.bottom - srcRect.top;
 
-	// 스프라이트 시트 전체 이미지의 크기 (디버깅용)
+	// 스프라이트 시트 전체 이미지의 크기
+	/*
 	int imageWidth = static_cast<int>(pImgData->GetWidth());
 	int imageHeight = static_cast<int>(pImgData->GetHeight());
+	*/
 
 	// 렌더링할 소스 시작 좌표 (스프라이트 시트 로컬 좌표계)
 	INT_VECTOR2 srcStart = { srcRect.left, srcRect.top };
@@ -551,6 +555,7 @@ BOOL CDDrawDevice::DrawSprite(int screenX, int screenY, const CImageData* pImgDa
 	if (!CalcSpriteClipArea(&srcStart, &destStart, &clippedSize, srcRect, &destPos, &bufferSize))
 		goto lb_return;
 
+
 	// pImgData에서 srcStart.y 행의 압축된 데이터를 가져오기
 	const COMPRESSED_LINE* lineDesc = pImgData->GetCompressedImage(srcStart.y);
 
@@ -567,9 +572,13 @@ BOOL CDDrawDevice::DrawSprite(int screenX, int screenY, const CImageData* pImgDa
 			DWORD pixelColor = pStream->dwPixel;
 			int pixelCount = static_cast<int>(pStream->wPixelNum);
 
+		
 
 
 			/*
+			이는 0번압축에서 전체 Sprite이미지 중 Rect범위안에 해당하는 이미지만 Render하기 위한 Case들임
+			만약 아래 Case들을 고려하지 않으면 스프라이트 시트 전체가 렌더링됨
+			
 			pStream->wPosX 는 전체 이미지의 로컬좌표계상에서의 연속된 픽셀이 시작되는 X좌표이라는 점을 고려해야함
 			즉 {wPosX, wPosX + pixelCount} 만큼이 현재 Line에서 연속된 구간이라는것
 			기존 좌우 Screen범위에 맞춰 그려야할 수를 조절하는 로직을 수정하던가, 그 전에 작업을 추가해서 처리해야함
@@ -592,17 +601,23 @@ BOOL CDDrawDevice::DrawSprite(int screenX, int screenY, const CImageData* pImgDa
 			이런식으로 두면 될 거 같음
 
 			이후 기존 screenRenderX가 화면 좌측경계, 우측경계를 벗어낫을 시 처리도 수행하면 될 거 같음
+
+			추가로 srcStart.x 값이 양수인 경우 화면경계 좌측에서 clipping이 일어난 것이므로 이에 대한 처리도 추가함
 			
 			*/
 
-
+			
 			// Rect 기준 Local 좌표계로 변경해서 계산
-			int localX = static_cast<int>(pStream->wPosX) - srcRect.left;
+			// 이 때 srcStart.x 가 양수이면 clipping이 일어난 것이므로, 그 부분을 고려하여 localX와 frameWidth를 조절
+			int localX = static_cast<int>(pStream->wPosX) - srcStart.x;
+			frameWidth = srcRect.right - srcStart.x;
+			
 
 			// Case1, Case5: srcRect 범위를 벗어난 경우
 			if (localX + pixelCount <= 0 || localX >= frameWidth)
 				continue;
 
+			
 			// Case2: 왼쪽이 벗어난 경우
 			if (localX < 0) {
 				pixelCount += localX; // localX는 음수
@@ -620,16 +635,20 @@ BOOL CDDrawDevice::DrawSprite(int screenX, int screenY, const CImageData* pImgDa
 
 
 			// 화면 좌측 경계를 벗어나면 조정
+			
 			if (drawX < 0)
 			{
 				pixelCount += drawX;
 				drawX = 0;
 			}
+			
+
 			// 화면 우측 경계를 벗어나면 조정
 			if (drawX + pixelCount > screenWidth)
 			{
 				pixelCount = screenWidth - drawX;
 			}
+
 
 			// 대상 버퍼 내 해당 픽셀 위치 계산 (픽셀당 4Byte)
 			char* destPixelPtr = destLinePtr + (drawX * 4);

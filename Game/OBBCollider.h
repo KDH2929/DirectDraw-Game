@@ -1,12 +1,13 @@
 #pragma once
 #include "Collider.h"
 
-
 // OBB 충돌체 클래스 (회전 정보를 포함)
 class OBBCollider : public Collider {
 public:
-    OBBCollider(int centerX, int centerY, int width, int height, float rotation)
-        : Collider(ColliderType::OBB),
+    // 생성자: centerX, centerY는 중심 좌표, rotation은 회전 각도 (도 단위)
+    // owner: 이 Collider를 소유한 GameObject
+    OBBCollider(GameObject* owner, int centerX, int centerY, int width, int height, float rotation)
+        : Collider(ColliderType::OBB, owner),
         m_x(centerX), m_y(centerY), m_width(width), m_height(height), m_rotation(rotation) {}
     virtual ~OBBCollider() {}
 
