@@ -18,6 +18,7 @@ public:
 public:
 	int posx, posy;
 	int worldposx, worldposy;
+	int m_mapWidth = -1, m_mapHeight = -1;
 	
 private:
 	void ReadTileSource(const char* filename);
