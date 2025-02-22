@@ -16,15 +16,17 @@ public:
         return instance;
     }
 
-    void AddMessage(const std::wstring& msg, float duration);   // duration은 s 단위
+    // 화면에 메시지를 표시하는 함수 (duration은 초 단위)
+    void AddOnScreenMessage(const std::wstring& msg, float duration);
+    // 콘솔/디버그 출력에 메시지를 기록하는 함수
+    void LogMessage(const std::wstring& msg);
+
     void Update(float deltaTime);
     void Render(HDC hDC);
 
 private:
-
-    // 싱글톤 패턴 적용
-    DebugManager() = default;
-    ~DebugManager() = default;
+    DebugManager();
+    ~DebugManager();
     DebugManager(const DebugManager&) = delete;
     DebugManager& operator=(const DebugManager&) = delete;
 

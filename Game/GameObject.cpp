@@ -1,11 +1,13 @@
 #include "stdafx.h"
 #include "GameObject.h"
+#include "Collider.h"
 
 GameObject::GameObject()
     : m_pCollider(nullptr),
     m_CurrentPosition(m_Transform.position),
     m_PreviousPosition(m_Transform.position),
-    m_InterpolatedPosition(m_Transform.position)
+    m_InterpolatedPosition(m_Transform.position),
+    m_mass(1.0f), m_invMass(1.0f), m_physicsType(PhysicsType::Dynamic)
 {
     // m_Transform은 기본 생성자에서 초기화됨.
 }
@@ -24,7 +26,7 @@ void GameObject::Update(float deltaTime) {
     // 외부 로직(물리, 입력 처리 등)에 의해 m_Transform.position이 갱신되었다고 가정
     m_CurrentPosition = m_Transform.position;
 
-    // Collider 업데이트 (있다면)
+    // Collider 업데이트
     if (m_pCollider)
         m_pCollider->Update(m_Transform);
 }
@@ -54,7 +56,20 @@ Collider* GameObject::GetCollider() {
     return m_pCollider;
 }
 
-// 항상 보간 적용: bool 매개변수 제거
+void GameObject::OnCollision(GameObject* other, CollisionResponse response) {
+    // 기본 충돌 이벤트 처리 (상속받아 구체적인 처리구현)
+    switch (response) {
+    case CollisionResponse::Block:
+        break;
+    case CollisionResponse::Overlap:
+        break;
+    case CollisionResponse::Ignore:
+    default:
+        break;
+    }
+}
+
+
 void GameObject::SetPosition(const Vector2& newPos) {
     m_PreviousPosition = m_CurrentPosition;
     m_CurrentPosition = newPos;
@@ -76,4 +91,33 @@ void GameObject::UpdateInterpolation(float alpha) {
 
 Vector2 GameObject::GetInterpolatedPosition() const {
     return m_InterpolatedPosition;
+}
+
+
+
+void GameObject::SetMass(float mass) {
+    m_mass = mass;
+    // 질량이 0이면 정적 객체로 간주하고, 역질량을 0으로 설정
+    m_invMass = (mass != 0.0f) ? (1.0f / mass) : 0.0f;
+}
+
+float GameObject::GetMass() const {
+    return m_mass;
+}
+
+float GameObject::GetInvMass() const {
+    return m_invMass;
+}
+
+void GameObject::SetPhysicsType(PhysicsType type) {
+    m_physicsType = type;
+    // 정적 객체라면 질량은 0으로, 역질량은 0으로 설정
+    if (type == PhysicsType::Static) {
+        m_mass = 0.0f;
+        m_invMass = 0.0f;
+    }
+}
+
+PhysicsType GameObject::GetPhysicsType() const {
+    return m_physicsType;
 }

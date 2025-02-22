@@ -3,6 +3,12 @@
 #include "Collider.h"
 #include <string>
 
+
+enum class PhysicsType {
+    Static,         // 움직이지 않음 (ex: 벽, 바닥)
+    Dynamic,    // 물리 시뮬레이션에 의해 움직임
+};
+
 class CDDrawDevice;
 
 
@@ -24,11 +30,26 @@ public:
     // Collider 관련
     Collider* GetCollider();
 
-    // 보간 관련 함수들 (항상 보간 적용)
+    // 충돌 이벤트 콜백 (충돌 발생 시 호출)
+    // other: 충돌한 다른 GameObject, response: 충돌 반응 타입
+    virtual void OnCollision(GameObject* other, CollisionResponse response);
+
+
+    // 보간 관련 함수들
     virtual void SetPosition(const Vector2& newPos);
     void ResetInterpolation();
     void UpdateInterpolation(float alpha);
     Vector2 GetInterpolatedPosition() const;
+
+
+    // 물리 관련 Getter/Setter
+    void SetMass(float mass);         // 질량을 설정하고, 동시에 역질량을 계산
+    float GetMass() const;
+    float GetInvMass() const;         // 미리 계산된 역질량 반환
+
+    void SetPhysicsType(PhysicsType type);
+    PhysicsType GetPhysicsType() const;
+
 
 protected:
     Transform m_Transform;
@@ -38,4 +59,11 @@ protected:
     Vector2 m_CurrentPosition;
     Vector2 m_PreviousPosition;
     Vector2 m_InterpolatedPosition;
+
+
+    // 물리 속성
+    float m_mass;         // 질량
+    float m_invMass;      // 역질량 (mass가 0이면 0, 그렇지 않으면 1/mass)
+    PhysicsType m_physicsType;
+
 };

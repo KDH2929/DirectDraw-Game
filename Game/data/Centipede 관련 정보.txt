@@ -1,0 +1,11 @@
+각 스프라이트 당 216 * 216
+
+Attack1  4프레임
+Attack2  6프레임
+Attack3  6프레임
+Attack4  4프레임
+Death    4프레임
+Hurt      2프레임
+Idle       4프레임
+Sneer    6프레임
+Walk     4프레임 

@@ -14,6 +14,8 @@
 #include "MathUtils.h"
 #include "AABBCollider.h"
 #include "InputManager.h"
+#include "ColliderManager.h"
+#include "Centipede.h"
 
 CGame* g_pGame = nullptr;
 
@@ -59,21 +61,46 @@ BOOL CGame::Initialize(HWND hWnd)
     delete pPlayerImage;
     pPlayerImage = nullptr;
 
+
+
     // 배경 이미지 로드
     m_pBackgroundImage = new CTGAImage;
     m_pBackgroundImage->Load24BitsTGA("./data/Background_01.tga", 4);
 
 
-    // 플레이어 초기 위치 (화면 중앙)
-    int playerPosX = (screenWidth - static_cast<int>(m_pPlayerImgData->GetWidth())) / 2;
-    int playerPosY = (screenHeight - static_cast<int>(m_pPlayerImgData->GetHeight())) / 2;
+    // 플레이어 초기 위치
+    int playerPosX = 50;
+    int playerPosY = 50;
 
     // 플레이어 캐릭터 생성
     m_pPlayer = new Character(m_pPlayerImgData, static_cast<float>(playerPosX), static_cast<float>(playerPosY));
+    m_colliderManager.AddCollider(m_pPlayer->GetCollider());
 
+
+    // 몬스터 관련
+    CTGAImage* pCentipedeImage = new CTGAImage;
+    CImageData* pCentipedeImgData = nullptr;
+    if (pCentipedeImage->Load24BitsTGA("./data/Centipede.tga", 4))
+    {
+        DWORD dwColorKey = pCentipedeImage->GetPixel(0, 0);
+        pCentipedeImgData = new CImageData;
+        pCentipedeImgData->Create(pCentipedeImage->GetRawImage(), pCentipedeImage->GetWidth(), pCentipedeImage->GetHeight(), dwColorKey);
+    }
+    delete pCentipedeImage;
+    pCentipedeImage = nullptr;
+
+    m_vMonsters.push_back(new Centipede(pCentipedeImgData, 100.0f, 400.0f));
+    m_vMonsters.push_back(new Centipede(pCentipedeImgData, 300.0f, 400.0f));
+    m_vMonsters.push_back(new Centipede(pCentipedeImgData, 500.0f, 400.0f));
+    m_vMonsters.push_back(new Centipede(pCentipedeImgData, 700.0f, 400.0f));
+    
+    for (auto monster : m_vMonsters) {
+        m_colliderManager.AddCollider(monster->GetCollider());
+    }
 
     return TRUE;
 }
+
 
 void CGame::Process()
 {
@@ -85,7 +112,7 @@ void CGame::Process()
     if (elapsedTick > m_fTicksPerFrame)
     {
         ResetInterpolation();
-        UpdateGameFrame(currentTick);
+        UpdateGameFrame(currentTick);       // Update
         m_prevFrameTick = currentTick;
         m_prevCounter = currentCounter;
     }
@@ -95,8 +122,9 @@ void CGame::Process()
         InterpolatePosition(alpha);
     }
 
-    DrawScene();
+    DrawScene();        // Render
 }
+
 
 void CGame::Cleanup()
 {
@@ -125,44 +153,43 @@ void CGame::Cleanup()
     }
 }
 
+
 void CGame::UpdateGameFrame(ULONGLONG currentTick)
 {
     int screenWidth = static_cast<int>(m_pDrawDevice->GetWidth());
     int screenHeight = static_cast<int>(m_pDrawDevice->GetHeight());
 
     UpdatePosition(m_fTicksPerFrame, screenWidth, screenHeight);
+    
+    m_colliderManager.ProcessCollisions();
+
     DebugManager::GetInstance().Update(m_fTicksPerFrame);
 }
 
+
 void CGame::UpdatePosition(float deltaTime, int screenWidth, int screenHeight)
 {
- 
-    int bgWidth = static_cast<int>(m_pBackgroundImage->GetWidth());
-    int bgHeight = static_cast<int>(m_pBackgroundImage->GetHeight());
 
-    int playerWidth = 0;
-    int playerHeight = 0;
-
-    AABBCollider* pPlayerCollider = static_cast<AABBCollider*>(m_pPlayer->GetCollider());
-
-    if (pPlayerCollider)
-    {
-        playerWidth = pPlayerCollider->GetWidth();
-        playerHeight = pPlayerCollider->GetHeight();
-    }
-
-    // 월드 경계 설정: 캐릭터가 스프라이트 전체가 화면 내에 남도록 하기 위한 용도 (화면 바깥을 벗어나지 않도록)
-    m_pPlayer->SetWorldBounds(bgWidth - playerWidth, bgHeight - playerHeight);
     m_pPlayer->Update(deltaTime);
 
     Vector2 playerPos = m_pPlayer->GetPosition();
 
-    DebugManager::GetInstance().AddMessage(L"PlayerPos: " + std::to_wstring(static_cast<int>(playerPos.x)) +
+
+    DebugManager::GetInstance().AddOnScreenMessage(L"PlayerPos: " + std::to_wstring(static_cast<int>(playerPos.x)) +
         L", " + std::to_wstring(static_cast<int>(playerPos.y)), 0.03f);
 
 
+    // 모든 몬스터 업데이트
+    for (auto monster : m_vMonsters)
+    {
+        monster->Update(deltaTime);
+    }
+
     UpdateCamera(screenWidth, screenHeight);
+
+
 }
+
 
 void CGame::UpdateCamera(int screenWidth, int screenHeight)
 {
@@ -175,6 +202,7 @@ void CGame::UpdateCamera(int screenWidth, int screenHeight)
     int cameraCenterX = screenCenterX + cameraOffsetX;
     int cameraCenterY = screenCenterY + cameraOffsetY;
 
+
     int computedOffsetX = playerPos.x - cameraCenterX;
     int computedOffsetY = playerPos.y - cameraCenterY;
 
@@ -186,13 +214,38 @@ void CGame::UpdateCamera(int screenWidth, int screenHeight)
     m_backgroundPosX = -clampedOffsetX;
     m_backgroundPosY = -clampedOffsetY;
 
+    // 카메라가 맵 끝에 도착하여 더 이상 움직이지 못할 때, 플레이어만 움직이게 처리
     m_playerRenderX = cameraCenterX - (clampedOffsetX - computedOffsetX);
     m_playerRenderY = cameraCenterY - (clampedOffsetY - computedOffsetY);
 
     m_pPlayer->SetRenderPosition(Vector2{ static_cast<float>(m_playerRenderX),  static_cast<float>(m_playerRenderY) });
 
-    DebugManager::GetInstance().AddMessage(L"Camera: Offset (" + std::to_wstring(clampedOffsetX) +
+    for (auto monster : m_vMonsters)
+    {
+        // 몬스터의 월드 좌표에 배경 오프셋을 더해 실제 렌더될 좌표 계산
+        Vector2 monsterWorldPos = monster->GetPosition();
+        Vector2 monsterRenderPos = monsterWorldPos + Vector2{ static_cast<float>(m_backgroundPosX), static_cast<float>(m_backgroundPosY) };
+
+        monster->SetRenderPosition(monsterRenderPos);
+    }
+
+
+    DebugManager::GetInstance().AddOnScreenMessage(L"Camera Offset (" + std::to_wstring(clampedOffsetX) +
         L", " + std::to_wstring(clampedOffsetY) + L")", 0.03f);
+
+    for (auto monster : m_vMonsters)
+    {
+        if (monster)
+        {
+            Vector2 renderPos = monster->GetRenderPosition();
+            Vector2 actualPos = monster->GetPosition();
+            std::wstring msg = L"Monster: RenderPos (" + std::to_wstring(static_cast<int>(renderPos.x)) + L", " +
+                std::to_wstring(static_cast<int>(renderPos.y)) + L"), ActualPos (" +
+                std::to_wstring(static_cast<int>(actualPos.x)) + L", " +
+                std::to_wstring(static_cast<int>(actualPos.y)) + L")";
+            DebugManager::GetInstance().AddOnScreenMessage(msg, 0.03f);
+        }
+    }
 }
 
 void CGame::InterpolatePosition(float alpha)
@@ -230,6 +283,16 @@ void CGame::DrawScene()
     }
 
 
+    for (auto monster : m_vMonsters)
+    {
+        if (monster)
+        {
+            monster->Render(m_pDrawDevice);
+        }
+    }
+    
+
+
     m_pDrawDevice->EndDraw();
 
 
@@ -239,7 +302,19 @@ void CGame::DrawScene()
     {
         m_pDrawDevice->DrawInfo(hDC);
         DebugManager::GetInstance().Render(hDC);
+
         m_pPlayer->GetCollider()->Render(hDC, m_playerRenderX, m_playerRenderY);
+        
+        for (auto monster : m_vMonsters)
+        {
+            if (monster && monster->GetCollider())
+            {
+                // 몬스터의 화면상 렌더링 위치를 가져옴
+                Vector2 monsterRenderPos = monster->GetRenderPosition();
+                monster->GetCollider()->Render(hDC, static_cast<int>(monsterRenderPos.x), static_cast<int>(monsterRenderPos.y));
+            }
+        }
+
         m_pDrawDevice->EndGDI(hDC);
     }
 

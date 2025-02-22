@@ -2,11 +2,8 @@
 #include "OBBCollider.h"
 #include "AABBCollider.h"
 #include "MathUtils.h"
-
-
 #include <algorithm>
 #include <sstream>
-
 
 // OBB의 꼭짓점 계산
 // box->GetX(), box->GetY()는 월드 좌표계에서의 중심 좌표라고 가정
@@ -45,23 +42,20 @@ bool OBBCollider::CheckCollision(const Collider* other) const {
         const OBBCollider* otherOBB = static_cast<const OBBCollider*>(other);
         return CheckCollisionWithOBB(otherOBB);
     }
-
     else if (other->GetType() == ColliderType::AABB) {
         // 다른 Collider가 AABB인 경우,
         // AABB의 좌표는 좌상단 기준이므로 중심 좌표로 변환
         const AABBCollider* otherAABB = static_cast<const AABBCollider*>(other);
         int centerX = otherAABB->GetX() + otherAABB->GetWidth() / 2;
         int centerY = otherAABB->GetY() + otherAABB->GetHeight() / 2;
-
         // 회전이 0인 OBB로 변환하여 충돌 검사를 수행합니다.
-        OBBCollider aabbAsObb(centerX, centerY, otherAABB->GetWidth(), otherAABB->GetHeight(), 0.0f);
+        OBBCollider aabbAsObb(nullptr, centerX, centerY, otherAABB->GetWidth(), otherAABB->GetHeight(), 0.0f);
         return CheckCollisionWithOBB(&aabbAsObb);
     }
-
     return false;
 }
 
-// OBBCollider::CheckCollisionOBB 구현 (SAT 기반)
+// OBBCollider::CheckCollisionWithOBB 구현 (SAT 기반)
 bool OBBCollider::CheckCollisionWithOBB(const OBBCollider* other) const {
     // 각 OBB의 꼭짓점 계산
     Vector2 cornersA[4], cornersB[4];
@@ -82,6 +76,7 @@ bool OBBCollider::CheckCollisionWithOBB(const OBBCollider* other) const {
         float minA, maxA, minB, maxB;
         ProjectOntoAxis(cornersA, axes[i], minA, maxA);
         ProjectOntoAxis(cornersB, axes[i], minB, maxB);
+
         // 한 축이라도 구간이 겹치지 않으면 충돌하지 않음
         if (maxA < minB || maxB < minA)
             return false;
@@ -92,10 +87,15 @@ bool OBBCollider::CheckCollisionWithOBB(const OBBCollider* other) const {
 
 void OBBCollider::Update(const Transform& transform)
 {
+    // Transform 정보를 이용해 중심 좌표를 업데이트
+    // 필요시 transform에서 회전 값을 가져오기
+    m_x = static_cast<int>(transform.position.x);
+    m_y = static_cast<int>(transform.position.y);
 }
 
 void OBBCollider::Render(HDC hDC, int renderX, int renderY) const
 {
+
 }
 
 std::string OBBCollider::GetDebugString() const {

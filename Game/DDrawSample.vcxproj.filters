@@ -135,6 +135,18 @@
     <ClInclude Include="TileMap.h">
       <Filter>Game</Filter>
     </ClInclude>
+    <ClInclude Include="SpriteAnim.h">
+      <Filter>Game\Animation</Filter>
+    </ClInclude>
+    <ClInclude Include="CentipedeAnim.h">
+      <Filter>Game\Animation</Filter>
+    </ClInclude>
+    <ClInclude Include="Monster.h">
+      <Filter>Game\GameObject</Filter>
+    </ClInclude>
+    <ClInclude Include="Centipede.h">
+      <Filter>Game\GameObject</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ResourceCompile Include="DDrawSample.rc">
@@ -204,14 +216,17 @@
     <ClCompile Include="SpriteManager.cpp">
       <Filter>Game\Animation</Filter>
     </ClCompile>
-    <ClCompile Include="CharacterAnim.cpp">
-      <Filter>Game\Animation</Filter>
-    </ClCompile>
     <ClCompile Include="Tile.cpp">
       <Filter>Game\GameObject</Filter>
     </ClCompile>
     <ClCompile Include="TileMap.cpp">
       <Filter>Game</Filter>
+    </ClCompile>
+    <ClCompile Include="Monster.cpp">
+      <Filter>Game\GameObject</Filter>
+    </ClCompile>
+    <ClCompile Include="Centipede.cpp">
+      <Filter>Game\GameObject</Filter>
     </ClCompile>
   </ItemGroup>
 </Project>
