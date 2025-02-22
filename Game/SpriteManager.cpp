@@ -6,6 +6,15 @@ SpriteManager::SpriteManager()
 {
 }
 
+SpriteManager::SpriteManager(SpriteManager& spriteManager)
+{
+    m_spriteSheet = spriteManager.CopyImageData();
+    m_frameWidth = spriteManager.GetFrameWidth();
+    m_frameHeight = spriteManager.GetFrameHeight();
+    m_frames = spriteManager.GetFrames();
+    // spriteSheet 처럼 나머지도 포인터로 변환하면 메모리 최적화 될듯
+}
+
 SpriteManager::~SpriteManager()
 {
     if (m_spriteSheet) {
@@ -79,4 +88,14 @@ int SpriteManager::GetFrameWidth() const {
 
 int SpriteManager::GetFrameHeight() const {
     return m_frameHeight;
+}
+
+CImageData* SpriteManager::CopyImageData()
+{
+    return m_spriteSheet;
+}
+
+std::vector<RECT> SpriteManager::GetFrames()
+{
+    return m_frames;
 }

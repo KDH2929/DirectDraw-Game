@@ -258,6 +258,9 @@
     <ClInclude Include="..\Util\TGAImage.h" />
     <ClInclude Include="..\Util\stdafx.h" />
     <ClInclude Include="..\Util\Util.h" />
+    <ClInclude Include="FireTile.h" />
+    <ClInclude Include="TileAnim.h" />
+    <ClInclude Include="TileMap2D.h" />
     <ClInclude Include="AABBCollider.h" />
     <ClInclude Include="Character.h" />
     <ClInclude Include="CharacterAnim.h" />
@@ -276,6 +279,7 @@
     <ClInclude Include="targetver.h" />
     <ClInclude Include="Tile.h" />
     <ClInclude Include="TileMap.h" />
+    <ClInclude Include="TileMapReader.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\DDrawLib\DDrawDevice.cpp" />
@@ -284,6 +288,9 @@
     <ClCompile Include="..\Util\QueryPerfCounter .cpp" />
     <ClCompile Include="..\Util\TGAImage.cpp" />
     <ClCompile Include="..\Util\Util.cpp" />
+    <ClCompile Include="FireTile.cpp" />
+    <ClCompile Include="TileAnim.cpp" />
+    <ClCompile Include="TileMap2D.cpp" />
     <ClCompile Include="AABBCollider.cpp" />
     <ClCompile Include="Character.cpp" />
     <ClCompile Include="CharacterAnim.cpp" />
@@ -306,6 +313,7 @@
     </ClCompile>
     <ClCompile Include="Tile.cpp" />
     <ClCompile Include="TileMap.cpp" />
+    <ClCompile Include="TileMapReader.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ResourceCompile Include="DDrawSample.rc" />

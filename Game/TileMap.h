@@ -22,6 +22,7 @@ public:
     // 전체 타일맵 렌더링
     void Render(CDDrawDevice* pDevice);
 
+
     // 특정 타일 접근
     Tile* GetTile(int row, int col);
 

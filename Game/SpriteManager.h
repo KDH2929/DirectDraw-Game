@@ -10,6 +10,7 @@ struct SpriteFrame {
 class SpriteManager {
 public:
     SpriteManager();
+    SpriteManager(SpriteManager& spriteManager);
     ~SpriteManager();
 
     bool SetSpriteSheet(CImageData* spriteSheet, int frameWidth, int frameHeight);
@@ -25,7 +26,8 @@ public:
     int GetFrameWidth() const;
     int GetFrameHeight() const;
 
-
+    CImageData* CopyImageData();
+    std::vector<RECT> GetFrames();
 private:
     void GenerateFrames();
 

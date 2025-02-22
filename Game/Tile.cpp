@@ -2,27 +2,13 @@
 #include "Tile.h"
 #include "../DDrawLib/DDrawDevice.h"
 
-Tile::Tile()
-    : m_tileID(0), m_collidable(false)
+Tile::Tile(int id = 0)
+    : m_id(id)
 {
 }
 
-Tile::~Tile()
+Tile::Tile(Tile& tile)
 {
-}
-
-void Tile::SetTileID(int id)
-{
-    m_tileID = id;
-}
-
-int Tile::GetTileID() const
-{
-    return m_tileID;
-}
-
-
-void Tile::Render(CDDrawDevice* pDevice)
-{
-
+    m_id = tile.m_id;
+    m_tileLayer = tile.m_tileLayer;
 }

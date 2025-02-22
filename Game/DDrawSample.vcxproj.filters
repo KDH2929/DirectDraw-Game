@@ -46,6 +46,9 @@
     <Filter Include="Game\Animation">
       <UniqueIdentifier>{4d423e11-917e-4473-8e55-2796cc65966a}</UniqueIdentifier>
     </Filter>
+    <Filter Include="TileMap">
+      <UniqueIdentifier>{11884ed6-4fae-4d0e-b2d2-645d6d7fe553}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="targetver.h">
@@ -135,6 +138,18 @@
     <ClInclude Include="TileMap.h">
       <Filter>Game</Filter>
     </ClInclude>
+    <ClInclude Include="TileMap2D.h">
+      <Filter>TileMap</Filter>
+    </ClInclude>
+    <ClInclude Include="TileAnim.h">
+      <Filter>Game\Animation</Filter>
+    </ClInclude>
+    <ClInclude Include="FireTile.h">
+      <Filter>Game\GameObject</Filter>
+    </ClInclude>
+    <ClInclude Include="TileMapReader.h">
+      <Filter>TileMap</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ResourceCompile Include="DDrawSample.rc">
@@ -212,6 +227,18 @@
     </ClCompile>
     <ClCompile Include="TileMap.cpp">
       <Filter>Game</Filter>
+    </ClCompile>
+    <ClCompile Include="TileMap2D.cpp">
+      <Filter>TileMap</Filter>
+    </ClCompile>
+    <ClCompile Include="TileAnim.cpp">
+      <Filter>Game\Animation</Filter>
+    </ClCompile>
+    <ClCompile Include="FireTile.cpp">
+      <Filter>Game\GameObject</Filter>
+    </ClCompile>
+    <ClCompile Include="TileMapReader.cpp">
+      <Filter>TileMap</Filter>
     </ClCompile>
   </ItemGroup>
 </Project>

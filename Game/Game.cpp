@@ -14,6 +14,7 @@
 #include "MathUtils.h"
 #include "AABBCollider.h"
 #include "InputManager.h"
+#include "TileMap2D.h"
 
 CGame* g_pGame = nullptr;
 
@@ -122,6 +123,12 @@ void CGame::Cleanup()
     {
         delete m_pDrawDevice;
         m_pDrawDevice = nullptr;
+    }
+
+    if (m_TileMap)
+    {
+        delete m_TileMap;
+        m_TileMap = nullptr;
     }
 }
 

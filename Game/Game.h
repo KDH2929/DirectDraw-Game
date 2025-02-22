@@ -7,6 +7,7 @@ class CTGAImage;
 class CImageData;
 class Character;   // 플레이어 캐릭터
 class CDDrawDevice;
+class TileMap2D;
 
 class CGame
 {
@@ -57,6 +58,8 @@ private:
     int m_backgroundPosY = 0;
 
     Character* m_pPlayer = nullptr;
+
+    TileMap2D* m_TileMap;
 };
 
 extern CGame* g_pGame;
