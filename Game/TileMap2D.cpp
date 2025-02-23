@@ -9,6 +9,7 @@
 #include <stdlib.h>
 #include <iostream>
 #include "../DDrawLib/DDrawDevice.h"
+#include "AABBCollider.h"
 
 #pragma warning(disable:4996)
 
@@ -231,6 +232,10 @@ bool TileMap2D::ReadLayer(FILE* file, std::string layername)
 				pos.x = x * tilewidth;
 				pos.y = -y * tileheight;
 				newTile->SetPosition(pos);
+
+				Collider* tileCollider = new AABBCollider(newTile, pos.x, pos.y, tilewidth, tileheight);
+				newTile->SetCollider(tileCollider);
+				ColliderManager::GetInstance().AddCollider(newTile->GetCollider());
 
 				m_BlockLayer.push_back(newTile);
 			}

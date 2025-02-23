@@ -56,6 +56,11 @@ Collider* GameObject::GetCollider() {
     return m_pCollider;
 }
 
+void GameObject::SetCollider(Collider* collider)
+{
+    m_pCollider = collider;
+}
+
 void GameObject::OnCollision(const CollisionInfo& collisionInfo) {
     // 기본 충돌 이벤트 처리 (상속받아 구체적인 처리구현)
     switch (collisionInfo.response) {

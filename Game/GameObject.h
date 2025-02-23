@@ -30,6 +30,7 @@ public:
 
     // Collider 관련
     Collider* GetCollider();
+    void SetCollider(Collider* collider);
 
     // 충돌 이벤트 콜백 (충돌 발생 시 호출)
     // other: 충돌한 다른 GameObject, response: 충돌 반응 타입
