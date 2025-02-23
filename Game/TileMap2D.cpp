@@ -8,6 +8,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <iostream>
+#include <string>
 #include "../DDrawLib/DDrawDevice.h"
 #include "AABBCollider.h"
 
@@ -108,7 +109,13 @@ void TileMap2D::ReadTileMap(const char* filename)
 			char tilesourcename[128];
 			res = fscanf(file, "%s", tilesourcename);
 			char openname[128] = "./data/";
-			strcat(openname, tilesourcename);
+
+			char newname[128];
+			std::string temp = tilesourcename;
+			temp = temp.substr(1, temp.size() - 2);
+			strcpy(newname, temp.c_str());
+
+			strcat(openname, newname);
 
 			ReadTileSource(openname);
 
@@ -165,7 +172,12 @@ void TileMap2D::ReadTileSource(const char* filename)
 
 	char openname[128] = "./data/";
 
-	strcat(openname, imagename);
+	char newname[128];
+	std::string temp = imagename;
+	temp = temp.substr(1, temp.size() - 2);
+	strcpy(newname, temp.c_str());
+
+	strcat(openname, newname);
 
 	
 	CTGAImage* sourceImage = new CTGAImage;
@@ -217,11 +229,11 @@ bool TileMap2D::ReadLayer(FILE* file, std::string layername)
 
 				if (m_mapWidth < x)
 				{
-					m_mapWidth = float(x);
+					m_mapWidth = x;
 				}
 				if (m_mapHeight < y)
 				{
-					m_mapHeight = float(y);
+					m_mapHeight = y;
 				}
 
 				Tile* newTile = new Tile(tile);

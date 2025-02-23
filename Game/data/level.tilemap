@@ -1,4 +1,4 @@
-tile_set: tiles.tilesource
+tile_set: "tiles.tilesource"
 layers {
   id: "Block"
   z: 0.0001
