@@ -64,7 +64,7 @@ BOOL CGame::Initialize(HWND hWnd)
 
     
     m_TileMap = new TileMap2D(0,0);
-    m_TileMap->ReadTileMap("./data/level.tilemap");
+    m_TileMap->ReadTileMap("./data/level.tilemap3");
     
 
     // 플레이어 초기 위치
