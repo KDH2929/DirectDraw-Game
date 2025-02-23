@@ -11,7 +11,6 @@
 #include "CharacterAnim.h"
 #include "Raycast.h"
 
-
 Character::Character(CImageData* pPlayerImgData, float startX, float startY)
     : m_health(100), m_speed(8), m_verticalVelocity(0.0f), m_isGrounded(false),
     m_worldWidth(0), m_worldHeight(0), m_renderPosition(Vector2{0,0}),

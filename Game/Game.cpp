@@ -16,6 +16,7 @@
 #include "InputManager.h"
 #include "ColliderManager.h"
 #include "Centipede.h"
+#include "TileMap2D.h"
 
 CGame* g_pGame = nullptr;
 
@@ -61,12 +62,10 @@ BOOL CGame::Initialize(HWND hWnd)
     delete pPlayerImage;
     pPlayerImage = nullptr;
 
-
-
-    // 배경 이미지 로드
-    m_pBackgroundImage = new CTGAImage;
-    m_pBackgroundImage->Load24BitsTGA("./data/Background_01.tga", 4);
-
+    
+    m_TileMap = new TileMap2D(0,0);
+    m_TileMap->ReadTileMap("./data/level.tilemap");
+    
 
     // 플레이어 초기 위치
     int playerPosX = 50;
@@ -138,18 +137,18 @@ void CGame::Cleanup()
     {
         delete m_pPlayerImgData;
         m_pPlayerImgData = nullptr;
-    }
-
-    if (m_pBackgroundImage)
-    {
-        delete m_pBackgroundImage;
-        m_pBackgroundImage = nullptr;
-    }
+    }    
 
     if (m_pDrawDevice)
     {
         delete m_pDrawDevice;
         m_pDrawDevice = nullptr;
+    }
+
+    if (m_TileMap)
+    {
+        delete m_TileMap;
+        m_TileMap = nullptr;
     }
 }
 
@@ -209,13 +208,13 @@ void CGame::UpdateCamera(int screenWidth, int screenHeight)
     int computedOffsetX = playerPos.x - cameraCenterX;
     int computedOffsetY = playerPos.y - cameraCenterY;
 
-    int bgWidth = static_cast<int>(m_pBackgroundImage->GetWidth());
-    int bgHeight = static_cast<int>(m_pBackgroundImage->GetHeight());
+    
+    int bgWidth = static_cast<int>(m_TileMap->GetTileMapWidth());
+    int bgHeight = static_cast<int>(m_TileMap->GetTileMapHeight());
     int clampedOffsetX = std::max<int>(0, std::min<int>(computedOffsetX, bgWidth - screenWidth));
     int clampedOffsetY = std::max<int>(0, std::min<int>(computedOffsetY, bgHeight - screenHeight));
-
-    m_backgroundPosX = -clampedOffsetX;
-    m_backgroundPosY = -clampedOffsetY;
+    m_TileMap->SetOffset(clampedOffsetX, clampedOffsetY);
+    
 
     // 카메라가 맵 끝에 도착하여 더 이상 움직이지 못할 때, 플레이어만 움직이게 처리
     m_playerRenderX = cameraCenterX - (clampedOffsetX - computedOffsetX);
@@ -268,16 +267,13 @@ void CGame::DrawScene()
     // DirectDraw Device로 Bitmap 이미지들 Render
     m_pDrawDevice->BeginDraw();
 
-    if (m_pBackgroundImage)
+    m_pDrawDevice->Clear();
+    
+    if (m_TileMap)
     {
-        m_pDrawDevice->DrawBitmap(m_backgroundPosX, m_backgroundPosY,
-            m_pBackgroundImage->GetWidth(),
-            m_pBackgroundImage->GetHeight(),
-            m_pBackgroundImage->GetRawImage());
+        m_TileMap->Render(m_pDrawDevice);
     }
-    else {
-        m_pDrawDevice->Clear();
-    }
+    
 
 
     if (m_pPlayer)

@@ -9,6 +9,7 @@ class CTGAImage;
 class CImageData;
 class Character;   // 플레이어 캐릭터
 class CDDrawDevice;
+class TileMap2D;
 
 
 class CGame
@@ -49,7 +50,7 @@ private:
     LARGE_INTEGER m_prevCounter = {};
 
     CImageData* m_pPlayerImgData = nullptr;
-    CTGAImage* m_pBackgroundImage = nullptr;
+    TileMap2D* m_TileMap = nullptr;
 
     // 카메라 처리
     int m_cameraOffsetX = 0;

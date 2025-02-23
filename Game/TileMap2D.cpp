@@ -17,6 +17,10 @@ TileMap2D::TileMap2D(int tileWidth, int tileHeight)
 	: m_tileHeight(tileHeight), m_tileWidth(tileWidth)
 {
 	m_spriteManager = nullptr;
+	m_worldposX = 0;
+	m_worldposY = 0;
+	m_mapWidth = -1.0;
+	m_mapHeight = -1.0;
 }
 
 TileMap2D::~TileMap2D()
@@ -47,8 +51,8 @@ void TileMap2D::Render(CDDrawDevice* pDevice)
 		int currentFrame = m_BackGroundLayer[i]->m_id;
 		const RECT& srcRect = m_spriteManager->GetFrameRect(currentFrame);
 		Vector2 renderPos = m_BackGroundLayer[i]->GetTransform().position;
-		renderPos.x = renderPos.x + posx + worldposx;
-		renderPos.y = renderPos.y+ posy + worldposy;
+		renderPos.x = renderPos.x + m_offsetX + m_worldposX;
+		renderPos.y = renderPos.y + m_offsetY + m_worldposY;
 
 		pDevice->DrawSprite(static_cast<int>(renderPos.x), static_cast<int>(renderPos.y), m_spriteManager->GetSpriteSheet(), srcRect);
 	}
@@ -59,11 +63,12 @@ void TileMap2D::Render(CDDrawDevice* pDevice)
 		int currentFrame = m_BlockLayer[i]->m_id;
 		const RECT& srcRect = m_spriteManager->GetFrameRect(currentFrame);
 		Vector2 renderPos = m_BlockLayer[i]->GetTransform().position;
-		renderPos.x = renderPos.x + posx + worldposx;
-		renderPos.y = renderPos.y + posy + worldposy;
+		renderPos.x = renderPos.x + m_offsetX + m_worldposX;
+		renderPos.y = renderPos.y + m_offsetY + m_worldposY;
 
 		pDevice->DrawSprite(static_cast<int>(renderPos.x), static_cast<int>(renderPos.y), m_spriteManager->GetSpriteSheet(), srcRect);
 	}
+	
 
 }
 
@@ -123,6 +128,26 @@ void TileMap2D::ReadTileMap(const char* filename)
 	}
 
 	fclose(file);
+
+	m_mapWidth = m_tileRawwidth * m_mapWidth;
+	m_mapHeight = m_tileRawheight * m_mapHeight;
+	m_worldposY = m_mapHeight;
+}
+
+float TileMap2D::GetTileMapWidth()
+{
+	return m_mapWidth;
+}
+
+float TileMap2D::GetTileMapHeight()
+{
+	return m_mapHeight;
+}
+
+void TileMap2D::SetOffset(float x, float y)
+{
+	m_offsetX = -x;
+	m_offsetY = -y;
 }
 
 void TileMap2D::ReadTileSource(const char* filename)
@@ -135,8 +160,8 @@ void TileMap2D::ReadTileSource(const char* filename)
 	
 
 	res = fscanf(file, "%s %s", skip, imagename);
-	res = fscanf(file, "%s %d", skip, &tilewidth);
-	res = fscanf(file, "%s %d", skip, &tileheight);
+	res = fscanf(file, "%s %d", skip, &m_tileRawwidth);
+	res = fscanf(file, "%s %d", skip, &m_tileRawheight);
 
 	char openname[128] = "./data/";
 
@@ -155,10 +180,12 @@ void TileMap2D::ReadTileSource(const char* filename)
 
 	delete sourceImage;
 
-	InitSpriteManager(TileImgData, tilewidth, tileheight);
+	InitSpriteManager(TileImgData, m_tileRawwidth, m_tileRawheight);
 
 
 	fclose(file);
+
+	
 }
 
 bool TileMap2D::ReadLayer(FILE* file, std::string layername)
@@ -188,10 +215,19 @@ bool TileMap2D::ReadLayer(FILE* file, std::string layername)
 					xHeader, &x, yHeader, &y, tileHeader, &tile, h_filpileHeader, &h_filp, v_filpileHeader, &v_filp,
 					end);
 
+				if (m_mapWidth < x)
+				{
+					m_mapWidth = float(x);
+				}
+				if (m_mapHeight < y)
+				{
+					m_mapHeight = float(y);
+				}
+
 				Tile* newTile = new Tile(tile);
 				Vector2 pos;
-				pos.x = x* tilewidth;
-				pos.y = -y* tileheight;
+				pos.x = x* m_tileRawwidth;
+				pos.y = -y* m_tileRawheight;
 				newTile->SetPosition(pos);
 
 				m_BackGroundLayer.push_back(newTile);
@@ -227,14 +263,24 @@ bool TileMap2D::ReadLayer(FILE* file, std::string layername)
 					xHeader, &x, yHeader, &y, tileHeader, &tile, h_filpileHeader, &h_filp, v_filpileHeader, &v_filp,
 					end);
 
+				if (m_mapWidth < x)
+				{
+					m_mapWidth = x;
+				}
+				if (m_mapHeight < y)
+				{
+					m_mapHeight = y;
+				}
+
 				Tile* newTile = new Tile(tile);
 				Vector2 pos;
-				pos.x = x * tilewidth;
-				pos.y = -y * tileheight;
+				pos.x = x * m_tileRawwidth;
+				pos.y = -y * m_tileRawheight;
 				newTile->SetPosition(pos);
 
-				Collider* tileCollider = new AABBCollider(newTile, pos.x, pos.y, tilewidth, tileheight);
+				Collider* tileCollider = new AABBCollider(newTile, pos.x, pos.y, m_tileRawwidth, m_tileRawheight);
 				newTile->SetCollider(tileCollider);
+
 				ColliderManager::GetInstance().AddCollider(newTile->GetCollider());
 
 				m_BlockLayer.push_back(newTile);
@@ -244,6 +290,10 @@ bool TileMap2D::ReadLayer(FILE* file, std::string layername)
 				return true;
 			}
 		}
+	}
+	else
+	{
+
 	}
 
 	return false;

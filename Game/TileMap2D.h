@@ -14,11 +14,9 @@ public:
 	void Render(CDDrawDevice* pDevice);
 	void AddTile(Tile* tile); // 아직 사용 x
 	void ReadTileMap(const char* filename);
-
-public:
-	int posx, posy;
-	int worldposx, worldposy;
-	int m_mapWidth = -1, m_mapHeight = -1;
+	float GetTileMapWidth();
+	float GetTileMapHeight();
+	void SetOffset(float x, float y);
 	
 private:
 	void ReadTileSource(const char* filename);
@@ -26,10 +24,13 @@ private:
 	bool ReadLayer(FILE* file, std::string layername);
 
 private:
-	int m_tileWidth;
-	int m_tileHeight;
+	int m_offsetX, m_offsetY;
+	float m_worldposX, m_worldposY;
+	int m_mapWidth, m_mapHeight;
+	float m_tileWidth;
+	float m_tileHeight;
 
-	int tilewidth, tileheight;
+	int m_tileRawwidth, m_tileRawheight;
 
 //	CTGAImage* m_pBackgroundImage;
 
