@@ -204,55 +204,8 @@ bool TileMap2D::ReadLayer(FILE* file, std::string layername)
 {
 	int res;
 
-	if (layername == "\"Background\"")
-	{
-		char skip[128];
-		res = fscanf(file, "%s", skip);
-		res = fscanf(file, "%s", skip);
-		res = fscanf(file, "%s", skip);
-		res = fscanf(file, "%s", skip);
-
-		while (1)
-		{
-			char lineHeader[128];
-			res = fscanf(file, "%s", lineHeader);
-
-			if (strcmp(lineHeader, "cell") == 0)
-			{
-				char start[128], end[128];
-				char xHeader[128], yHeader[128], tileHeader[128], h_filpileHeader[128], v_filpileHeader[128];
-				int x, y, tile, h_filp, v_filp;
-				res = fscanf(file, "%s %s %d %s %d %s %d %s %d %s %d %s", 
-					start,
-					xHeader, &x, yHeader, &y, tileHeader, &tile, h_filpileHeader, &h_filp, v_filpileHeader, &v_filp,
-					end);
-
-				if (m_mapWidth < x)
-				{
-					m_mapWidth = x;
-				}
-				if (m_mapHeight < y)
-				{
-					m_mapHeight = y;
-				}
-
-				Tile* newTile = new Tile(tile);
-				Vector2 pos;
-				pos.x = x* m_tileRawwidth;
-				pos.y = -y* m_tileRawheight;
-				newTile->SetPosition(pos);
-
-				m_BackGroundLayer.push_back(newTile);
-
-				std::cout << "22" << '\n';
-			}
-			else
-			{
-				return true;
-			}
-		}
-	}
-	else if (layername == "\"Block\"")
+	
+	if (layername == "\"Block\"")
 	{
 		char skip[128];
 		res = fscanf(file, "%s", skip);
@@ -305,7 +258,51 @@ bool TileMap2D::ReadLayer(FILE* file, std::string layername)
 	}
 	else
 	{
+		char skip[128];
+		res = fscanf(file, "%s", skip);
+		res = fscanf(file, "%s", skip);
+		res = fscanf(file, "%s", skip);
+		res = fscanf(file, "%s", skip);
 
+		while (1)
+		{
+			char lineHeader[128];
+			res = fscanf(file, "%s", lineHeader);
+
+			if (strcmp(lineHeader, "cell") == 0)
+			{
+				char start[128], end[128];
+				char xHeader[128], yHeader[128], tileHeader[128], h_filpileHeader[128], v_filpileHeader[128];
+				int x, y, tile, h_filp, v_filp;
+				res = fscanf(file, "%s %s %d %s %d %s %d %s %d %s %d %s",
+					start,
+					xHeader, &x, yHeader, &y, tileHeader, &tile, h_filpileHeader, &h_filp, v_filpileHeader, &v_filp,
+					end);
+
+				if (m_mapWidth < x)
+				{
+					m_mapWidth = x;
+				}
+				if (m_mapHeight < y)
+				{
+					m_mapHeight = y;
+				}
+
+				Tile* newTile = new Tile(tile);
+				Vector2 pos;
+				pos.x = x * m_tileRawwidth;
+				pos.y = -y * m_tileRawheight;
+				newTile->SetPosition(pos);
+
+				m_BackGroundLayer.push_back(newTile);
+
+				std::cout << "22" << '\n';
+			}
+			else
+			{
+				return true;
+			}
+		}
 	}
 
 	return false;
