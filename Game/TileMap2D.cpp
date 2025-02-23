@@ -55,6 +55,8 @@ void TileMap2D::Render(CDDrawDevice* pDevice)
 		renderPos.x = renderPos.x + m_offsetX + m_worldposX;
 		renderPos.y = renderPos.y + m_offsetY + m_worldposY;
 
+		
+
 		pDevice->DrawSprite(static_cast<int>(renderPos.x), static_cast<int>(renderPos.y), m_spriteManager->GetSpriteSheet(), srcRect);
 	}
 	
@@ -66,6 +68,10 @@ void TileMap2D::Render(CDDrawDevice* pDevice)
 		Vector2 renderPos = m_BlockLayer[i]->GetTransform().position;
 		renderPos.x = renderPos.x + m_offsetX + m_worldposX;
 		renderPos.y = renderPos.y + m_offsetY + m_worldposY;
+
+		Transform updatedTransform = m_BlockLayer[i]->GetTransform();
+		updatedTransform.position = renderPos;
+		m_BlockLayer[i]->GetCollider()->Update(updatedTransform);
 
 		pDevice->DrawSprite(static_cast<int>(renderPos.x), static_cast<int>(renderPos.y), m_spriteManager->GetSpriteSheet(), srcRect);
 	}
