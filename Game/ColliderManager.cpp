@@ -2,6 +2,7 @@
 #include "ColliderManager.h"
 #include "AABBCollider.h"
 #include "GameObject.h"
+#include "MathUtils.h"
 #include <algorithm>
 #include <sstream>
 #include <unordered_map>
@@ -51,7 +52,7 @@ void ColliderManager::ProcessCollisions() {
     auto collisions = CheckAllCollisions();
 
     // 각 GameObject에 대해 누적된 MTV(최소 이동 벡터)를 저장할 맵
-    std::unordered_map<GameObject*, Vector2> mtvMap;
+    std::unordered_map<GameObject*, Vector2<float>> mtvMap;
 
     // 모든 충돌 쌍을 순회하며 처리
     for (auto& pair : collisions) {
@@ -72,19 +73,19 @@ void ColliderManager::ProcessCollisions() {
                 finalResponse = CollisionResponse::Overlap;
 
 
-            Vector2 mtv = ComputeAABBMTV(colliderA, colliderB);
+            Vector2<float> mtv = ComputeAABBMTV(colliderA, colliderB);
 
             // Block와 Overlap 인 경우 이벤트 발생
             if (finalResponse != CollisionResponse::Ignore) {                
 
                 // MTV의 방향을 법선, 길이를 침투 깊이로 사용
-                Vector2 normal = mtv;
+                Vector2<float> normal = mtv;
                 float penetrationDepth = normal.Length();
                 if (penetrationDepth > 0.0f)
                     normal = normal / penetrationDepth;
 
                 // 두 객체의 중간 위치를 충돌 지점으로 사용
-                Vector2 collisionPoint = (objA->GetPosition() + objB->GetPosition()) * 0.5f;
+                Vector2<float> collisionPoint = (Vector2<float>(objA->GetPosition()) + Vector2<float>(objB->GetPosition())) * 0.5f;
 
 
                 // CollisionInfo 구조체 생성
@@ -108,8 +109,8 @@ void ColliderManager::ProcessCollisions() {
                 // 역질량 합이 0인 경우는 둘 다 정적이거나 충돌 처리를 할 필요 없는 경우
                 if ((invMassA + invMassB) > 0.0f) {
                     // 각 객체에 대해 MTV를 질량 비율에 따라 분담하여 밀어냄
-                    Vector2 positionOffsetA = mtv * (invMassA / (invMassA + invMassB));
-                    Vector2 positionOffsetB = mtv * (invMassB / (invMassA + invMassB));
+                    Vector2<float> positionOffsetA = mtv * (invMassA / (invMassA + invMassB));
+                    Vector2<float> positionOffsetB = mtv * (invMassB / (invMassA + invMassB));
                     mtvMap[objA] = mtvMap[objA] + positionOffsetA;
                     mtvMap[objB] = mtvMap[objB] - positionOffsetB;
                 }
@@ -120,8 +121,8 @@ void ColliderManager::ProcessCollisions() {
     // 누적된 MTV를 각 GameObject에 한 번에 적용함 (Block 충돌에 한해)
     for (auto& entry : mtvMap) {
         GameObject* obj = entry.first;
-        Vector2 totalMTV = entry.second;
-        obj->SetPosition(obj->GetPosition() + totalMTV);
+        Vector2<float> totalMTV = entry.second;
+        obj->SetPosition(obj->GetPosition() + Vector2<float>(totalMTV));
     }
 
 
@@ -133,12 +134,12 @@ void ColliderManager::ProcessCollisions() {
 
 // AABB 충돌에 대한 MTV(최소 이동 벡터)를 계산하는 함수
 // 두 Collider 객체가 AABB 타입이라고 가정함
-Vector2 ColliderManager::ComputeAABBMTV(Collider* a, Collider* b) {
+Vector2<float> ColliderManager::ComputeAABBMTV(Collider* a, Collider* b) {
     // Collider가 AABB 타입인지 확인
     AABBCollider* boxA = dynamic_cast<AABBCollider*>(a);
     AABBCollider* boxB = dynamic_cast<AABBCollider*>(b);
     if (!boxA || !boxB)
-        return Vector2{ 0.0f, 0.0f };
+        return Vector2<float>{ 0.0f, 0.0f };
 
     // 각 박스의 좌상단 좌표와 크기
     int aLeft = boxA->GetX();
@@ -157,7 +158,7 @@ Vector2 ColliderManager::ComputeAABBMTV(Collider* a, Collider* b) {
 
     // 겹침이 없다면 (이 경우는 충돌이 감지되지 않았어야 함)
     if (overlapX < 0 || overlapY < 0)
-        return Vector2{ 0.0f, 0.0f };
+        return Vector2<float>{ 0.0f, 0.0f };
 
     // 각 박스의 중심 좌표 계산
     float aCenterX = aLeft + boxA->GetWidth() / 2.0f;
@@ -166,10 +167,10 @@ Vector2 ColliderManager::ComputeAABBMTV(Collider* a, Collider* b) {
     float bCenterY = bTop + boxB->GetHeight() / 2.0f;
 
     // 두 중심 간 차이 벡터 계산 (내 객체에서 상대 객체를 빼는 방식)
-    Vector2 diff = { aCenterX - bCenterX, aCenterY - bCenterY };
+    Vector2<float> diff = { aCenterX - bCenterX, aCenterY - bCenterY };
 
     // 최소 이동 벡터(MTV) 결정: 겹침이 적은 축을 기준으로 이동
-    Vector2 mtv = { 0.0f, 0.0f };
+    Vector2<float> mtv = { 0.0f, 0.0f };
     if (overlapX < overlapY) {
         // x축 방향으로 분리
         mtv.x = (diff.x < 0) ? -overlapX : overlapX;

@@ -30,8 +30,8 @@ bool AABBCollider::CheckCollisionWithAABB(const AABBCollider* other) const {
 }
 
 void AABBCollider::Update(const Transform& transform) {
-    m_x = static_cast<int>(transform.position.x);
-    m_y = static_cast<int>(transform.position.y);
+    m_x = transform.position.x;
+    m_y = transform.position.y;
 }
 
 void AABBCollider::Render(HDC hDC, int renderX, int renderY) const {
@@ -54,4 +54,15 @@ std::string AABBCollider::GetDebugString() const {
     oss << "AABB(x=" << m_x << ", y=" << m_y
         << ", w=" << m_width << ", h=" << m_height << ")";
     return oss.str();
+}
+
+
+void AABBCollider::SetRenderPosition(const Vector2<float>& pos)
+{
+    m_RenderPosition = pos;
+}
+
+Vector2<float> AABBCollider::GetRenderPosition() const
+{
+    return m_RenderPosition;
 }

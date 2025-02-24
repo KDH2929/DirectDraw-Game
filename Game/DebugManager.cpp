@@ -6,10 +6,10 @@
 
 // 생성자: 콘솔 창 할당 및 표준 출력 리다이렉트 (옵션)
 DebugManager::DebugManager() {
-    //AllocConsole();
+    //AllocConsole();           // 주석 비활성화시 콘솔창 생성
     FILE* fpOut = nullptr;
     if (freopen_s(&fpOut, "CONOUT$", "w", stdout) == 0) {
-        //_setmode(_fileno(stdout), _O_U16TEXT);
+        _setmode(_fileno(stdout), _O_U16TEXT);
     }
 }
 

@@ -15,11 +15,10 @@ Centipede::Centipede(CImageData* pMonsterImgData, float startX, float startY)
     : m_health(100),
     m_speed(100),
     m_verticalVelocity(0.0f),
-    m_renderPosition(Vector2{ 0, 0 }),
     m_spriteManager(nullptr),
     m_anim(nullptr)
 {
-    SetPosition(Vector2{ startX, startY });
+    SetPosition(Vector2<float>{ startX, startY });
     InitCollider(0, 0, 216, 216);
     InitSpriteManager(pMonsterImgData, 216, 216);
     InitAnimation();
@@ -42,7 +41,7 @@ Centipede::~Centipede() {
 void Centipede::Update(float deltaTime) {
     const float MS_TO_SEC = 0.001f;
 
-    Vector2 pos = GetTransform().position;
+    Vector2<float> pos = GetTransform().position;
     pos.x += m_speed * deltaTime * MS_TO_SEC;
     SetPosition(pos);
 
@@ -66,7 +65,7 @@ void Centipede::Render(CDDrawDevice* pDevice) {
         const RECT& srcRect = m_spriteManager->GetFrameRect(currentFrame);
 
         // 화면상의 렌더링 위치
-        Vector2 renderPos = GetRenderPosition();
+        Vector2<float> renderPos = GetRenderPosition();
 
         pDevice->DrawSprite(static_cast<int>(renderPos.x), static_cast<int>(renderPos.y),
             m_spriteManager->GetSpriteSheet(), srcRect);
@@ -75,13 +74,6 @@ void Centipede::Render(CDDrawDevice* pDevice) {
     GameObject::Render(pDevice);
 }
 
-void Centipede::SetRenderPosition(const Vector2& pos) {
-    m_renderPosition = pos;
-}
-
-Vector2 Centipede::GetRenderPosition() const {
-    return m_renderPosition;
-}
 
 int Centipede::GetSpriteFrameWidth() const {
     return m_spriteManager ? m_spriteManager->GetFrameWidth() : 0;
@@ -99,7 +91,7 @@ void Centipede::InitCollider(int x, int y, int width, int height) {
     if (m_pCollider)
         delete m_pCollider;
 
-    Vector2 pos = GetTransform().position;
+    Vector2<float> pos = GetTransform().position;
     m_pCollider = new AABBCollider(this, x, y, width, height);
 }
 

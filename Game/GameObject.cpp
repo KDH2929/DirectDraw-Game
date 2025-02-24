@@ -7,6 +7,8 @@ GameObject::GameObject()
     m_CurrentPosition(m_Transform.position),
     m_PreviousPosition(m_Transform.position),
     m_InterpolatedPosition(m_Transform.position),
+    m_RenderPosition(Vector2<float>{0, 0}),
+    m_ColliderLocalPosition(m_Transform.position),
     m_mass(1.0f), m_invMass(1.0f), m_physicsType(PhysicsType::Dynamic)
 {
     // m_Transform은 기본 생성자에서 초기화됨.
@@ -22,13 +24,16 @@ GameObject::~GameObject() {
 void GameObject::Update(float deltaTime) {
     // 보간 전 단계: 현재 위치를 이전 위치로 기록
     m_PreviousPosition = m_CurrentPosition;
-
-    // 외부 로직(물리, 입력 처리 등)에 의해 m_Transform.position이 갱신되었다고 가정
     m_CurrentPosition = m_Transform.position;
 
     // Collider 업데이트
+    Transform updatedColliderTransform = GetTransform();
+    updatedColliderTransform.position = GetPosition() + GetColliderLocalPosition();
     if (m_pCollider)
-        m_pCollider->Update(m_Transform);
+    {
+        m_pCollider->Update(updatedColliderTransform);
+    }
+
 }
 
 void GameObject::Render(CDDrawDevice* pDevice) {
@@ -39,7 +44,7 @@ Transform& GameObject::GetTransform() {
     return m_Transform;
 }
 
-Vector2 GameObject::GetPosition() const {
+Vector2<float> GameObject::GetPosition() const {
     return m_Transform.position;
 }
 
@@ -56,6 +61,24 @@ Collider* GameObject::GetCollider() {
     return m_pCollider;
 }
 
+void GameObject::SetCollider(Collider* collider)
+{
+    m_pCollider = collider;
+}
+
+
+void GameObject::SetColliderLocalPosition(const Vector2<float>& pos)
+{
+    m_ColliderLocalPosition = pos;
+}
+
+const Vector2<float>& GameObject::GetColliderLocalPosition() const
+{
+    return m_ColliderLocalPosition;
+}
+
+
+
 void GameObject::OnCollision(const CollisionInfo& collisionInfo) {
     // 기본 충돌 이벤트 처리 (상속받아 구체적인 처리구현)
     switch (collisionInfo.response) {
@@ -63,14 +86,13 @@ void GameObject::OnCollision(const CollisionInfo& collisionInfo) {
         break;
     case CollisionResponse::Overlap:
         break;
-    case CollisionResponse::Ignore:
     default:
         break;
     }
 }
 
 
-void GameObject::SetPosition(const Vector2& newPos) {
+void GameObject::SetPosition(const Vector2<float>& newPos) {
     m_PreviousPosition = m_CurrentPosition;
     m_CurrentPosition = newPos;
     m_InterpolatedPosition = newPos;
@@ -89,8 +111,19 @@ void GameObject::UpdateInterpolation(float alpha) {
     m_InterpolatedPosition.y = m_PreviousPosition.y + (m_CurrentPosition.y - m_PreviousPosition.y) * alpha;
 }
 
-Vector2 GameObject::GetInterpolatedPosition() const {
+Vector2<float> GameObject::GetInterpolatedPosition() const {
     return m_InterpolatedPosition;
+}
+
+
+void GameObject::SetRenderPosition(const Vector2<float>& pos)
+{
+    m_RenderPosition = pos;
+}
+
+Vector2<float> GameObject::GetRenderPosition() const
+{
+    return m_RenderPosition;
 }
 
 

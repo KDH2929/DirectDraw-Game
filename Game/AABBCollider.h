@@ -22,6 +22,10 @@ public:
     int GetWidth() const { return m_width; }
     int GetHeight() const { return m_height; }
 
+
+    virtual void SetRenderPosition(const Vector2<float>& pos) override;
+    virtual Vector2<float> GetRenderPosition() const override;
+
 private:
     int m_x, m_y;         // ÁÂ»ó´Ü ÁÂÇ¥
     int m_width, m_height;  // Å©±â

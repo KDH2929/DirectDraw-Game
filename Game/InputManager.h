@@ -11,11 +11,13 @@ public:
     void OnKeyDown(UINT nChar);
     void OnKeyUp(UINT nChar);
     bool IsKeyDown(UINT nChar) const;
-
-    // 현재 프레임에서 새롭게 눌린 키를 반환 (이전 프레임에는 눌리지 않았던 경우)
     bool IsKeyPressed(UINT nChar) const;
+    // deltaTime은 밀리초 단위로 전달
+    void Update(float deltaTime);
 
-    void Update();
+    // 좌우키에 대해 double press 여부 반환
+    bool IsDoublePressedLeft() const;
+    bool IsDoublePressedRight() const;
 
 private:
     InputManager() = default;
@@ -24,4 +26,19 @@ private:
 
     bool m_keyStates[256] = { false };
     bool m_prevKeyStates[256] = { false };
+
+    // 좌우 키에 대한 double press 타이머 (ms 단위)
+    float m_leftKeyTimer = 0.0f;
+    float m_rightKeyTimer = 0.0f;
+
+    
+    bool m_leftKeyComboInputActive = false;
+    bool m_rightKeyComboInputActive = false;
+
+    bool m_leftKeyDoublePressed = false;
+    bool m_rightKeyDoublePressed = false;
+
+
+    // 연속입력 임계치 (ms 단위)
+    static constexpr float DOUBLE_PRESS_THRESHOLD = 500.0f;   
 };

@@ -7,17 +7,17 @@
 
 // OBB의 꼭짓점 계산
 // box->GetX(), box->GetY()는 월드 좌표계에서의 중심 좌표라고 가정
-static void ComputeOBBCorners(const OBBCollider* box, Vector2 corners[4]) {
+static void ComputeOBBCorners(const OBBCollider* box, Vector2<float> corners[4]) {
     float halfWidth = box->GetWidth() / 2.0f;
     float halfHeight = box->GetHeight() / 2.0f;
     float rad = degToRad(box->GetRotation());
 
     // 회전된 로컬 기저벡터 (axisX, axisY)
-    Vector2 axisX = { std::cos(rad), std::sin(rad) };
-    Vector2 axisY = { -std::sin(rad), std::cos(rad) };
+    Vector2<float> axisX = { std::cos(rad), std::sin(rad) };
+    Vector2<float> axisY = { -std::sin(rad), std::cos(rad) };
 
     // 월드 좌표계에서의 중심
-    Vector2 center = { static_cast<float>(box->GetX()), static_cast<float>(box->GetY()) };
+    Vector2<float> center = { static_cast<float>(box->GetX()), static_cast<float>(box->GetY()) };
 
     // 4개 꼭짓점 계산 (시계방향)
     corners[0] = center + axisX * halfWidth + axisY * halfHeight;
@@ -27,7 +27,7 @@ static void ComputeOBBCorners(const OBBCollider* box, Vector2 corners[4]) {
 }
 
 // 주어진 축(axis)에 대해 4개 꼭짓점을 투영하여 최소/최대 값을 계산
-static void ProjectOntoAxis(const Vector2 corners[4], const Vector2& axis, float& minProj, float& maxProj) {
+static void ProjectOntoAxis(const Vector2<float> corners[4], const Vector2<float>& axis, float& minProj, float& maxProj) {
     minProj = maxProj = Dot(corners[0], axis);
     for (int i = 1; i < 4; i++) {
         float projection = Dot(corners[i], axis);
@@ -58,18 +58,18 @@ bool OBBCollider::CheckCollision(const Collider* other) const {
 // OBBCollider::CheckCollisionWithOBB 구현 (SAT 기반)
 bool OBBCollider::CheckCollisionWithOBB(const OBBCollider* other) const {
     // 각 OBB의 꼭짓점 계산
-    Vector2 cornersA[4], cornersB[4];
+    Vector2<float> cornersA[4], cornersB[4];
     ComputeOBBCorners(this, cornersA);
     ComputeOBBCorners(other, cornersB);
 
     // 자신의 회전축의 두 기저벡터와 other의 회전축의 두 기저벡터 (총 4축)
     float radA = degToRad(GetRotation());
     float radB = degToRad(other->GetRotation());
-    Vector2 axes[4];
-    axes[0] = Normalize(Vector2{ std::cos(radA), std::sin(radA) });
-    axes[1] = Normalize(Vector2{ -std::sin(radA), std::cos(radA) });
-    axes[2] = Normalize(Vector2{ std::cos(radB), std::sin(radB) });
-    axes[3] = Normalize(Vector2{ -std::sin(radB), std::cos(radB) });
+    Vector2<float> axes[4];
+    axes[0] = Normalize(Vector2<float>{ std::cos(radA), std::sin(radA) });
+    axes[1] = Normalize(Vector2<float>{ -std::sin(radA), std::cos(radA) });
+    axes[2] = Normalize(Vector2<float>{ std::cos(radB), std::sin(radB) });
+    axes[3] = Normalize(Vector2<float>{ -std::sin(radB), std::cos(radB) });
 
     // 각 축에 대해 투영된 구간이 겹치는지 확인
     for (int i = 0; i < 4; i++) {
@@ -103,4 +103,14 @@ std::string OBBCollider::GetDebugString() const {
     oss << "OBB(center=(" << m_x << ", " << m_y << "), w=" << m_width
         << ", h=" << m_height << ", rot=" << m_rotation << ")";
     return oss.str();
+}
+
+void OBBCollider::SetRenderPosition(const Vector2<float>& pos)
+{
+    m_RenderPosition = pos;
+}
+
+Vector2<float> OBBCollider::GetRenderPosition() const
+{
+    return m_RenderPosition;
 }

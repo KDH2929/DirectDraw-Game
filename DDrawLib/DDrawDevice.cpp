@@ -602,14 +602,16 @@ BOOL CDDrawDevice::DrawSprite(int screenX, int screenY, const CImageData* pImgDa
 
 			이후 기존 screenRenderX가 화면 좌측경계, 우측경계를 벗어낫을 시 처리도 수행하면 될 거 같음
 
-			추가로 srcStart.x 값이 양수인 경우 화면경계 좌측에서 clipping이 일어난 것이므로 이에 대한 처리도 추가함
+			추가로 Rect기준 Local 좌표계로 생각했을 때 (Rect.left를 빼면됨)
+			즉 (srcStart.x - srcRect.left) 값이 양수인 경우 화면경계 좌측에서 clipping이 일어난 것이므로 이에 대한 처리도 추가함
 			
 			*/
 
 			
-			// Rect 기준 Local 좌표계로 변경해서 계산
-			// 이 때 srcStart.x 가 양수이면 clipping이 일어난 것이므로, 그 부분을 고려하여 localX와 frameWidth를 조절
-			int localX = static_cast<int>(pStream->wPosX) - srcStart.x;
+			// Rect 기준 Local 좌표계로 변경해서 생각하기 (srcRect.left를 빼주는 것)
+			// 이 때 (srcStart.x - srcRect.left) 가 양수이면 clipping이 일어난 것이므로, 그 부분을 고려하여 localX와 frameWidth를 조절
+			// localX = (wPosX - srcRect.left) - (srcStart.x - srcRect.left) = wPosX - srcStart.x
+			int localX = static_cast<int>(pStream->wPosX) - srcStart.x;			// 위의 수식에 의해 srcRect.left는 소거됨
 			frameWidth = srcRect.right - srcStart.x;
 			
 
@@ -667,6 +669,124 @@ BOOL CDDrawDevice::DrawSprite(int screenX, int screenY, const CImageData* pImgDa
 lb_return:
 	return bResult;
 }
+
+
+BOOL CDDrawDevice::DrawSpriteFlip(int screenX, int screenY, const CImageData* pImgData, const RECT& srcRect)
+{
+    BOOL bResult = FALSE;
+
+#ifdef _DEBUG
+    if (!m_pWriteBuffer)
+        __debugbreak();
+#endif
+
+    // 화면의 너비 (출력 대상)
+    int screenWidth = static_cast<int>(m_dwWidth);
+
+    // 스프라이트 프레임의 크기 (srcRect 기준)
+    int frameWidth = srcRect.right - srcRect.left;
+    int frameHeight = srcRect.bottom - srcRect.top;
+
+    // 렌더링할 소스 시작 좌표 (스프라이트 시트 로컬 좌표계)
+    INT_VECTOR2 srcStart = { srcRect.left, srcRect.top };
+
+    // 화면상의 시작 좌표 (스크린 좌표계)
+    INT_VECTOR2 destStart = { screenX, screenY };
+
+    // 복사할 영역의 크기는 스프라이트 프레임의 크기로 초기화
+    INT_VECTOR2 spriteSize = { frameWidth, frameHeight };
+    INT_VECTOR2 clippedSize = {};
+
+    // 대상 위치와 버퍼 크기
+    INT_VECTOR2 destPos = { screenX, screenY };
+    INT_VECTOR2 bufferSize = { screenWidth, static_cast<int>(m_dwHeight) };
+
+    // CalcClipArea() 함수는 destStart와 spriteSize를 기반으로 실제 화면에 그려질 영역(클립된 영역)을 계산
+    if (!CalcSpriteClipArea(&srcStart, &destStart, &clippedSize, srcRect, &destPos, &bufferSize))
+        goto lb_return;
+
+    // pImgData에서 srcStart.y 행의 압축 데이터를 가져옴
+    const COMPRESSED_LINE* lineDesc = pImgData->GetCompressedImage(srcStart.y);
+
+    // 대상 버퍼의 첫 행 포인터 (destStart.y 행부터 시작)
+    char* destLinePtr = m_pWriteBuffer + (destStart.y) * m_dwWriteBufferPitch;
+
+    // 클립된 영역의 높이만큼 반복
+    for (int y = 0; y < clippedSize.y; y++)
+    {
+        // 각 행의 압축된 스트림 데이터를 순회
+        for (DWORD i = 0; i < lineDesc->dwStreamNum; i++)
+        {
+            PIXEL_STREAM* pStream = lineDesc->pPixelStream + i;
+            DWORD pixelColor = pStream->dwPixel;
+            int pixelCount = static_cast<int>(pStream->wPixelNum);
+
+			// Rect 좌상단을 기준으로 하는 로컬좌표계르 기준으로 생각해야 로직짜기가 편함
+			// 따라서 srcRect.left를 빼줘야함
+			int localX = static_cast<int>(pStream->wPosX) - srcRect.left;
+			// frameWidth는 srcRect의 너비
+			frameWidth = srcRect.right - srcRect.left;
+
+            // 현재 스트림이 srcRect 범위를 벗어나면 건너뜀
+            if (localX + pixelCount <= 0 || localX >= frameWidth)
+                continue;
+
+            // Case2: 왼쪽을 벗어난 경우
+            if (localX < 0) {
+                pixelCount += localX; // localX는 음수
+                localX = 0;
+            }
+
+            // Case4: 오른쪽을 벗어난 경우
+            if (localX + pixelCount > frameWidth) {
+                pixelCount = frameWidth - localX;
+            }
+
+            // 좌우 반전 처리:
+            // 원래 좌우 복사는 destStart.x + localX로 계산하지만,
+            // 반전된 경우엔 해당 프레임의 오른쪽 끝에서부터 localX만큼 떨어진 위치로 복사하고,
+            // pixelCount만큼 픽셀을 채우므로,
+            // drawX = destStart.x + (frameWidth - localX - pixelCount)
+            int drawX = destStart.x + (frameWidth - localX - pixelCount);
+			
+			// 이번에는 여기서 최종 좌표위치를 왼쪽에서 Clipping 된 만큼 옮겨줘야함
+			// (srcStart.x - srcRect.left) 가 양수라면 왼쪽에서 Clippiing이 일어난 상황
+
+			drawX -= (srcStart.x - srcRect.left);
+
+            // 화면 좌측 경계 클리핑
+            if (drawX < 0)
+            {
+                pixelCount += drawX;
+                drawX = 0;
+            }
+
+            // 화면 우측 경계 클리핑
+            if (drawX + pixelCount > screenWidth)
+            {
+                pixelCount = screenWidth - drawX;
+            }
+
+            // 대상 버퍼 내 해당 픽셀 위치 계산 (픽셀당 4Byte)
+            // (반전된 이미지는 오른쪽에서부터 채워지므로, 여기서는 일반적인 순서로 복사해도 동일한 색상 반복 복사 시 문제없음)
+            char* destPixelPtr = destLinePtr + (drawX * 4);
+
+            // 동일 색상의 픽셀들을 pixelCount만큼 복사
+            for (int x = 0; x < pixelCount; x++)
+            {
+                *(DWORD*)destPixelPtr = pixelColor;
+                destPixelPtr += 4;
+            }
+        }
+        lineDesc++; // 다음 행의 압축 데이터
+        destLinePtr += m_dwWriteBufferPitch; // 대상 버퍼의 다음 행 포인터
+    }
+    bResult = TRUE;
+lb_return:
+    return bResult;
+}
+
+
 
 
 void CDDrawDevice::UpdateInfoTxt()

@@ -27,6 +27,9 @@ public:
     int GetHeight() const { return m_height; }
     float GetRotation() const { return m_rotation; }
 
+    virtual void SetRenderPosition(const Vector2<float>& pos) override;
+    virtual Vector2<float> GetRenderPosition() const override;
+
 private:
     int m_x, m_y;         // Áß½É ÁÂÇ¥
     int m_width, m_height;

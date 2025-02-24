@@ -46,6 +46,9 @@
     <Filter Include="Game\Animation">
       <UniqueIdentifier>{4d423e11-917e-4473-8e55-2796cc65966a}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Game\TileMap">
+      <UniqueIdentifier>{fb59118b-74d5-4ae6-ade7-12558728d40d}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="targetver.h">
@@ -132,9 +135,6 @@
     <ClInclude Include="Tile.h">
       <Filter>Game\GameObject</Filter>
     </ClInclude>
-    <ClInclude Include="TileMap.h">
-      <Filter>Game</Filter>
-    </ClInclude>
     <ClInclude Include="SpriteAnim.h">
       <Filter>Game\Animation</Filter>
     </ClInclude>
@@ -149,6 +149,9 @@
     </ClInclude>
     <ClInclude Include="Raycast.h">
       <Filter>Game\Collider</Filter>
+    </ClInclude>
+    <ClInclude Include="TileMap2D.h">
+      <Filter>Game\TileMap</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -204,9 +207,6 @@
     <ClCompile Include="OBBCollider.cpp">
       <Filter>Game\Collider</Filter>
     </ClCompile>
-    <ClCompile Include="MathUtils.cpp">
-      <Filter>Game</Filter>
-    </ClCompile>
     <ClCompile Include="GameObject.cpp">
       <Filter>Game\GameObject</Filter>
     </ClCompile>
@@ -222,9 +222,6 @@
     <ClCompile Include="Tile.cpp">
       <Filter>Game\GameObject</Filter>
     </ClCompile>
-    <ClCompile Include="TileMap.cpp">
-      <Filter>Game</Filter>
-    </ClCompile>
     <ClCompile Include="Monster.cpp">
       <Filter>Game\GameObject</Filter>
     </ClCompile>
@@ -233,6 +230,9 @@
     </ClCompile>
     <ClCompile Include="Raycast.cpp">
       <Filter>Game\Collider</Filter>
+    </ClCompile>
+    <ClCompile Include="TileMap2D.cpp">
+      <Filter>Game\TileMap</Filter>
     </ClCompile>
   </ItemGroup>
 </Project>

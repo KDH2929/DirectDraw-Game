@@ -13,7 +13,7 @@ public:
     ~SpriteManager();
 
     bool SetSpriteSheet(CImageData* spriteSheet, int frameWidth, int frameHeight);
-    const CImageData* GetSpriteSheet() const;
+    const CImageData* GetSpriteSheet() const;     // 상수멤버함수 : 객체의 멤버 변수를 수정할 수 없으며, const 객체에서도 호출가능 
 
 
     // 전체 프레임 수 반환

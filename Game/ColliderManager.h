@@ -6,8 +6,8 @@
 struct CollisionInfo {
     GameObject* other;              // 충돌한 상대 객체
     CollisionResponse response;     // 충돌 반응 유형
-    Vector2 normal;                 // 충돌 법선
-    Vector2 collisionPoint;         // 충돌 지점
+    Vector2<float> normal;                 // 충돌 법선
+    Vector2<float> collisionPoint;         // 충돌 지점
     float penetrationDepth;         // 충돌 깊이
 };
 
@@ -28,7 +28,7 @@ public:
     std::vector<std::pair<Collider*, Collider*>> CheckAllCollisions(); // 완전탐색 기반
     void ProcessCollisions();
 
-    Vector2 ComputeAABBMTV(Collider* a, Collider* b);
+    Vector2<float> ComputeAABBMTV(Collider* a, Collider* b);
 
     const std::vector<Collider*>& GetColliders() const;
 

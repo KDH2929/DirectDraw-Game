@@ -18,6 +18,5 @@ public:
     virtual void Render(CDDrawDevice* pDevice) override = 0;
 
     virtual MonsterType GetMonsterType() const = 0;
-    virtual void SetRenderPosition(const Vector2& pos) = 0;
-    virtual Vector2 GetRenderPosition() const = 0;
+
 };

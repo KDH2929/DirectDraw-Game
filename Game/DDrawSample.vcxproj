@@ -280,7 +280,7 @@
     <ClInclude Include="stdafx.h" />
     <ClInclude Include="targetver.h" />
     <ClInclude Include="Tile.h" />
-    <ClInclude Include="TileMap.h" />
+    <ClInclude Include="TileMap2D.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\DDrawLib\DDrawDevice.cpp" />
@@ -298,7 +298,6 @@
     <ClCompile Include="GameObject.cpp" />
     <ClCompile Include="InputManager.cpp" />
     <ClCompile Include="main.cpp" />
-    <ClCompile Include="MathUtils.cpp" />
     <ClCompile Include="Monster.cpp" />
     <ClCompile Include="OBBCollider.cpp" />
     <ClCompile Include="Raycast.cpp" />
@@ -312,7 +311,7 @@
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|ARM64'">Create</PrecompiledHeader>
     </ClCompile>
     <ClCompile Include="Tile.cpp" />
-    <ClCompile Include="TileMap.cpp" />
+    <ClCompile Include="TileMap2D.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ResourceCompile Include="DDrawSample.rc" />

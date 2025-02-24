@@ -9,6 +9,7 @@ class CTGAImage;
 class CImageData;
 class Character;   // 플레이어 캐릭터
 class CDDrawDevice;
+class TileMap2D;
 
 
 class CGame
@@ -48,8 +49,13 @@ private:
     ULONGLONG m_prevFrameTick = 0;
     LARGE_INTEGER m_prevCounter = {};
 
+    // 이미지 리소스들 (반드시 동적할당 후 해제 할 것!!)
     CImageData* m_pPlayerImgData = nullptr;
+    CImageData* m_pCentipedeImgData = nullptr;
     CTGAImage* m_pBackgroundImage = nullptr;
+    
+    TileMap2D* m_TileMap = nullptr;
+
 
     // 카메라 처리
     int m_cameraOffsetX = 0;

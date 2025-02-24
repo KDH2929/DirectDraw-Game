@@ -41,8 +41,19 @@ public:
     // 디버그용 문자열 반환
     virtual std::string GetDebugString() const = 0;
 
+
+    // 렌더링 위치 관련 함수
+    // 렌더링 위치와 월드 좌표계 상의 위치는 게임설계에 따라 같을 수도 다를 수도 있음
+    virtual void SetRenderPosition(const Vector2<float>& pos) = 0;
+    virtual Vector2<float> GetRenderPosition() const = 0;
+
+
 protected:
     ColliderType m_type;
     GameObject* m_owner;
     CollisionResponse m_response;
+
+    // 렌더링 위치 
+    // DirectX 스크린 좌표계상에서의 위치
+    Vector2<float> m_RenderPosition;
 };

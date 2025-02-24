@@ -12,9 +12,7 @@ public:
     Centipede(CImageData* pMonsterImgData, float startX, float startY);
     virtual ~Centipede();
 
-    // 매 프레임 업데이트
     virtual void Update(float deltaTime) override;
-    // 매 프레임 렌더링
     virtual void Render(CDDrawDevice* pDevice) override;
 
     int GetHealth() const { return m_health; }
@@ -22,9 +20,6 @@ public:
     int GetSpeed() const { return m_speed; }
     void SetSpeed(int speed) { m_speed = speed; }
 
-    // 렌더링 위치 관련 함수
-    void SetRenderPosition(const Vector2& pos);
-    Vector2 GetRenderPosition() const;
 
     int GetSpriteFrameWidth() const;
     int GetSpriteFrameHeight() const;
@@ -32,7 +27,7 @@ public:
     virtual MonsterType GetMonsterType() const override;
 
     // SetPosition는 GameObject의 것을 그대로 사용
-    virtual void SetPosition(const Vector2& newPos) override {
+    virtual void SetPosition(const Vector2<float>& newPos) override {
         GameObject::SetPosition(newPos);
     }
 
@@ -56,6 +51,4 @@ private:
     // Centipede 전용 변수 (예: 중력, 이동 관련)
     float m_verticalVelocity;
 
-    // 렌더링 위치 (DirectX 스크린 좌표계 상)
-    Vector2 m_renderPosition;
 };

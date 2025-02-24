@@ -56,6 +56,7 @@ public:
 	BOOL	DrawBitmapWithColorKey(int sx, int sy, int iBitmapWidth, int iBitmapHeight, char* pBits, DWORD dwColorKey);
 	BOOL	DrawImageData(int sx, int sy, const CImageData* pImgData);
 	BOOL DrawSprite(int screenX, int screenY, const CImageData* pImgData, const RECT& srcRect);
+	BOOL DrawSpriteFlip(int screenX, int screenY, const CImageData* pImgData, const RECT& srcRect);
 
 	BOOL	BeginDraw();
 	void	EndDraw();
