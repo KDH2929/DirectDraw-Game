@@ -10,6 +10,19 @@ enum class PhysicsType {
     Dynamic,    // 물리 시뮬레이션에 의해 움직임
 };
 
+
+struct DamageInfo {
+    int damageAmount;
+    GameObject* instigator; 
+    Vector2<float> hitLocation;
+
+    DamageInfo(int dmg, GameObject* inst, const Vector2<float>& hitLoc)
+        : damageAmount(dmg), instigator(inst), hitLocation(hitLoc)
+    {}
+};
+
+
+
 class CDDrawDevice;
 
 
@@ -37,6 +50,7 @@ public:
     // 충돌 이벤트 콜백 (충돌 발생 시 호출)
     // other: 충돌한 다른 GameObject, response: 충돌 반응 타입
     virtual void OnCollision(const CollisionInfo& collisionInfo);
+    virtual void TakeDamage(const DamageInfo& damageInfo) {};
 
 
     // 보간 관련 함수들

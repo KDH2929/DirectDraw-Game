@@ -1,21 +1,32 @@
 #include "stdafx.h"
-#include "Raycast.h"
+#include "CollisionQuery.h"
 #include <algorithm>
 
-namespace Raycast {
+namespace CollisionQuery {
 
-    bool IntersectCollider(const Ray& ray, const Collider* collider, float& outDistance) {
+    // queryMask: 충돌 검사 대상 레이어들의 비트마스크
+    // 만약 (queryMask & collider->GetLayer())가 0이면, 이 collider는 검사 대상이 아님
+    bool Raycast(const Ray& ray, const Collider* collider, float maxDistance, float& outDistance, CollisionLayer queryMask) {
+        // Bitwise AND 연산을 통해 collider가 queryMask에 포함되어 있는지 확인
+        if ((queryMask & collider->GetCollisionLayer()) == 0) {
+            return false;
+        }
+
+        if (collider->GetCollisionResponse() == CollisionResponse::Ignore) {
+            return false;
+        }
+
         switch (collider->GetType()) {
         case ColliderType::AABB:
-            return IntersectAABB(ray, static_cast<const AABBCollider*>(collider), outDistance);
+            return RaycastAABB(ray, static_cast<const AABBCollider*>(collider), maxDistance, outDistance);
         case ColliderType::OBB:
-            return IntersectOBB(ray, static_cast<const OBBCollider*>(collider), outDistance);
+            return RaycastOBB(ray, static_cast<const OBBCollider*>(collider), maxDistance, outDistance);
         default:
             return false;
         }
     }
 
-    bool IntersectAABB(const Ray& ray, const AABBCollider* aabb, float& outDistance) {
+    bool RaycastAABB(const Ray& ray, const AABBCollider* aabb, float maxDistance, float& outDistance) {
         // AABB의 좌상단 기준 좌표와 크기를 이용해 최소/최대 좌표 계산
         Vector2<float> aabbMin(static_cast<float>(aabb->GetX()), static_cast<float>(aabb->GetY()));
         Vector2<float> aabbMax(static_cast<float>(aabb->GetX() + aabb->GetWidth()),
@@ -37,7 +48,6 @@ namespace Raycast {
             if (tmin > tmax) std::swap(tmin, tmax);
         }
         else {
-            // 레이의 x 방향이 0이면, 원점이 AABB slab 내에 있어야 함
             if (ray.origin.x < aabbMin.x || ray.origin.x > aabbMax.x)
                 return false;
             tmin = -std::numeric_limits<float>::infinity();
@@ -68,12 +78,19 @@ namespace Raycast {
         if (tmax < 0)  // 레이가 AABB 뒤쪽에서 시작하는 경우
             return false;
 
-        outDistance = (tmin >= 0) ? tmin : tmax;
-        return true;
+        // 선분 검사: 충돌점이 maxDistance 이내에 있어야 함
+        if (tmin >= 0 && tmin <= maxDistance) {
+            outDistance = tmin;
+            return true;
+        }
+        else if (tmin < 0 && tmax <= maxDistance) {
+            outDistance = tmax;
+            return true;
+        }
+        return false;
     }
 
-
-    bool IntersectOBB(const Ray& ray, const OBBCollider* obb, float& outDistance) {
+    bool RaycastOBB(const Ray& ray, const OBBCollider* obb, float maxDistance, float& outDistance) {
         // OBB는 회전된 AABB이므로, 먼저 OBB의 중심과 회전 정보를 이용해
         // 광선을 OBB의 로컬 좌표계로 변환
         float rad = degToRad(obb->GetRotation());
@@ -82,7 +99,7 @@ namespace Raycast {
 
         // OBB의 중심 (월드 좌표)
         Vector2<float> obbCenter(static_cast<float>(obb->GetX()), static_cast<float>(obb->GetY()));
-        
+
         float halfWidth = obb->GetWidth() / 2.0f;
         float halfHeight = obb->GetHeight() / 2.0f;
 
@@ -97,7 +114,7 @@ namespace Raycast {
             ray.direction.x * cosR + ray.direction.y * sinR,
             -ray.direction.x * sinR + ray.direction.y * cosR
         );
-        // 이제 OBB의 로컬 AABB는 중심이 (0,0)이고 최소 좌표(-halfWidth, -halfHeight), 최대 좌표(halfWidth, halfHeight)
+        // OBB의 로컬 AABB: 중심이 (0,0)이고 최소 좌표(-halfWidth, -halfHeight), 최대 좌표(halfWidth, halfHeight)
         Vector2<float> localMin(-halfWidth, -halfHeight);
         Vector2<float> localMax(halfWidth, halfHeight);
 
@@ -118,7 +135,34 @@ namespace Raycast {
         if (tmax < 0)
             return false;
 
-        outDistance = (tmin >= 0) ? tmin : tmax;
-        return true;
+        // 선분 검사: 충돌점이 maxDistance 이내에 있어야 함
+        if (tmin >= 0 && tmin <= maxDistance) {
+            outDistance = tmin;
+            return true;
+        }
+        else if (tmin < 0 && tmax <= maxDistance) {
+            outDistance = tmax;
+            return true;
+        }
+        return false;
     }
+
+
+
+    bool OverlapBox(const Vector2<float>& center, float width, float height, float rotation, const Collider* collider, CollisionLayer queryMask)
+    {
+        // QueryMask 필터
+        if ((collider->GetCollisionLayer() & queryMask) == 0) {
+            return false;
+        }
+
+        if (collider->GetCollisionResponse() == CollisionResponse::Ignore) {
+            return false;
+        }
+
+        OBBCollider queryOBB(nullptr, center.x, center.y, width, height, rotation);
+
+        return queryOBB.CheckCollision(collider);
+    }
+
 }

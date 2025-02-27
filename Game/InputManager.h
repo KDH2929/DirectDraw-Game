@@ -40,5 +40,5 @@ private:
 
 
     // 연속입력 임계치 (ms 단위)
-    static constexpr float DOUBLE_PRESS_THRESHOLD = 500.0f;   
+    static constexpr float DOUBLE_PRESS_THRESHOLD = 200.0f;   
 };

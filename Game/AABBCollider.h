@@ -22,6 +22,9 @@ public:
     int GetWidth() const { return m_width; }
     int GetHeight() const { return m_height; }
 
+    // 중심 좌표 반환 함수 (좌상단 기준)
+    virtual const Vector2<float> GetCenterPosition() const override;
+
 
     virtual void SetRenderPosition(const Vector2<float>& pos) override;
     virtual Vector2<float> GetRenderPosition() const override;

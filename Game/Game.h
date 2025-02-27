@@ -56,6 +56,8 @@ private:
     
     TileMap2D* m_TileMap = nullptr;
 
+    int m_bgWidth = 0;
+    int m_bgHeight = 0;
 
     // 카메라 처리
     int m_cameraOffsetX = 0;

@@ -46,19 +46,11 @@ TileMap2D::~TileMap2D()
 	}
 }
 
-void TileMap2D::Update()
+void TileMap2D::Update(float deltaTime)
 {
 	for (int i = 0; i < m_BlockLayer.size(); i++)
 	{
-		Vector2<float> ColliderPos = m_BlockLayer[i]->GetTransform().position;
-		ColliderPos.x = ColliderPos.x + m_worldposX;
-		ColliderPos.y = ColliderPos.y + m_worldposY;
-
-		Transform updatedTransform = m_BlockLayer[i]->GetTransform();
-		updatedTransform.position = ColliderPos;
-		m_BlockLayer[i]->GetCollider()->Update(updatedTransform);
-		m_BlockLayer[i]->GetCollider()->SetRenderPosition(ColliderPos);
-
+		m_BlockLayer[i]->Update(deltaTime);
 	}
 }
 
@@ -70,10 +62,8 @@ void TileMap2D::Render(CDDrawDevice* pDevice)
 		int currentFrame = m_BackGroundLayer[i]->m_id;
 		const RECT& srcRect = m_spriteManager->GetFrameRect(currentFrame);
 		Vector2<float> renderPos = m_BackGroundLayer[i]->GetTransform().position;
-		renderPos.x = renderPos.x + m_cameraOffsetX + m_worldposX;
-		renderPos.y = renderPos.y + m_cameraOffsetY + m_worldposY;
-
-
+		renderPos.x = renderPos.x + m_cameraOffsetX;
+		renderPos.y = renderPos.y + m_cameraOffsetY;
 
 		pDevice->DrawSprite(static_cast<int>(renderPos.x), static_cast<int>(renderPos.y), m_spriteManager->GetSpriteSheet(), srcRect);
 	}
@@ -84,8 +74,8 @@ void TileMap2D::Render(CDDrawDevice* pDevice)
 		int currentFrame = m_BlockLayer[i]->m_id;
 		const RECT& srcRect = m_spriteManager->GetFrameRect(currentFrame);
 		Vector2<float> renderPos = m_BlockLayer[i]->GetTransform().position;
-		renderPos.x = renderPos.x + m_cameraOffsetX + m_worldposX;
-		renderPos.y = renderPos.y + m_cameraOffsetY + m_worldposY;
+		renderPos.x = renderPos.x + m_cameraOffsetX;
+		renderPos.y = renderPos.y + m_cameraOffsetY;
 
 		pDevice->DrawSprite(static_cast<int>(renderPos.x), static_cast<int>(renderPos.y), m_spriteManager->GetSpriteSheet(), srcRect);
 	}
@@ -164,6 +154,19 @@ void TileMap2D::ReadTileMap(const char* filename)
 	m_mapWidth = m_tileRawwidth * m_mapWidth;
 	m_mapHeight = m_tileRawheight * m_mapHeight;
 	m_worldposY = m_mapHeight;
+
+	for (int i = 0; i < m_BackGroundLayer.size(); i++)
+	{
+		Vector2<float> worldPos = Vector2<float>(m_worldposX, m_worldposY);
+		m_BackGroundLayer[i]->SetPosition(m_BackGroundLayer[i]->GetTransform().position + worldPos);
+	}
+
+
+	for (int i = 0; i < m_BlockLayer.size(); i++)
+	{
+		Vector2<float> worldPos = Vector2<float>(m_worldposX, m_worldposY);
+		m_BlockLayer[i]->SetPosition(m_BlockLayer[i]->GetTransform().position + worldPos);
+	}
 }
 
 float TileMap2D::GetTileMapWidth()
@@ -209,7 +212,7 @@ void TileMap2D::ReadTileSource(const char* filename)
 	temp = temp.substr(1, temp.size() - 2);
 	strcpy(newname, temp.c_str());
 
-	 strcat(openname, newname);
+	strcat(openname, newname);
 
 
 	CTGAImage* sourceImage = new CTGAImage;
@@ -276,6 +279,8 @@ bool TileMap2D::ReadLayer(FILE* file, std::string layername)
 				newTile->SetPhysicsType(PhysicsType::Static);
 
 				Collider* tileCollider = new AABBCollider(newTile, pos.x, pos.y, m_tileRawwidth, m_tileRawheight);
+				tileCollider->SetCollisionLayer(TILE_COLLISION_LAYER);
+
 				newTile->SetCollider(tileCollider);
 
 				ColliderManager::GetInstance().AddCollider(newTile->GetCollider());

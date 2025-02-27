@@ -65,12 +65,23 @@ void ColliderManager::ProcessCollisions() {
             CollisionResponse responseA = colliderA->GetCollisionResponse();
             CollisionResponse responseB = colliderB->GetCollisionResponse();
 
-            // 둘 중 하나라도 Block이면 Block, 아니면 Overlap, 둘 다 Ignore이면 무시
+
             CollisionResponse finalResponse = CollisionResponse::Ignore;
-            if (responseA == CollisionResponse::Block || responseB == CollisionResponse::Block)
+
+            if (responseA == CollisionResponse::Ignore || responseB == CollisionResponse::Ignore) 
+            {
+                finalResponse = CollisionResponse::Ignore;
+            }
+
+            else if (responseA == CollisionResponse::Block && responseB == CollisionResponse::Block) 
+            {
                 finalResponse = CollisionResponse::Block;
-            else if (responseA == CollisionResponse::Overlap || responseB == CollisionResponse::Overlap)
+            }
+
+            else if (responseA == CollisionResponse::Overlap || responseB == CollisionResponse::Overlap) 
+            {
                 finalResponse = CollisionResponse::Overlap;
+            }
 
 
             Vector2<float> mtv = ComputeAABBMTV(colliderA, colliderB);
@@ -98,31 +109,50 @@ void ColliderManager::ProcessCollisions() {
 
 
             if (finalResponse == CollisionResponse::Block) {
-
-                // 각 객체의 질량의 역수를 가져옴
-                // 질량의 역수를 쓰면 고정된 물체나 질량이 매우 큰(무한한 질량) 물체에 대해 계산할 때 용이
-                // 이 경우, 고정된 물체와 질량이 매우 큰 물체의 경우 질량의 역수는 0으로 처리가능
+                // 각 객체의 역질량(InvMass)를 구함
                 float invMassA = objA->GetInvMass();
                 float invMassB = objB->GetInvMass();
 
-                //  m1/(m1+m2) 대신 역질량 사용
-                // 역질량 합이 0인 경우는 둘 다 정적이거나 충돌 처리를 할 필요 없는 경우
+                // 두 객체 모두 정적이거나 충돌 처리가 필요 없는 경우는 건너뛰기
                 if ((invMassA + invMassB) > 0.0f) {
-                    // 각 객체에 대해 MTV를 질량 비율에 따라 분담하여 밀어냄
-                    Vector2<float> positionOffsetA = mtv * (invMassA / (invMassA + invMassB));
-                    Vector2<float> positionOffsetB = mtv * (invMassB / (invMassA + invMassB));
-                    mtvMap[objA] = mtvMap[objA] + positionOffsetA;
-                    mtvMap[objB] = mtvMap[objB] - positionOffsetB;
+                    // 질량의 역수를 이용해 MTV를 분담함
+                    Vector2<float> offsetA = mtv * (invMassA / (invMassA + invMassB));
+                    Vector2<float> offsetB = mtv * (invMassB / (invMassA + invMassB));
+
+                    // Dynamic인 경우에만 적용 (Static이면 움직이지 않음)
+                    if (objA->GetPhysicsType() == PhysicsType::Dynamic) {
+                        // 기존에 저장된 MTV가 없거나, 새 offset의 크기가 더 크면 업데이트
+                        if (mtvMap.find(objA) == mtvMap.end()) {
+                            mtvMap[objA] = offsetA;
+                        }
+                        else {
+                            if (offsetA.Length() > mtvMap[objA].Length()) {
+                                mtvMap[objA] = offsetA;
+                            }
+                        }
+                    }
+
+                    // objB의 경우 (단, offset은 반대 방향이므로 -offsetB 사용)
+                    if (objB->GetPhysicsType() == PhysicsType::Dynamic) {
+                        if (mtvMap.find(objB) == mtvMap.end()) {
+                            mtvMap[objB] = -offsetB;
+                        }
+                        else {
+                            if (offsetB.Length() > mtvMap[objB].Length()) {
+                                mtvMap[objB] = -offsetB;
+                            }
+                        }
+                    }
                 }
             }
         }
     }
 
-    // 누적된 MTV를 각 GameObject에 한 번에 적용함 (Block 충돌에 한해)
+    // MTV를 각 GameObject들에 한 번에 처리
     for (auto& entry : mtvMap) {
         GameObject* obj = entry.first;
-        Vector2<float> totalMTV = entry.second;
-        obj->SetPosition(obj->GetPosition() + Vector2<float>(totalMTV));
+        Vector2<float> MTV = entry.second;
+        obj->SetPosition(obj->GetPosition() + Vector2<float>(MTV));
     }
 
 
@@ -182,7 +212,7 @@ Vector2<float> ColliderManager::ComputeAABBMTV(Collider* a, Collider* b) {
     return mtv;
 }
 
-const std::vector<Collider*>& ColliderManager::GetColliders() const
+const std::vector<Collider*>& ColliderManager::GetAllColliders() const
 {
     return m_colliders;
 }

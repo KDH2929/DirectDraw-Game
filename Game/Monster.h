@@ -1,22 +1,51 @@
 #pragma once
 #include "GameObject.h"
 
-// Monster 클래스
-// 현재로썬 추상 클래스 역할을 하며, 모든 몬스터의 공통 인터페이스를 정의함
 
 enum class MonsterType {
     Unknown,
     Centipede,
 };
 
+enum class MonsterAIState {
+    Wait,
+    Move,
+    Turn,
+    Attack,
+    Chase,
+    Dead,
+};
+
+class Character;
+
 class Monster : public GameObject {
 public:
     Monster();
     virtual ~Monster();
 
-    virtual void Update(float deltaTime) override = 0;
-    virtual void Render(CDDrawDevice* pDevice) override = 0;
+    virtual void Update(float deltaTime);
+    virtual void Render(CDDrawDevice* pDevice);
 
     virtual MonsterType GetMonsterType() const = 0;
 
+
+    const Vector2<float> GetForwardVector();
+    void SetForwardVector(Vector2<float> forwardVec);
+
+    // 현재 몬스터는 AABB Collider임을 가정하고 사용
+    // 추후 MonsterAI 클래스를 만들어 기능분리하면 좋을 듯
+    virtual bool CheckLeftWall();
+    virtual bool CheckRightWall();
+    virtual bool CheckGround();
+    virtual bool CheckForwardGround();
+    Character* DetectPlayer(float rayDistance);
+    std::wstring MonsterAIStateToWString(MonsterAIState state);
+
+protected:
+    virtual void UpdateAI(float deltaTime) = 0;
+    virtual void UpdateAnimFSM() = 0;
+
+
+private:
+    Vector2<float> m_forwardVec = Vector2<float>(1.0f, 0.0f);           // 기본 ForwardVector 는 오른쪽방향
 };

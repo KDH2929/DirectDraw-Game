@@ -11,7 +11,7 @@ public:
 	TileMap2D(int tileWidth, int tileHeight);
 	~TileMap2D();
 
-	void Update();
+	void Update(float deltaTime);
 	void Render(CDDrawDevice* pDevice);
 	void AddTile(Tile* tile); // 아직 사용 x
 	void ReadTileMap(const char* filename);
@@ -27,7 +27,7 @@ private:
 	bool ReadLayer(FILE* file, std::string layername);
 
 private:
-	int m_cameraOffsetX, m_cameraOffsetY;			// 카메라 오프셋
+	float m_cameraOffsetX, m_cameraOffsetY;			// 카메라 오프셋
 	float m_worldposX, m_worldposY;
 	int m_mapWidth, m_mapHeight;
 	float m_tileWidth;

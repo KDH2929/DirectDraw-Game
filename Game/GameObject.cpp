@@ -1,6 +1,7 @@
 #include "stdafx.h"
 #include "GameObject.h"
 #include "Collider.h"
+#include "DebugManager.h"
 
 GameObject::GameObject()
     : m_pCollider(nullptr),
@@ -8,7 +9,7 @@ GameObject::GameObject()
     m_PreviousPosition(m_Transform.position),
     m_InterpolatedPosition(m_Transform.position),
     m_RenderPosition(Vector2<float>{0, 0}),
-    m_ColliderLocalPosition(m_Transform.position),
+    m_ColliderLocalPosition(Vector2<float>{0, 0}),
     m_mass(1.0f), m_invMass(1.0f), m_physicsType(PhysicsType::Dynamic)
 {
     // m_Transform은 기본 생성자에서 초기화됨.
@@ -53,8 +54,6 @@ void GameObject::SetTransform(const Transform& newTransform) {
     m_CurrentPosition = newTransform.position;
     m_PreviousPosition = newTransform.position;
     m_InterpolatedPosition = newTransform.position;
-    if (m_pCollider)
-        m_pCollider->Update(m_Transform);
 }
 
 Collider* GameObject::GetCollider() {

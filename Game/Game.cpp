@@ -71,12 +71,15 @@ BOOL CGame::Initialize(HWND hWnd)
 
 
     m_TileMap = new TileMap2D(0, 0);
-    m_TileMap->ReadTileMap("./data/TileMap/level.tilemap3");
+    m_TileMap->ReadTileMap("./data/TileMap/level.tilemap");
+
+    m_bgWidth = m_TileMap->GetTileMapWidth();
+    m_bgHeight = m_TileMap->GetTileMapHeight();
 
 
     // 플레이어 초기 위치
     int playerPosX = 50;
-    int playerPosY = 50;
+    int playerPosY = 800;
 
     // 플레이어 캐릭터 생성
     m_pPlayer = new Character(m_pPlayerImgData, static_cast<float>(playerPosX), static_cast<float>(playerPosY));
@@ -94,10 +97,8 @@ BOOL CGame::Initialize(HWND hWnd)
     delete pCentipedeImage;
     pCentipedeImage = nullptr;
 
-    m_vMonsters.push_back(new Centipede(m_pCentipedeImgData, 100.0f, 400.0f));
-    m_vMonsters.push_back(new Centipede(m_pCentipedeImgData, 300.0f, 400.0f));
-    m_vMonsters.push_back(new Centipede(m_pCentipedeImgData, 500.0f, 400.0f));
-    m_vMonsters.push_back(new Centipede(m_pCentipedeImgData, 700.0f, 400.0f));
+
+    m_vMonsters.push_back(new Centipede(m_pCentipedeImgData, 700.0f, 800.0f));
     
     for (auto monster : m_vMonsters) {
         ColliderManager::GetInstance().AddCollider(monster->GetCollider());
@@ -199,8 +200,10 @@ void CGame::UpdatePosition(float deltaTime, int screenWidth, int screenHeight)
         monster->Update(deltaTime);
     }
     
-    m_TileMap->Update();
+    m_TileMap->Update(deltaTime);
 
+
+    // UpdateCamera 함수에서 카메라 위치를 설정 후, 그에 따른 RenderPosition 설정할 것
     UpdateCamera(screenWidth, screenHeight);
 
 }
@@ -210,21 +213,20 @@ void CGame::UpdateCamera(int screenWidth, int screenHeight)
 {
     Vector2<float> playerPos = m_pPlayer->GetPosition();
 
-    int screenCenterX = screenWidth / 2;
-    int screenCenterY = screenHeight / 2;
-    int cameraOffsetX = -200;
-    int cameraOffsetY = 20;
-    int cameraCenterX = screenCenterX + cameraOffsetX;
-    int cameraCenterY = screenCenterY + cameraOffsetY;
+    float screenCenterX = static_cast<float>(screenWidth) / 2;
+    float screenCenterY = static_cast<float>(screenHeight) / 2;
+    float cameraOffsetX = -200;
+    float cameraOffsetY = 20;
+    float cameraCenterX = screenCenterX + cameraOffsetX;
+    float cameraCenterY = screenCenterY + cameraOffsetY;
 
 
-    int computedOffsetX = playerPos.x - cameraCenterX;
-    int computedOffsetY = playerPos.y - cameraCenterY;
+    float computedOffsetX = playerPos.x - cameraCenterX;
+    float computedOffsetY = playerPos.y - cameraCenterY;
 
-    int bgWidth = static_cast<int>(m_pBackgroundImage->GetWidth());
-    int bgHeight = static_cast<int>(m_pBackgroundImage->GetHeight());
-    int clampedOffsetX = std::max<int>(0, std::min<int>(computedOffsetX, bgWidth - screenWidth));
-    int clampedOffsetY = std::max<int>(0, std::min<int>(computedOffsetY, bgHeight - screenHeight));
+    // 카메라가 배경화면 바깥을 벗어나지 못하도록 clamp 처리
+    float clampedOffsetX = std::max<float>(0, std::min<float>(computedOffsetX, static_cast<float>(m_bgWidth) - screenWidth));
+    float clampedOffsetY = std::max<float>(0, std::min<float>(computedOffsetY, static_cast<float>(m_bgHeight) - screenHeight));
 
     m_backgroundPosX = -clampedOffsetX;
     m_backgroundPosY = -clampedOffsetY;
@@ -233,7 +235,10 @@ void CGame::UpdateCamera(int screenWidth, int screenHeight)
     m_playerRenderX = cameraCenterX - (clampedOffsetX - computedOffsetX);
     m_playerRenderY = cameraCenterY - (clampedOffsetY - computedOffsetY);
 
-    m_pPlayer->SetRenderPosition(Vector2<float>{ static_cast<float>(m_playerRenderX),  static_cast<float>(m_playerRenderY) });
+    m_pPlayer->SetRenderPosition(Vector2<float>{ static_cast<float>(m_playerRenderX), static_cast<float>(m_playerRenderY) });
+
+    m_pPlayer->SetCameraOffset(Vector2<float>(-clampedOffsetX, -clampedOffsetY));
+    DebugManager::GetInstance().SetCameraOffset(Vector2<float>(-clampedOffsetX, -clampedOffsetY));
 
     for (auto monster : m_vMonsters)
     {
@@ -245,11 +250,25 @@ void CGame::UpdateCamera(int screenWidth, int screenHeight)
     }
 
 
-    DebugManager::GetInstance().AddOnScreenMessage(L"Camera Offset (" + std::to_wstring(clampedOffsetX) +
-        L", " + std::to_wstring(clampedOffsetY) + L")", 0.03f);
+    DebugManager::GetInstance().AddOnScreenMessage(L"Camera Offset (" + std::to_wstring(static_cast<int>(clampedOffsetX)) +
+        L", " + std::to_wstring(static_cast<int>(clampedOffsetY)) + L")", 0.03f);
 
 
+    // 이후 TileMap의 Render함수에서 CameraOffset을 고려하여 Render 수행
     m_TileMap->SetCameraOffset(clampedOffsetX, clampedOffsetY);
+
+
+    const std::vector<Tile*>& blockLayer = m_TileMap->GetBlockLayer();
+    for (Tile* tile : blockLayer)
+    {
+        if (tile && tile->GetCollider())
+        {
+            Vector2<float> colliderPos = tile->GetPosition();
+            Vector2<float> newRenderPos = colliderPos + Vector2<float>({ -clampedOffsetX, -clampedOffsetY });
+
+            tile->GetCollider()->SetRenderPosition(newRenderPos);
+        }
+    }
 
 }
 
@@ -268,6 +287,7 @@ void CGame::ResetInterpolation()
 void CGame::DrawScene()
 {
     // DirectDraw Device로 Bitmap 이미지들 Render
+    // Lock, UnLock을 통해 BackBuffer에 직접 접근하여 픽셀값들을 하나씩 지정하여 Render
     m_pDrawDevice->BeginDraw();
 
     
@@ -297,6 +317,7 @@ void CGame::DrawScene()
 
 
     // hDC로 디버깅 관련사항들 렌더링
+    // GDI(Device Context)를 통한 렌더링으로 winAPI 기능을 통한 렌더를 하기위함
     HDC hDC = nullptr;
     if (m_pDrawDevice->BeginGDI(&hDC))
     {
@@ -310,7 +331,7 @@ void CGame::DrawScene()
             float colliderLocalX = m_pPlayer->GetColliderLocalPosition().x;
             float colliderLocalY = m_pPlayer->GetColliderLocalPosition().y;
 
-            m_pPlayer->GetCollider()->Render(hDC, m_playerRenderX + colliderLocalX, m_playerRenderY + colliderLocalY);
+            m_pPlayer->GetCollider()->Render(hDC, static_cast<int>(m_playerRenderX + colliderLocalX), static_cast<int>(m_playerRenderY + colliderLocalY));
         }
 
   
@@ -319,8 +340,21 @@ void CGame::DrawScene()
             if (monster && monster->GetCollider())
             {
                 // 몬스터의 화면상 렌더링 위치를 가져옴
-                Vector2<float> monsterRenderPos = monster->GetRenderPosition();
-                monster->GetCollider()->Render(hDC, static_cast<int>(monsterRenderPos.x), static_cast<int>(monsterRenderPos.y));
+                Vector2<float> monsterColliderRenderPos = monster->GetRenderPosition() + monster->GetColliderLocalPosition();
+                monster->GetCollider()->Render(hDC, static_cast<int>(monsterColliderRenderPos.x), static_cast<int>(monsterColliderRenderPos.y));
+            }
+        }
+
+        if (m_TileMap)
+        {
+            const std::vector<Tile*>& blockLayer = m_TileMap->GetBlockLayer();
+            for (Tile* tile : blockLayer)
+            {
+                if (tile && tile->GetCollider())
+                {
+                    Vector2<float> tileRenderPos = tile->GetCollider()->GetRenderPosition();
+                    tile->GetCollider()->Render(hDC, static_cast<int>(tileRenderPos.x), static_cast<int>(tileRenderPos.y));
+                }
             }
         }
 

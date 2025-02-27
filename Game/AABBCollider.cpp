@@ -6,6 +6,14 @@
 
 
 bool AABBCollider::CheckCollision(const Collider* other) const {
+
+    // 충돌 필터 검사: 두 Collider의 레이어와 마스크가 서로 충돌 가능한지 확인
+    if (((this->GetCollisionMask() & other->GetCollisionLayer()) == 0) || ((other->GetCollisionMask() & this->GetCollisionLayer()) == 0)) 
+    {
+        return false;
+    }
+
+
     if (other->GetType() == ColliderType::AABB) {
         const AABBCollider* otherAABB = static_cast<const AABBCollider*>(other);
         return CheckCollisionWithAABB(otherAABB);
@@ -54,6 +62,12 @@ std::string AABBCollider::GetDebugString() const {
     oss << "AABB(x=" << m_x << ", y=" << m_y
         << ", w=" << m_width << ", h=" << m_height << ")";
     return oss.str();
+}
+
+
+const Vector2<float> AABBCollider::GetCenterPosition() const
+{
+    return Vector2<float>(m_x + m_width * 0.5f, m_y + m_height * 0.5f);
 }
 
 

@@ -2,6 +2,14 @@
 #include "GameObject.h"
 #include "CharacterAnim.h"
 
+
+enum class CharacterAttackType {
+    ComboAttack1,   // 연속공격1 (C키 한 번)
+    ComboAttack2,   // 연속공격2 (C키 두 번)
+    DashAttack      // 대시공격
+};
+    
+
 // 전방 선언
 class CImageData;
 class SpriteManager;
@@ -14,17 +22,18 @@ public:
     Character(CImageData* pPlayerImgData, float startX, float startY);
     virtual ~Character();
 
+    virtual void ProcessInput();
     virtual void Update(float deltaTime) override;
     virtual void Render(CDDrawDevice* pDevice) override;
 
-    int GetHealth() const { return m_health; }
-    void SetHealth(int health) { m_health = health; }
-    int GetSpeed() const { return m_speed; }
-    void SetSpeed(int speed) { m_speed = speed; }
+    float GetHealth() const { return m_health; }
+    float GetSpeed() const { return m_speed; }
+    void SetHealth(float health) { m_health = health; }
+    void SetSpeed(float speed) { m_speed = speed; }
 
 
     // Component들 초기화 관련 함수
-    void InitCollider(int x, int y, int width, int height);
+    void InitCollider(float x, float y, float width, float height);
     void InitSpriteManager(CImageData* spriteSheet, int frameWidth, int frameHeight);
     void InitAnimation();
 
@@ -32,22 +41,41 @@ public:
     int GetSpriteFrameWidth() const;
     int GetSpriteFrameHeight() const;
 
+    void SetCameraOffset(Vector2<float> cameraOffset);
+    Vector2<float> GetCameraOffset() const;
+    Vector2<float> GetForwardVector() const;
+
+    bool CheckLeftWall();
+    bool CheckRightWall();
+    bool CheckGround(float& GroundHitDistance);     // GroundHitDistance 값을 참조자 매개변수를 통해 얻을 수 있음
 
     virtual void OnCollision(const CollisionInfo& collisionInfo) override;
+    virtual void TakeDamage(const DamageInfo& damageInfo) override;
 
-    void Character::CheckColliderHitFromPlayer(float rayLength);
+    void Attack(CharacterAttackType attackType);
+    void Dead();
 
 
 private:
     void UpdateAnimFSM();
 
 
+
 private:
    
-    int m_health;
-    int m_speed;
+
+    float m_health;
+    float m_speed;
+
+    bool m_isHurt = false;
+    int m_hurtEndFrame = 0;
+    bool m_isDead = false;
 
     Vector2<float> m_forwardVec = Vector2<float>(1.0f, 0.0f);
+    Vector2<float> m_cameraOffset = Vector2<float>(0.0f, 0.0f);
+
+    bool m_leftWallDetected = false;
+    bool m_rightWallDetected = false;
     
     // 애니메이션 관련
     SpriteManager* m_spriteManager;
@@ -62,6 +90,7 @@ private:
     const float m_dashSpeed = 6.0f;
     bool m_isDashAttacking = false;
     int m_DashAttackEndFrame = 0;
+    bool m_dashAttackOverlapBoxSpawned = false;
 
 
     // 연속공격 처리
@@ -72,6 +101,7 @@ private:
     int m_firstAttackEndFrame = 0;
     int m_secondAttackEndFrame = 0;
 
+    bool m_firstAttackOverlapBoxSpawned = false;
 
 
     // 캐릭터 전용 중력 변수

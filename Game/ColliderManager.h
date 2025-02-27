@@ -4,11 +4,25 @@
 #include <utility>
 
 struct CollisionInfo {
-    GameObject* other;              // 충돌한 상대 객체
-    CollisionResponse response;     // 충돌 반응 유형
-    Vector2<float> normal;                 // 충돌 법선
-    Vector2<float> collisionPoint;         // 충돌 지점
-    float penetrationDepth;         // 충돌 깊이
+    GameObject* other;
+    CollisionResponse response;
+    Vector2<float> normal;
+    Vector2<float> collisionPoint;
+    float penetrationDepth;
+
+    // 구조체 생성자
+    CollisionInfo(GameObject* _other = nullptr,
+        CollisionResponse _response = CollisionResponse::Ignore,
+        const Vector2<float>& _normal = Vector2<float>(0.0f, 0.0f),
+        const Vector2<float>& _collisionPoint = Vector2<float>(0.0f, 0.0f),
+        float _penetrationDepth = 0.0f)
+        : other(_other),
+        response(_response),
+        normal(_normal),
+        collisionPoint(_collisionPoint),
+        penetrationDepth(_penetrationDepth)
+    {}
+
 };
 
 class ColliderManager {
@@ -30,7 +44,7 @@ public:
 
     Vector2<float> ComputeAABBMTV(Collider* a, Collider* b);
 
-    const std::vector<Collider*>& GetColliders() const;
+    const std::vector<Collider*>& GetAllColliders() const;
 
 private:
     // 싱글톤은 생성자/소멸자가 private

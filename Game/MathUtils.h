@@ -67,7 +67,7 @@ public:
     }
 };
 
-// 글로벌 벡터 연산 함수 예제
+// 글로벌 벡터 연산 함수들
 template <typename T>
 T Dot(const Vector2<T>& a, const Vector2<T>& b) {
     return a.x * b.x + a.y * b.y;
@@ -81,8 +81,10 @@ Vector2<T> Normalize(const Vector2<T>& a) {
     return a / len;
 }
 
-
-
+template <typename T>
+Vector2<T> operator*(T scalar, const Vector2<T>& vec) {
+    return Vector2<T>(scalar * vec.x, scalar * vec.y);
+}
 
 
 class Transform {

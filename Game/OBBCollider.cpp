@@ -38,6 +38,13 @@ static void ProjectOntoAxis(const Vector2<float> corners[4], const Vector2<float
 
 // 다른 Collider 타입에 대해 분기
 bool OBBCollider::CheckCollision(const Collider* other) const {
+
+    // 충돌 필터 검사: 두 Collider의 레이어와 마스크가 서로 충돌 가능한지 확인
+    if (((this->GetCollisionMask() & other->GetCollisionLayer()) == 0) || ((other->GetCollisionMask() & this->GetCollisionLayer()) == 0)) {
+        return false;
+    }
+
+
     if (other->GetType() == ColliderType::OBB) {
         const OBBCollider* otherOBB = static_cast<const OBBCollider*>(other);
         return CheckCollisionWithOBB(otherOBB);
@@ -46,9 +53,9 @@ bool OBBCollider::CheckCollision(const Collider* other) const {
         // 다른 Collider가 AABB인 경우,
         // AABB의 좌표는 좌상단 기준이므로 중심 좌표로 변환
         const AABBCollider* otherAABB = static_cast<const AABBCollider*>(other);
-        int centerX = otherAABB->GetX() + otherAABB->GetWidth() / 2;
-        int centerY = otherAABB->GetY() + otherAABB->GetHeight() / 2;
-        // 회전이 0인 OBB로 변환하여 충돌 검사를 수행합니다.
+        float centerX = otherAABB->GetX() + otherAABB->GetWidth() / 2;
+        float centerY = otherAABB->GetY() + otherAABB->GetHeight() / 2;
+        // 회전이 0인 OBB로 변환하여 충돌 검사를 수행
         OBBCollider aabbAsObb(nullptr, centerX, centerY, otherAABB->GetWidth(), otherAABB->GetHeight(), 0.0f);
         return CheckCollisionWithOBB(&aabbAsObb);
     }
@@ -89,13 +96,18 @@ void OBBCollider::Update(const Transform& transform)
 {
     // Transform 정보를 이용해 중심 좌표를 업데이트
     // 필요시 transform에서 회전 값을 가져오기
-    m_x = static_cast<int>(transform.position.x);
-    m_y = static_cast<int>(transform.position.y);
+    m_x = static_cast<float>(transform.position.x);
+    m_y = static_cast<float>(transform.position.y);
 }
 
 void OBBCollider::Render(HDC hDC, int renderX, int renderY) const
 {
 
+}
+
+const Vector2<float> OBBCollider::GetCenterPosition() const
+{
+    return Vector2<float>(m_x, m_y);
 }
 
 std::string OBBCollider::GetDebugString() const {
