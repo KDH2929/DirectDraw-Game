@@ -37,9 +37,6 @@
     <Filter Include="Filter">
       <UniqueIdentifier>{62a84d93-3e39-4892-8c2b-ff1e48e5f006}</UniqueIdentifier>
     </Filter>
-    <Filter Include="Game\Collider">
-      <UniqueIdentifier>{488503e2-ff58-4f36-b622-875b7c0f56e0}</UniqueIdentifier>
-    </Filter>
     <Filter Include="Game\GameObject">
       <UniqueIdentifier>{2f29ba39-41b4-4831-997c-17da4f1ab61a}</UniqueIdentifier>
     </Filter>
@@ -48,6 +45,15 @@
     </Filter>
     <Filter Include="Game\TileMap">
       <UniqueIdentifier>{fb59118b-74d5-4ae6-ade7-12558728d40d}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Game\Scene">
+      <UniqueIdentifier>{7fc797e7-3b61-4ee1-aa27-e7facb569848}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Game\UI">
+      <UniqueIdentifier>{ab727a62-4fc4-4695-bfb9-a00fc1038255}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Game\Collision">
+      <UniqueIdentifier>{488503e2-ff58-4f36-b622-875b7c0f56e0}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>
@@ -62,9 +68,6 @@
     </ClInclude>
     <ClInclude Include="stdafx.h">
       <Filter>pch</Filter>
-    </ClInclude>
-    <ClInclude Include="..\DDrawLib\stdafx.h">
-      <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="..\DDrawLib\DDrawDevice.h">
       <Filter>DDrawLib</Filter>
@@ -84,9 +87,6 @@
     <ClInclude Include="..\ImageData\ImageData.h">
       <Filter>ImageData</Filter>
     </ClInclude>
-    <ClInclude Include="..\ImageData\stdafx.h">
-      <Filter>ImageData</Filter>
-    </ClInclude>
     <ClInclude Include="Game.h">
       <Filter>Game</Filter>
     </ClInclude>
@@ -102,56 +102,104 @@
     <ClInclude Include="DebugManager.h">
       <Filter>Game</Filter>
     </ClInclude>
-    <ClInclude Include="Collider.h">
-      <Filter>Game\Collider</Filter>
+    <ClInclude Include="Collision\Collider.h">
+      <Filter>Game\Collision</Filter>
     </ClInclude>
-    <ClInclude Include="AABBCollider.h">
-      <Filter>Game\Collider</Filter>
+    <ClInclude Include="Collision\AABBCollider.h">
+      <Filter>Game\Collision</Filter>
     </ClInclude>
-    <ClInclude Include="OBBCollider.h">
-      <Filter>Game\Collider</Filter>
+    <ClInclude Include="Collision\OBBCollider.h">
+      <Filter>Game\Collision</Filter>
     </ClInclude>
-    <ClInclude Include="ColliderManager.h">
-      <Filter>Game\Collider</Filter>
+    <ClInclude Include="Collision\ColliderManager.h">
+      <Filter>Game\Collision</Filter>
     </ClInclude>
     <ClInclude Include="MathUtils.h">
       <Filter>Game</Filter>
     </ClInclude>
-    <ClInclude Include="GameObject.h">
+    <ClInclude Include="GameObject\GameObject.h">
       <Filter>Game\GameObject</Filter>
     </ClInclude>
-    <ClInclude Include="Character.h">
+    <ClInclude Include="GameObject\Character.h">
       <Filter>Game\GameObject</Filter>
     </ClInclude>
     <ClInclude Include="InputManager.h">
       <Filter>Game</Filter>
     </ClInclude>
-    <ClInclude Include="SpriteManager.h">
+    <ClInclude Include="Animation\SpriteManager.h">
       <Filter>Game\Animation</Filter>
     </ClInclude>
-    <ClInclude Include="CharacterAnim.h">
+    <ClInclude Include="Animation\CharacterAnim.h">
       <Filter>Game\Animation</Filter>
     </ClInclude>
-    <ClInclude Include="Tile.h">
+    <ClInclude Include="GameObject\Tile.h">
       <Filter>Game\GameObject</Filter>
     </ClInclude>
-    <ClInclude Include="SpriteAnim.h">
+    <ClInclude Include="Animation\SpriteAnim.h">
       <Filter>Game\Animation</Filter>
     </ClInclude>
-    <ClInclude Include="CentipedeAnim.h">
+    <ClInclude Include="Animation\CentipedeAnim.h">
       <Filter>Game\Animation</Filter>
     </ClInclude>
-    <ClInclude Include="Monster.h">
+    <ClInclude Include="GameObject\Monster.h">
       <Filter>Game\GameObject</Filter>
     </ClInclude>
-    <ClInclude Include="Centipede.h">
+    <ClInclude Include="GameObject\Centipede.h">
       <Filter>Game\GameObject</Filter>
-    </ClInclude>
-    <ClInclude Include="Raycast.h">
-      <Filter>Game\Collider</Filter>
     </ClInclude>
     <ClInclude Include="TileMap2D.h">
       <Filter>Game\TileMap</Filter>
+    </ClInclude>
+    <ClInclude Include="Collision\CollisionLayer.h">
+      <Filter>Game\Collision</Filter>
+    </ClInclude>
+    <ClInclude Include="Collision\CollisionQuery.h">
+      <Filter>Game\Collision</Filter>
+    </ClInclude>
+    <ClInclude Include="Scene.h">
+      <Filter>Game\Scene</Filter>
+    </ClInclude>
+    <ClInclude Include="Scene\SceneLoader.h">
+      <Filter>Game\Scene</Filter>
+    </ClInclude>
+    <ClInclude Include="Scene\SceneManager.h">
+      <Filter>Game\Scene</Filter>
+    </ClInclude>
+    <ClInclude Include="Scene\SceneTypes.h">
+      <Filter>Game\Scene</Filter>
+    </ClInclude>
+    <ClInclude Include="Scene\Stage1Scene.h">
+      <Filter>Game\Scene</Filter>
+    </ClInclude>
+    <ClInclude Include="Scene\Stage2Scene.h">
+      <Filter>Game\Scene</Filter>
+    </ClInclude>
+    <ClInclude Include="Scene\GameOverScene.h">
+      <Filter>Game\Scene</Filter>
+    </ClInclude>
+    <ClInclude Include="Scene\LoadingScene.h">
+      <Filter>Game\Scene</Filter>
+    </ClInclude>
+    <ClInclude Include="GameObject\DeathOverlapBox.h">
+      <Filter>Game\GameObject</Filter>
+    </ClInclude>
+    <ClInclude Include="GameObject\Portal.h">
+      <Filter>Game\GameObject</Filter>
+    </ClInclude>
+    <ClInclude Include="UI\UI.h">
+      <Filter>Game\UI</Filter>
+    </ClInclude>
+    <ClInclude Include="UI\UI_Button.h">
+      <Filter>Game\UI</Filter>
+    </ClInclude>
+    <ClInclude Include="UI\UI_Text.h">
+      <Filter>Game\UI</Filter>
+    </ClInclude>
+    <ClInclude Include="Scene\TitleScene.h">
+      <Filter>Game\Scene</Filter>
+    </ClInclude>
+    <ClInclude Include="Animation\PortalAnim.h">
+      <Filter>Game\Animation</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -198,41 +246,74 @@
     <ClCompile Include="DebugManager.cpp">
       <Filter>Game</Filter>
     </ClCompile>
-    <ClCompile Include="ColliderManager.cpp">
-      <Filter>Game\Collider</Filter>
+    <ClCompile Include="Collision\ColliderManager.cpp">
+      <Filter>Game\Collision</Filter>
     </ClCompile>
-    <ClCompile Include="AABBCollider.cpp">
-      <Filter>Game\Collider</Filter>
+    <ClCompile Include="Collision\AABBCollider.cpp">
+      <Filter>Game\Collision</Filter>
     </ClCompile>
-    <ClCompile Include="OBBCollider.cpp">
-      <Filter>Game\Collider</Filter>
+    <ClCompile Include="Collision\OBBCollider.cpp">
+      <Filter>Game\Collision</Filter>
     </ClCompile>
-    <ClCompile Include="GameObject.cpp">
+    <ClCompile Include="GameObject\GameObject.cpp">
       <Filter>Game\GameObject</Filter>
     </ClCompile>
-    <ClCompile Include="Character.cpp">
+    <ClCompile Include="GameObject\Character.cpp">
       <Filter>Game\GameObject</Filter>
     </ClCompile>
     <ClCompile Include="InputManager.cpp">
       <Filter>Game</Filter>
     </ClCompile>
-    <ClCompile Include="SpriteManager.cpp">
+    <ClCompile Include="Animation\SpriteManager.cpp">
       <Filter>Game\Animation</Filter>
     </ClCompile>
-    <ClCompile Include="Tile.cpp">
+    <ClCompile Include="GameObject\Tile.cpp">
       <Filter>Game\GameObject</Filter>
     </ClCompile>
-    <ClCompile Include="Monster.cpp">
+    <ClCompile Include="GameObject\Monster.cpp">
       <Filter>Game\GameObject</Filter>
     </ClCompile>
-    <ClCompile Include="Centipede.cpp">
+    <ClCompile Include="GameObject\Centipede.cpp">
       <Filter>Game\GameObject</Filter>
-    </ClCompile>
-    <ClCompile Include="Raycast.cpp">
-      <Filter>Game\Collider</Filter>
     </ClCompile>
     <ClCompile Include="TileMap2D.cpp">
       <Filter>Game\TileMap</Filter>
+    </ClCompile>
+    <ClCompile Include="Collision\CollisionQuery.cpp">
+      <Filter>Game\Collision</Filter>
+    </ClCompile>
+    <ClCompile Include="Scene\GameOverScene.cpp">
+      <Filter>Game\Scene</Filter>
+    </ClCompile>
+    <ClCompile Include="Scene\LoadingScene.cpp">
+      <Filter>Game\Scene</Filter>
+    </ClCompile>
+    <ClCompile Include="Scene\SceneManager.cpp">
+      <Filter>Game\Scene</Filter>
+    </ClCompile>
+    <ClCompile Include="Scene\SceneLoader.cpp">
+      <Filter>Game\Scene</Filter>
+    </ClCompile>
+    <ClCompile Include="Scene\Stage1Scene.cpp">
+      <Filter>Game\Scene</Filter>
+    </ClCompile>
+    <ClCompile Include="Scene\Stage2Scene.cpp">
+      <Filter>Game\Scene</Filter>
+    </ClCompile>
+    <ClCompile Include="Scene\TitleScene.cpp">
+      <Filter>Game\Scene</Filter>
+    </ClCompile>
+    <ClCompile Include="UI\UI_Text.cpp">
+      <Filter>Game\UI</Filter>
+    </ClCompile>
+    <ClCompile Include="UI\UI_Button.cpp">
+      <Filter>Game\UI</Filter>
+    </ClCompile>
+    <ClCompile Include="GameObject\DeathOverlapBox.cpp">
+      <Filter>Game\GameObject</Filter>
+    </ClCompile>
+    <ClCompile Include="GameObject\Portal.cpp">
+      <Filter>Game\GameObject</Filter>
     </ClCompile>
   </ItemGroup>
 </Project>

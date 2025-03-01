@@ -245,6 +245,9 @@ bool Monster::CheckForwardGround() {
     const float groundThreshold = 500.0f;
     float groundHitDistance = 0.0f;
     CollisionLayer queryMask = DEFAULT_COLLISION_LAYER_MASK & ~MONSTER_COLLISION_LAYER;
+
+    queryMask &= ~OVERLAP_COLLISION_LAYER;
+
     const auto& colliders = ColliderManager::GetInstance()->GetAllColliders();
 
     for (Collider* collider : colliders) {

@@ -63,13 +63,16 @@ private:
 
 private:
    
-
     float m_health;
     float m_speed;
 
     bool m_isHurt = false;
     int m_hurtEndFrame = 0;
     bool m_isDead = false;
+
+    float m_deathTimer = 0.0f;
+    const float GAME_OVER_DELAY = 3.5f;
+    const float SECOND_TO_MS = 1000.0f;
 
     Vector2<float> m_forwardVec = Vector2<float>(1.0f, 0.0f);
     Vector2<float> m_cameraOffset = Vector2<float>(0.0f, 0.0f);
@@ -109,5 +112,6 @@ private:
     bool m_isGrounded;
     const float JUMP_VELOCITY = -0.8f;
     const float GRAVITY_ACCEL = 0.0015f;
+
 
 };

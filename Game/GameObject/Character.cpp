@@ -10,6 +10,7 @@
 #include "CharacterAnim.h"
 #include "CollisionQuery.h"
 #include "Monster.h"
+#include "SceneManager.h"
 
 #include <typeinfo>
 #include <algorithm>
@@ -152,6 +153,17 @@ void Character::ProcessInput()
 
 void Character::Update(float deltaTime)
 {
+
+    if (m_isDead)
+    {
+        m_deathTimer += deltaTime;
+        if (m_deathTimer >= GAME_OVER_DELAY * SECOND_TO_MS)
+        {
+            SceneManager::GetInstance()->AsyncChangeScene(SceneType::GameOver);
+        }
+    }
+
+
     // Raycast 를 통한 벽 검사
     m_leftWallDetected = CheckLeftWall();
     m_rightWallDetected = CheckRightWall();
@@ -625,6 +637,7 @@ void Character::Dead()
     m_anim->SetState(CharacterAnimState::Death);
     GetCollider()->SetCollisionResponse(CollisionResponse::Ignore);
     DebugManager::GetInstance()->AddOnScreenMessage(L"Character Dead!", 2.0f);
+
 }
 
 
@@ -664,71 +677,69 @@ void Character::InitAnimation()
 
     std::vector<CharacterAnim::AnimSequence> sequences;
 
-    const float SECONDS_TO_MS = 1000.0f;
-
     int currentFrame = 0;
     // Idle : 6 frames
-    sequences.push_back({ CharacterAnimState::Idle, currentFrame, (currentFrame + 6 - 1), 0.15f * SECONDS_TO_MS });
+    sequences.push_back({ CharacterAnimState::Idle, currentFrame, (currentFrame + 6 - 1), 0.15f * SECOND_TO_MS });
     currentFrame += 6;
 
     // Run : 8 frames
-    sequences.push_back({ CharacterAnimState::Run, currentFrame, (currentFrame + 8 - 1), 0.1f * SECONDS_TO_MS });
+    sequences.push_back({ CharacterAnimState::Run, currentFrame, (currentFrame + 8 - 1), 0.1f * SECOND_TO_MS });
     currentFrame += 8;
 
     // 2 Combo Attack : 12 frames
-    sequences.push_back({ CharacterAnimState::Attack, currentFrame, (currentFrame + 12 - 1), 0.08f * SECONDS_TO_MS });
+    sequences.push_back({ CharacterAnimState::Attack, currentFrame, (currentFrame + 12 - 1), 0.08f * SECOND_TO_MS });
     currentFrame += 12;
 
     // Death : 11 frames
-    sequences.push_back({ CharacterAnimState::Death, currentFrame, (currentFrame + 11 - 1), 0.1f * SECONDS_TO_MS, false });
+    sequences.push_back({ CharacterAnimState::Death, currentFrame, (currentFrame + 11 - 1), 0.1f * SECOND_TO_MS, false });
     currentFrame += 11;
 
     // Hurt : 4 frames
-    sequences.push_back({ CharacterAnimState::Hurt, currentFrame, (currentFrame + 4 - 1), 0.1f * SECONDS_TO_MS });
+    sequences.push_back({ CharacterAnimState::Hurt, currentFrame, (currentFrame + 4 - 1), 0.1f * SECOND_TO_MS });
     currentFrame += 4;
 
     // Jump : 3 frames
-    sequences.push_back({ CharacterAnimState::Jump, currentFrame, (currentFrame + 3 - 1), 0.12f * SECONDS_TO_MS });
+    sequences.push_back({ CharacterAnimState::Jump, currentFrame, (currentFrame + 3 - 1), 0.12f * SECOND_TO_MS });
     currentFrame += 3;
 
     // UpToFall : 2 frames
-    sequences.push_back({ CharacterAnimState::UpToFall, currentFrame, (currentFrame + 2 - 1), 0.15f * SECONDS_TO_MS, false });
+    sequences.push_back({ CharacterAnimState::UpToFall, currentFrame, (currentFrame + 2 - 1), 0.15f * SECOND_TO_MS, false });
     currentFrame += 2;
 
     // Fall : 3 frames
-    sequences.push_back({ CharacterAnimState::Fall, currentFrame, (currentFrame + 3 - 1), 0.15f * SECONDS_TO_MS });
+    sequences.push_back({ CharacterAnimState::Fall, currentFrame, (currentFrame + 3 - 1), 0.15f * SECOND_TO_MS });
     currentFrame += 3;
 
     // Edge Grab : 5 frames
-    sequences.push_back({ CharacterAnimState::EdgeGrab, currentFrame, (currentFrame + 5 - 1), 0.1f * SECONDS_TO_MS });
+    sequences.push_back({ CharacterAnimState::EdgeGrab, currentFrame, (currentFrame + 5 - 1), 0.1f * SECOND_TO_MS });
     currentFrame += 5;
 
     // Edge Idle : 6 frames
-    sequences.push_back({ CharacterAnimState::EdgeIdle, currentFrame, (currentFrame + 6 - 1), 0.1f * SECONDS_TO_MS });
+    sequences.push_back({ CharacterAnimState::EdgeIdle, currentFrame, (currentFrame + 6 - 1), 0.1f * SECOND_TO_MS });
     currentFrame += 6;
 
     // WallSlide : 3 frames
-    sequences.push_back({ CharacterAnimState::WallSlide, currentFrame, (currentFrame + 3 - 1), 0.1f * SECONDS_TO_MS });
+    sequences.push_back({ CharacterAnimState::WallSlide, currentFrame, (currentFrame + 3 - 1), 0.1f * SECOND_TO_MS });
     currentFrame += 3;
 
     // Crouch : 6 frames
-    sequences.push_back({ CharacterAnimState::Crouch, currentFrame, (currentFrame + 6 - 1), 0.1f * SECONDS_TO_MS });
+    sequences.push_back({ CharacterAnimState::Crouch, currentFrame, (currentFrame + 6 - 1), 0.1f * SECOND_TO_MS });
     currentFrame += 6;
 
     // Dash : 7 frames
-    sequences.push_back({ CharacterAnimState::Dash, currentFrame, (currentFrame + 7 - 1), 0.08f * SECONDS_TO_MS });
+    sequences.push_back({ CharacterAnimState::Dash, currentFrame, (currentFrame + 7 - 1), 0.08f * SECOND_TO_MS });
     currentFrame += 7;
 
     // Dash-Attack : 10 frames
-    sequences.push_back({ CharacterAnimState::DashAttack, currentFrame, (currentFrame + 10 - 1), 0.08f * SECONDS_TO_MS });
+    sequences.push_back({ CharacterAnimState::DashAttack, currentFrame, (currentFrame + 10 - 1), 0.08f * SECOND_TO_MS });
     currentFrame += 10;
 
     // Slide : 5 frames
-    sequences.push_back({ CharacterAnimState::Slide, currentFrame, (currentFrame + 5 - 1), 0.1f * SECONDS_TO_MS });
+    sequences.push_back({ CharacterAnimState::Slide, currentFrame, (currentFrame + 5 - 1), 0.1f * SECOND_TO_MS });
     currentFrame += 5;
 
     // Ladder-Grab : 8 frames
-    sequences.push_back({ CharacterAnimState::LadderGrab, currentFrame, (currentFrame + 8 - 1), 0.1f * SECONDS_TO_MS });
+    sequences.push_back({ CharacterAnimState::LadderGrab, currentFrame, (currentFrame + 8 - 1), 0.1f * SECOND_TO_MS });
     currentFrame += 8;
 
     // 애니메이션 시퀀스 목록 설정

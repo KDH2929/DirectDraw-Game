@@ -162,6 +162,7 @@
       <PreprocessorDefinitions>_DEBUG;_WINDOWS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>false</ConformanceMode>
       <RuntimeLibrary>MultiThreadedDebug</RuntimeLibrary>
+      <AdditionalIncludeDirectories>$(ProjectDir);$(ProjectDir)GameObject;$(ProjectDir)Collision;$(ProjectDir)Scene;$(ProjectDir)Animation;$(ProjectDir)UI;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <SubSystem>Windows</SubSystem>
@@ -216,6 +217,7 @@
       <PreprocessorDefinitions>NDEBUG;_WINDOWS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>false</ConformanceMode>
       <RuntimeLibrary>MultiThreaded</RuntimeLibrary>
+      <AdditionalIncludeDirectories>$(ProjectDir);$(ProjectDir)GameObject;$(ProjectDir)Collision;$(ProjectDir)Scene;$(ProjectDir)Animation;$(ProjectDir)UI;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <SubSystem>Windows</SubSystem>
@@ -249,54 +251,52 @@
   <ItemGroup>
     <ClInclude Include="..\Common\typedef.h" />
     <ClInclude Include="..\DDrawLib\DDrawDevice.h" />
-    <ClInclude Include="..\DDrawLib\stdafx.h" />
     <ClInclude Include="..\Filter\CPU_Filter.h" />
     <ClInclude Include="..\Filter\Filter_typedef.h" />
     <ClInclude Include="..\ImageData\ImageData.h" />
-    <ClInclude Include="..\ImageData\stdafx.h" />
     <ClInclude Include="..\Util\QueryPerfCounter.h" />
     <ClInclude Include="..\Util\TGAImage.h" />
     <ClInclude Include="..\Util\stdafx.h" />
     <ClInclude Include="..\Util\Util.h" />
-    <ClInclude Include="AABBCollider.h" />
-    <ClInclude Include="CollisionLayer.h" />
-    <ClInclude Include="DeathOverlapBox.h" />
-    <ClInclude Include="Portal.h" />
-    <ClInclude Include="PortalAnim.h" />
-    <ClInclude Include="UI_Button.h" />
-    <ClInclude Include="Centipede.h" />
-    <ClInclude Include="Character.h" />
-    <ClInclude Include="CharacterAnim.h" />
-    <ClInclude Include="Collider.h" />
-    <ClInclude Include="ColliderManager.h" />
+    <ClInclude Include="Collision\AABBCollider.h" />
+    <ClInclude Include="Collision\CollisionLayer.h" />
+    <ClInclude Include="GameObject\DeathOverlapBox.h" />
+    <ClInclude Include="GameObject\Portal.h" />
+    <ClInclude Include="Animation\PortalAnim.h" />
+    <ClInclude Include="UI\UI_Button.h" />
+    <ClInclude Include="GameObject\Centipede.h" />
+    <ClInclude Include="GameObject\Character.h" />
+    <ClInclude Include="Animation\CharacterAnim.h" />
+    <ClInclude Include="Collision\Collider.h" />
+    <ClInclude Include="Collision\ColliderManager.h" />
     <ClInclude Include="DDrawSample.h" />
     <ClInclude Include="DebugManager.h" />
     <ClInclude Include="Game.h" />
-    <ClInclude Include="GameObject.h" />
-    <ClInclude Include="GameOverScene.h" />
+    <ClInclude Include="GameObject\GameObject.h" />
+    <ClInclude Include="Scene\GameOverScene.h" />
     <ClInclude Include="InputManager.h" />
-    <ClInclude Include="LoadingScene.h" />
+    <ClInclude Include="Scene\LoadingScene.h" />
     <ClInclude Include="MathUtils.h" />
-    <ClInclude Include="CentipedeAnim.h" />
-    <ClInclude Include="Monster.h" />
-    <ClInclude Include="OBBCollider.h" />
-    <ClInclude Include="CollisionQuery.h" />
+    <ClInclude Include="Animation\CentipedeAnim.h" />
+    <ClInclude Include="GameObject\Monster.h" />
+    <ClInclude Include="Collision\OBBCollider.h" />
+    <ClInclude Include="Collision\CollisionQuery.h" />
     <ClInclude Include="Resource.h" />
     <ClInclude Include="Scene.h" />
-    <ClInclude Include="SceneLoader.h" />
-    <ClInclude Include="SceneManager.h" />
-    <ClInclude Include="SceneTypes.h" />
-    <ClInclude Include="SpriteAnim.h" />
-    <ClInclude Include="SpriteManager.h" />
-    <ClInclude Include="Stage1Scene.h" />
-    <ClInclude Include="Stage2Scene.h" />
+    <ClInclude Include="Scene\SceneLoader.h" />
+    <ClInclude Include="Scene\SceneManager.h" />
+    <ClInclude Include="Scene\SceneTypes.h" />
+    <ClInclude Include="Animation\SpriteAnim.h" />
+    <ClInclude Include="Animation\SpriteManager.h" />
+    <ClInclude Include="Scene\Stage1Scene.h" />
+    <ClInclude Include="Scene\Stage2Scene.h" />
     <ClInclude Include="stdafx.h" />
     <ClInclude Include="targetver.h" />
-    <ClInclude Include="Tile.h" />
+    <ClInclude Include="GameObject\Tile.h" />
     <ClInclude Include="TileMap2D.h" />
-    <ClInclude Include="TitleScene.h" />
-    <ClInclude Include="UI.h" />
-    <ClInclude Include="UI_Text.h" />
+    <ClInclude Include="Scene\TitleScene.h" />
+    <ClInclude Include="UI\UI.h" />
+    <ClInclude Include="UI\UI_Text.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\DDrawLib\DDrawDevice.cpp" />
@@ -305,28 +305,28 @@
     <ClCompile Include="..\Util\QueryPerfCounter .cpp" />
     <ClCompile Include="..\Util\TGAImage.cpp" />
     <ClCompile Include="..\Util\Util.cpp" />
-    <ClCompile Include="AABBCollider.cpp" />
-    <ClCompile Include="DeathOverlapBox.cpp" />
-    <ClCompile Include="GameOverScene.cpp" />
-    <ClCompile Include="LoadingScene.cpp" />
-    <ClCompile Include="Portal.cpp" />
-    <ClCompile Include="Stage2Scene.cpp" />
-    <ClCompile Include="UI_Button.cpp" />
-    <ClCompile Include="Centipede.cpp" />
-    <ClCompile Include="Character.cpp" />
-    <ClCompile Include="ColliderManager.cpp" />
+    <ClCompile Include="Collision\AABBCollider.cpp" />
+    <ClCompile Include="GameObject\DeathOverlapBox.cpp" />
+    <ClCompile Include="Scene\GameOverScene.cpp" />
+    <ClCompile Include="Scene\LoadingScene.cpp" />
+    <ClCompile Include="GameObject\Portal.cpp" />
+    <ClCompile Include="Scene\Stage2Scene.cpp" />
+    <ClCompile Include="UI\UI_Button.cpp" />
+    <ClCompile Include="GameObject\Centipede.cpp" />
+    <ClCompile Include="GameObject\Character.cpp" />
+    <ClCompile Include="Collision\ColliderManager.cpp" />
     <ClCompile Include="DebugManager.cpp" />
     <ClCompile Include="Game.cpp" />
-    <ClCompile Include="GameObject.cpp" />
+    <ClCompile Include="GameObject\GameObject.cpp" />
     <ClCompile Include="InputManager.cpp" />
     <ClCompile Include="main.cpp" />
-    <ClCompile Include="Monster.cpp" />
-    <ClCompile Include="OBBCollider.cpp" />
-    <ClCompile Include="CollisionQuery.cpp" />
-    <ClCompile Include="SceneLoader.cpp" />
-    <ClCompile Include="SceneManager.cpp" />
-    <ClCompile Include="SpriteManager.cpp" />
-    <ClCompile Include="Stage1Scene.cpp" />
+    <ClCompile Include="GameObject\Monster.cpp" />
+    <ClCompile Include="Collision\OBBCollider.cpp" />
+    <ClCompile Include="Collision\CollisionQuery.cpp" />
+    <ClCompile Include="Scene\SceneLoader.cpp" />
+    <ClCompile Include="Scene\SceneManager.cpp" />
+    <ClCompile Include="Animation\SpriteManager.cpp" />
+    <ClCompile Include="Scene\Stage1Scene.cpp" />
     <ClCompile Include="stdafx.cpp">
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Create</PrecompiledHeader>
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Create</PrecompiledHeader>
@@ -335,10 +335,10 @@
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Create</PrecompiledHeader>
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|ARM64'">Create</PrecompiledHeader>
     </ClCompile>
-    <ClCompile Include="Tile.cpp" />
+    <ClCompile Include="GameObject\Tile.cpp" />
     <ClCompile Include="TileMap2D.cpp" />
-    <ClCompile Include="TitleScene.cpp" />
-    <ClCompile Include="UI_Text.cpp" />
+    <ClCompile Include="Scene\TitleScene.cpp" />
+    <ClCompile Include="UI\UI_Text.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ResourceCompile Include="DDrawSample.rc" />

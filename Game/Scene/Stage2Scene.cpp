@@ -127,6 +127,7 @@ void Stage2Scene::Initialize()
 
     // 몬스터 생성
     m_vMonsters.push_back(new Centipede(m_pCentipedeImgData, 700.0f, 800.0f));
+    m_vMonsters.push_back(new Centipede(m_pCentipedeImgData, 1200.0f, 800.0f));
 
     m_pPortal = std::make_unique<Portal>(m_pPortalImgData.get(), 2500, 955);
     m_pPortal->SetNextSceneType(SceneType::GameOver);
