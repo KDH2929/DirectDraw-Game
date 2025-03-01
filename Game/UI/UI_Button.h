@@ -4,8 +4,8 @@
 #include <functional>
 #include <windows.h>
 
-// UI_Button 클래스는 UI 요소로 버튼을 표현하며,
-// 배경색, 테두리 색상, 텍스트 색상, 폰트 크기를 설정할 수 있습니다.
+
+// 배경색, 테두리 색상, 텍스트 색상, 폰트 크기를 설정가능
 class UI_Button : public UI {
 public:
     // 클릭 시 실행할 콜백 함수

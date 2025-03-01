@@ -9,7 +9,7 @@ UI_Text::UI_Text(const std::wstring& text, const RECT& rect)
 
 void UI_Text::Update(float deltaTime)
 {
-    // 정적 텍스트인 경우 업데이트할 내용이 없으면 그대로 둡니다.
+
 }
 
 void UI_Text::Render(HDC hdc)
@@ -25,7 +25,7 @@ void UI_Text::Render(HDC hdc)
         SetBkColor(hdc, m_textBkColor);
     }
 
-    // 폰트 생성: m_fontSize를 사용하여 폰트 크기를 지정합니다.
+    // 폰트 생성: m_fontSize를 사용하여 폰트 크기를 지정
     HFONT hFont = CreateFont(
         m_fontSize,                // 글자 높이
         0,                         // 글자 폭 (0이면 기본값)
