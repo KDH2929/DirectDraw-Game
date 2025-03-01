@@ -34,8 +34,10 @@ public:
 
     // 현재 몬스터는 AABB Collider임을 가정하고 사용
     // 추후 MonsterAI 클래스를 만들어 기능분리하면 좋을 듯
-    virtual bool CheckLeftWall();
-    virtual bool CheckRightWall();
+    virtual bool CheckLeftObject();
+    virtual bool CheckRightObject();
+    virtual bool CheckForwardObject();
+
     virtual bool CheckGround();
     virtual bool CheckForwardGround();
     Character* DetectPlayer(float rayDistance);

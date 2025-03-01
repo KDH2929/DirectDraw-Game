@@ -9,6 +9,7 @@
 #include "../Util/QueryPerfCounter.h"
 #include "../ImageData/ImageData.h"
 #include "Game.h"
+#include "InputManager.h"
 
 #define MAX_LOADSTRING 100
 
@@ -241,12 +242,44 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 
 			}
 			break;
-			/*case WM_KEYDOWN:
-	  case WM_SYSKEYDOWN:
-		  if (wParam == VK_RETURN)
+		/*
+		case WM_SYSKEYDOWN:
+			if (wParam == VK_RETURN)
 			  if ((HIWORD(lParam) & KF_ALTDOWN))
 				  ToggleFullscreen();
-		  break;*/
+			break;
+		*/
+
+		case WM_MOUSEMOVE:
+		{
+			int xPos = GET_X_LPARAM(lParam);
+			int yPos = GET_Y_LPARAM(lParam);
+			if (g_pGame)
+			{
+				g_pGame->OnMouseMove(xPos, yPos);
+			}
+		}
+		break;
+
+		case WM_LBUTTONDOWN:
+		{
+			if (g_pGame)
+			{
+				// 왼쪽 버튼 클릭
+				g_pGame->OnMouseDown(MouseButton::Left);
+			}
+		}
+		break;
+
+		case WM_LBUTTONUP:
+		{
+			if (g_pGame)
+			{
+				// 왼쪽 버튼 클릭 해제
+				g_pGame->OnMouseUp(MouseButton::Left);
+			}
+		}
+		break;
 
 		case WM_PAINT:
 			{

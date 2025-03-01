@@ -283,7 +283,7 @@ bool TileMap2D::ReadLayer(FILE* file, std::string layername)
 
 				newTile->SetCollider(tileCollider);
 
-				ColliderManager::GetInstance().AddCollider(newTile->GetCollider());
+				ColliderManager::GetInstance()->AddCollider(newTile->GetCollider());
 
 				m_BlockLayer.push_back(newTile);
 			}
@@ -332,8 +332,6 @@ bool TileMap2D::ReadLayer(FILE* file, std::string layername)
 				newTile->SetPosition(pos);
 
 				m_BackGroundLayer.push_back(newTile);
-
-				std::cout << "22" << '\n';
 			}
 			else
 			{

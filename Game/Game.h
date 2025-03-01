@@ -1,16 +1,11 @@
 #pragma once
 #include "DebugManager.h"
-#include "Monster.h"
-#include "MathUtils.h"
-#include "ColliderManager.h"
+#include "InputManager.h"
+#include <windows.h>
 
 // 전방 선언
-class CTGAImage;
-class CImageData;
-class Character;   // 플레이어 캐릭터
 class CDDrawDevice;
-class TileMap2D;
-
+class SceneManager;
 
 class CGame
 {
@@ -25,18 +20,12 @@ public:
     void OnKeyDown(UINT nChar, UINT uiScanCode);
     void OnKeyUp(UINT nChar, UINT uiScanCode);
     BOOL OnSysKeyDown(UINT nChar, UINT uiScanCode, BOOL bAltKeyDown);
+    void OnMouseMove(int x, int y);
+    void OnMouseDown(MouseButton button);
+    void OnMouseUp(MouseButton button);
     void OnUpdateWindowSize();
     void OnUpdateWindowPos();
     BOOL CaptureBackBuffer(const char* szFileName);
-
-private:
-    void UpdateGameFrame(ULONGLONG currentTick);
-    void UpdatePosition(float deltaTime, int screenWidth, int screenHeight);
-    void UpdateCamera(int screenWidth, int screenHeight);
-    void InterpolatePosition(float alpha);
-    void ResetInterpolation();
-
-    void DrawScene();
 
 
 private:
@@ -49,27 +38,7 @@ private:
     ULONGLONG m_prevFrameTick = 0;
     LARGE_INTEGER m_prevCounter = {};
 
-    // 이미지 리소스들 (반드시 동적할당 후 해제 할 것!!)
-    CImageData* m_pPlayerImgData = nullptr;
-    CImageData* m_pCentipedeImgData = nullptr;
-    CTGAImage* m_pBackgroundImage = nullptr;
-    
-    TileMap2D* m_TileMap = nullptr;
-
-    int m_bgWidth = 0;
-    int m_bgHeight = 0;
-
-    // 카메라 처리
-    int m_cameraOffsetX = 0;
-    int m_cameraOffsetY = 0;
-    int m_playerRenderX = 0;
-    int m_playerRenderY = 0;
-    int m_backgroundPosX = 0;
-    int m_backgroundPosY = 0;
-
-    Character* m_pPlayer = nullptr;
-    std::vector<Monster*> m_vMonsters;
-
+    SceneManager* m_pSceneManager = nullptr;
 };
 
 extern CGame* g_pGame;

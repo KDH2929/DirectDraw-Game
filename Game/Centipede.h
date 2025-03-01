@@ -66,8 +66,6 @@ private:
     float m_verticalVelocity;
     const float GRAVITY_ACCEL = 0.0015f;
 
-    bool m_LeftWallDetected = false;
-    bool m_RightWallDetected = false;
     bool m_isGrounded = false;
 
 

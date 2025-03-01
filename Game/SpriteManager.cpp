@@ -1,5 +1,6 @@
 #include "stdafx.h"
 #include "SpriteManager.h"
+#include "DebugManager.h"
 
 SpriteManager::SpriteManager()
     : m_spriteSheet(nullptr), m_frameWidth(0), m_frameHeight(0)
@@ -8,10 +9,14 @@ SpriteManager::SpriteManager()
 
 SpriteManager::~SpriteManager()
 {
+    /*
+    여기서 할당해제하고 nullptr로 바꾸면 안됨
     if (m_spriteSheet) {
         delete m_spriteSheet;
         m_spriteSheet = nullptr;
     }
+    */
+
 }
 
 bool SpriteManager::SetSpriteSheet(CImageData* spriteSheet, int frameWidth, int frameHeight)
@@ -19,13 +24,13 @@ bool SpriteManager::SetSpriteSheet(CImageData* spriteSheet, int frameWidth, int 
     if (!spriteSheet || frameWidth <= 0 || frameHeight <= 0)
         return false;
 
-    // 기존 스프라이트 시트가 있다면 해제
     if (m_spriteSheet) {
         delete m_spriteSheet;
         m_spriteSheet = nullptr;
     }
 
-    m_spriteSheet = spriteSheet;
+    m_spriteSheet = spriteSheet;        // 단순 참조만 유지할 것
+
     m_frameWidth = frameWidth;
     m_frameHeight = frameHeight;
 

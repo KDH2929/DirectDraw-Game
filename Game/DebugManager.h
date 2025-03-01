@@ -1,9 +1,20 @@
 #pragma once
+#include "MathUtils.h"
 #include <string>
 #include <vector>
 #include <Windows.h>
-#include "MathUtils.h"
 #include <cmath>
+#include <codecvt>
+#include <locale>
+#include <mutex>
+
+
+#define LOG_MESSAGE(msg) \
+    DebugManager::GetInstance()->LogMessage( \
+        std::wstring(L"[") + \
+        std::wstring_convert<std::codecvt_utf8_utf16<wchar_t>>().from_bytes(__FUNCTION__) + \
+        L"] " + std::wstring(msg))
+
 
 // 기존 DebugMessage 구조체
 struct DebugMessage {
@@ -53,10 +64,11 @@ struct DebugLine {
 
 class DebugManager {
 public:
-    static DebugManager& GetInstance() {
-        static DebugManager instance;
-        return instance;
-    }
+    // 포인터 기반 싱글톤 인스턴스 접근 함수
+    static DebugManager* GetInstance();
+
+    // 인스턴스 해제 함수
+    static void DestroyInstance();
 
     // 화면에 메시지를 표시하는 함수 (duration은 초 단위)
     void AddOnScreenMessage(const std::wstring& msg, float duration);
@@ -67,6 +79,8 @@ public:
     void AddDebugBox(const DebugBox& box);
     void AddDebugLine(const DebugLine& line);
 
+    void ClearAllDebugData();
+
     void Update(float deltaTime);
     void Render(HDC hDC);
 
@@ -76,9 +90,13 @@ private:
     DebugManager(const DebugManager&) = delete;
     DebugManager& operator=(const DebugManager&) = delete;
 
+    static DebugManager* s_instance;
+
     std::vector<DebugMessage> m_messages;
     std::vector<DebugBox> m_debugBoxes;
     std::vector<DebugLine> m_debugLines;
+
+    std::mutex logMutex;
 
     Vector2<float> m_cameraOffset = Vector2<float>(0.0f, 0.0f);
 };

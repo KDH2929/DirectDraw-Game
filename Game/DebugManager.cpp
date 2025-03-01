@@ -1,21 +1,70 @@
 #include "stdafx.h"
 #include "DebugManager.h"
-#include <iostream>
+#include <direct.h>     // _mkdir
+#include <time.h>
 #include <fcntl.h>
 #include <io.h>
+#include <iostream>
 
-// 생성자: 콘솔 창 할당 및 표준 출력 리다이렉트 (옵션)
+// 초기 정적 포인터 선언
+DebugManager* DebugManager::s_instance = nullptr;
+
+
+// 생성자: 로그 파일 할당 및 표준 출력 리다이렉트 (옵션)
+// Log 디렉토리에 현재 날짜/시간을 이름으로 한 텍스트 파일로 리다이렉트
 DebugManager::DebugManager() {
-    //AllocConsole();           // 주석 비활성화시 콘솔창 생성
+    // 콘솔 출력 옵션 (필요시 사용, 주석 처리됨)
+    /*
+    AllocConsole();
     FILE* fpOut = nullptr;
     if (freopen_s(&fpOut, "CONOUT$", "w", stdout) == 0) {
-        _setmode(_fileno(stdout), _O_U16TEXT);
+        //_setmode(_fileno(stdout), _O_U16TEXT);
     }
+    */
+
+    // "Log" 디렉토리 생성 (존재하지 않으면)
+    const char* logDir = "Log";
+    _mkdir(logDir); // Windows에서 디렉토리 생성
+
+    // 현재 날짜와 시간을 기반으로 파일 이름 생성
+    time_t now = time(NULL);
+    struct tm localTime;
+    localtime_s(&localTime, &now); // thread-safe 버전
+    char fileName[256];
+    // 예: Log/Log_2023-04-15_12-30-45.txt
+    sprintf_s(fileName, sizeof(fileName), "%s/Log_%04d-%02d-%02d_%02d-%02d-%02d.txt",
+        logDir,
+        localTime.tm_year + 1900,
+        localTime.tm_mon + 1,
+        localTime.tm_mday,
+        localTime.tm_hour,
+        localTime.tm_min,
+        localTime.tm_sec);
+
+    // 표준 출력을 생성한 로그 파일로 리다이렉트
+    FILE* fpOut = nullptr;
+    if (freopen_s(&fpOut, fileName, "w", stdout) == 0) {
+        // 파일에 쓰는 경우에는 _setmode(_fileno(stdout), _O_U16TEXT)를 호출하지 않는 것이 안전
+    }   
 }
 
-// 소멸자: 콘솔 해제
+
 DebugManager::~DebugManager() {
     FreeConsole();
+}
+
+DebugManager* DebugManager::GetInstance()
+{
+    if (!s_instance) {
+        s_instance = new DebugManager();
+    }
+    return s_instance;
+}
+
+void DebugManager::DestroyInstance()
+{
+    delete s_instance;
+    s_instance = nullptr;
 }
 
 // 화면에 메시지를 표시하는 함수
@@ -29,9 +78,14 @@ void DebugManager::AddOnScreenMessage(const std::wstring& msg, float duration) {
 
 // 콘솔/디버그 출력에 메시지를 기록하는 함수
 void DebugManager::LogMessage(const std::wstring& msg) {
+    std::lock_guard<std::mutex> lock(logMutex);  // 한 번에 하나의 스레드만 실행
+
     OutputDebugStringW(msg.c_str());
     OutputDebugStringW(L"\n");
+
     std::wcout << msg << std::endl;
+
+    // std::lock_guard<std::mutex>는 함수가 끝날 때 자동으로 mutex.unlock()을 호출
 }
 
 void DebugManager::SetCameraOffset(Vector2<float> cameraOffset)
@@ -47,6 +101,13 @@ void DebugManager::AddDebugBox(const DebugBox& box)
 void DebugManager::AddDebugLine(const DebugLine& line)
 {
     m_debugLines.push_back(line);
+}
+
+void DebugManager::ClearAllDebugData()
+{
+    m_messages.clear();
+    m_debugBoxes.clear();
+    m_debugLines.clear();
 }
 
 void DebugManager::Update(float deltaTime) {

@@ -1,6 +1,7 @@
 #pragma once
 #include <vector>
 #include <Windows.h>
+#include <memory>
 #include "../ImageData/ImageData.h"
 
 struct SpriteFrame {

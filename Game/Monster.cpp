@@ -33,12 +33,12 @@ void Monster::SetForwardVector(Vector2<float> forwardVec)
     m_forwardVec = forwardVec;
 }
 
-bool Monster::CheckLeftWall()
+bool Monster::CheckLeftObject()
 {
     // 벽 Raycast 검사를 위한 설정
-    const float wallCheckDistance = 0.3f;
-    float wallHitDistance = 0.0f;
-    const float wallCheckRayOffsetY = 5.0f;
+    const float ObjectCheckDistance = 0.3f;
+    float ObjectHitDistance = 0.0f;
+    const float ObjectCheckRayOffsetY = 5.0f;
 
     Collider* curCollider = GetCollider();
 
@@ -50,15 +50,15 @@ bool Monster::CheckLeftWall()
             int top = aabb->GetY();
             int bottom = aabb->GetY() + aabb->GetHeight();
 
-            Vector2<float> topLeft(static_cast<float>(left), static_cast<float>(top) + wallCheckRayOffsetY);
-            Vector2<float> bottomLeft(static_cast<float>(left), static_cast<float>(bottom) - wallCheckRayOffsetY);
+            Vector2<float> topLeft(static_cast<float>(left), static_cast<float>(top) + ObjectCheckRayOffsetY);
+            Vector2<float> bottomLeft(static_cast<float>(left), static_cast<float>(bottom) - ObjectCheckRayOffsetY);
 
 
             // 좌측의 경우, 좌상단과 좌하단에서 왼쪽으로 Ray를 쏨
             Ray leftRayFromTop(topLeft, Vector2<float>(-1.0f, 0.0f));
             Ray leftRayFromBottom(bottomLeft, Vector2<float>(-1.0f, 0.0f));
 
-            const auto& colliders = ColliderManager::GetInstance().GetAllColliders();
+            const auto& colliders = ColliderManager::GetInstance()->GetAllColliders();
 
             // 자기자신 Collider는 무시
             CollisionLayer queryMask = DEFAULT_COLLISION_LAYER_MASK & ~MONSTER_COLLISION_LAYER;
@@ -72,11 +72,11 @@ bool Monster::CheckLeftWall()
                     //continue;
                 }
 
-                if (CollisionQuery::Raycast(leftRayFromTop, collider, wallCheckDistance, wallHitDistance, queryMask)) {
+                if (CollisionQuery::Raycast(leftRayFromTop, collider, ObjectCheckDistance, ObjectHitDistance, queryMask)) {
                     return true;
                 }
 
-                if (CollisionQuery::Raycast(leftRayFromBottom, collider, wallCheckDistance, wallHitDistance, queryMask)) {
+                if (CollisionQuery::Raycast(leftRayFromBottom, collider, ObjectCheckDistance, ObjectHitDistance, queryMask)) {
                     return true;
                 }
             }
@@ -86,13 +86,13 @@ bool Monster::CheckLeftWall()
     return false;
 }
 
-bool Monster::CheckRightWall()
+bool Monster::CheckRightObject()
 {
     Collider* curCollider = GetCollider();
 
-    const float wallCheckDistance = 0.3f;
-    const float wallCheckRayOffsetY = 5.0f;
-    float wallHitDistance = 0.0f;
+    const float ObjectCheckDistance = 0.3f;
+    const float ObjectCheckRayOffsetY = 5.0f;
+    float ObjectHitDistance = 0.0f;
 
 
     if (curCollider) {
@@ -104,15 +104,15 @@ bool Monster::CheckRightWall()
             int bottom = aabb->GetY() + aabb->GetHeight();
 
 
-            Vector2<float> topRight(static_cast<float>(right), static_cast<float>(top) + wallCheckRayOffsetY);
-            Vector2<float> bottomRight(static_cast<float>(right), static_cast<float>(bottom) - wallCheckRayOffsetY);
+            Vector2<float> topRight(static_cast<float>(right), static_cast<float>(top) + ObjectCheckRayOffsetY);
+            Vector2<float> bottomRight(static_cast<float>(right), static_cast<float>(bottom) - ObjectCheckRayOffsetY);
 
 
             Ray rightRayFromTop(topRight, Vector2<float>(1.0f, 0.0f));
             Ray rightRayFromBottom(bottomRight, Vector2<float>(1.0f, 0.0f));
 
 
-            const auto& colliders = ColliderManager::GetInstance().GetAllColliders();
+            const auto& colliders = ColliderManager::GetInstance()->GetAllColliders();
 
             // 자기자신 Collider는 무시
             CollisionLayer queryMask = DEFAULT_COLLISION_LAYER_MASK & ~MONSTER_COLLISION_LAYER;
@@ -127,15 +127,31 @@ bool Monster::CheckRightWall()
                 }
 
 
-                if (CollisionQuery::Raycast(rightRayFromTop, collider, wallCheckDistance, wallHitDistance, queryMask)) {
+                if (CollisionQuery::Raycast(rightRayFromTop, collider, ObjectCheckDistance, ObjectHitDistance, queryMask)) {
                     return true;
                 }
 
-                if (CollisionQuery::Raycast(rightRayFromBottom, collider, wallCheckDistance, wallHitDistance, queryMask)) {
+                if (CollisionQuery::Raycast(rightRayFromBottom, collider, ObjectCheckDistance, ObjectHitDistance, queryMask)) {
                     return true;
                 }
             }
         }
+    }
+
+    return false;
+}
+
+bool Monster::CheckForwardObject()
+{
+    const Vector2<float> forward = GetForwardVector();
+
+    if (forward.x < 0)
+    {
+        return CheckLeftObject();
+    }
+    else if (forward.x > 0)
+    {
+        return CheckRightObject();
     }
 
     return false;
@@ -167,7 +183,7 @@ bool Monster::CheckGround()
             // 자기자신 Collider는 무시
             CollisionLayer queryMask = DEFAULT_COLLISION_LAYER_MASK & ~MONSTER_COLLISION_LAYER;
 
-            const auto& colliders = ColliderManager::GetInstance().GetAllColliders();
+            const auto& colliders = ColliderManager::GetInstance()->GetAllColliders();
             for (Collider* collider : colliders) {
                 if (collider == curCollider)
                     continue;
@@ -226,10 +242,10 @@ bool Monster::CheckForwardGround() {
     // 아래 방향으로 Raycast (방향: (0,1))
     Ray forwardGroundRay(origin, Vector2<float>(0.0f, 1.0f));
 
-    const float groundThreshold = 20.0f;
+    const float groundThreshold = 500.0f;
     float groundHitDistance = 0.0f;
     CollisionLayer queryMask = DEFAULT_COLLISION_LAYER_MASK & ~MONSTER_COLLISION_LAYER;
-    const auto& colliders = ColliderManager::GetInstance().GetAllColliders();
+    const auto& colliders = ColliderManager::GetInstance()->GetAllColliders();
 
     for (Collider* collider : colliders) {
         if (collider == curCollider)
@@ -254,7 +270,7 @@ Character* Monster::DetectPlayer(float rayDistance) {
     Ray detectRay(origin, forward);
     CollisionLayer queryMask = CHARACTER_COLLISION_LAYER & ~MONSTER_COLLISION_LAYER;
 
-    const auto& colliders = ColliderManager::GetInstance().GetAllColliders();
+    const auto& colliders = ColliderManager::GetInstance()->GetAllColliders();
     for (Collider* collider : colliders) {
         // 자기 자신의 Collider는 무시
         if (collider == GetCollider())
@@ -265,8 +281,7 @@ Character* Monster::DetectPlayer(float rayDistance) {
 
         // DebugLine 생성: 시작점은 origin, 끝점은 hitPoint, 색상은 빨간색, 두께 2, 지속시간 0.5초
         DebugLine debugLine(origin, hitPoint, RGB(255, 0, 0), 2, 0.03f);
-        DebugManager::GetInstance().AddDebugLine(debugLine);
-
+        DebugManager::GetInstance()->AddDebugLine(debugLine);
 
 
         if (CollisionQuery::Raycast(detectRay, collider, rayDistance, hitDistance, queryMask)) {
@@ -278,11 +293,11 @@ Character* Monster::DetectPlayer(float rayDistance) {
               
                 // Dynamic cast는 캐스팅 실패 시 nullptr 이라는 점을 활용
 
-                DebugManager::GetInstance().AddOnScreenMessage(L"Player Detected!", 1.0f);
+                DebugManager::GetInstance()->AddOnScreenMessage(L"Player Detected!", 1.0f);
 
 
                 DebugLine debugLineHit(origin, hitPoint, RGB(0, 255, 0), 3, 2.0f);
-                DebugManager::GetInstance().AddDebugLine(debugLineHit);
+                DebugManager::GetInstance()->AddDebugLine(debugLineHit);
 
                 return DetectedObject;
             }

@@ -36,6 +36,7 @@ Character::~Character()
         delete m_spriteManager;
         m_spriteManager = nullptr;
     }
+
     if (m_anim) {
         delete m_anim;
         m_anim = nullptr;
@@ -121,7 +122,7 @@ void Character::ProcessInput()
     if (InputManager::GetInstance().IsDoublePressedLeft() && !m_isDashing) {
         // 대시 입력은 기존상태를 캔슬하고 대시 상태로 전환
 
-        DebugManager::GetInstance().AddOnScreenMessage(L"LeftKey is double preseed", 3.0f);
+        DebugManager::GetInstance()->AddOnScreenMessage(L"LeftKey is double preseed", 3.0f);
         m_isAttacking = false;
         m_isDashing = true;
         m_anim->SetState(CharacterAnimState::Dash);
@@ -131,7 +132,7 @@ void Character::ProcessInput()
     if (InputManager::GetInstance().IsDoublePressedRight() && !m_isDashing) {
         // 대시 입력은 공격 상태를 캔슬하고 대시 상태로 전환
 
-        DebugManager::GetInstance().AddOnScreenMessage(L"RightKey is double preseed", 3.0f);
+        DebugManager::GetInstance()->AddOnScreenMessage(L"RightKey is double preseed", 3.0f);
         m_isAttacking = false;
         m_isDashing = true;
         m_anim->SetState(CharacterAnimState::Dash);
@@ -140,7 +141,7 @@ void Character::ProcessInput()
 
     // 점프 입력 처리 (X 키, 땅에 닿은 상태에서만)
     if (InputManager::GetInstance().IsKeyPressed('X') && m_isGrounded) {
-        //DebugManager::GetInstance().AddOnScreenMessage(L"Key X is pressed", 5.0f);
+        //DebugManager::GetInstance()->AddOnScreenMessage(L"Key X is pressed", 5.0f);
         m_verticalVelocity = JUMP_VELOCITY;
         m_isGrounded = false;
     }
@@ -199,7 +200,7 @@ void Character::Update(float deltaTime)
 
     else {
 
-        // DebugManager::GetInstance().AddOnScreenMessage(L"Player is on ground", 5.0f);
+        // DebugManager::GetInstance()->AddOnScreenMessage(L"Player is on ground", 5.0f);
         m_verticalVelocity = 0;
     }
 
@@ -314,6 +315,7 @@ void Character::Render(CDDrawDevice* pDevice)
         Vector2<float> renderPos = GetRenderPosition();
         
         const float FLIP_RENDER_OFFSET_X = -50.0f;
+        
 
         if (GetForwardVector().x >= 0) {
             pDevice->DrawSprite(static_cast<int>(renderPos.x), static_cast<int>(renderPos.y),
@@ -378,10 +380,13 @@ bool Character::CheckLeftWall()
             Ray leftRayFromTop(topLeft, Vector2<float>(-1.0f, 0.0f));
             Ray leftRayFromBottom(bottomLeft, Vector2<float>(-1.0f, 0.0f));
 
-            const auto& colliders = ColliderManager::GetInstance().GetAllColliders();
+            const auto& colliders = ColliderManager::GetInstance()->GetAllColliders();
 
             // 자기자신 Collider는 무시
             CollisionLayer queryMask = DEFAULT_COLLISION_LAYER_MASK & ~CHARACTER_COLLISION_LAYER;
+
+            // Overlap 객체도 무시
+            queryMask = queryMask & ~OVERLAP_COLLISION_LAYER;
 
             for (Collider* collider : colliders) {
                 if (collider == curCollider)
@@ -432,10 +437,13 @@ bool Character::CheckRightWall()
             Ray rightRayFromBottom(bottomRight, Vector2<float>(1.0f, 0.0f));
 
 
-            const auto& colliders = ColliderManager::GetInstance().GetAllColliders();
+            const auto& colliders = ColliderManager::GetInstance()->GetAllColliders();
 
             // 자기자신 Collider는 무시
             CollisionLayer queryMask = DEFAULT_COLLISION_LAYER_MASK & ~CHARACTER_COLLISION_LAYER;
+
+            // Overlap 객체도 무시
+            queryMask = queryMask & ~OVERLAP_COLLISION_LAYER;
 
             for (Collider* collider : colliders) {
                 if (collider == curCollider)
@@ -486,7 +494,7 @@ bool Character::CheckGround(float& groundHitDistance)
             // 자기자신 Collider는 무시
             CollisionLayer queryMask = DEFAULT_COLLISION_LAYER_MASK & ~CHARACTER_COLLISION_LAYER;
 
-            const auto& colliders = ColliderManager::GetInstance().GetAllColliders();
+            const auto& colliders = ColliderManager::GetInstance()->GetAllColliders();
             for (Collider* collider : colliders) {
                 if (collider == curCollider)
                     continue;
@@ -543,7 +551,7 @@ void Character::Attack(CharacterAttackType attackType)
 
     int attackTypeNum = static_cast<int>(attackType);
 
-    DebugManager::GetInstance().AddOnScreenMessage(L"AttackType: " + (std::to_wstring(attackTypeNum)), 0.8f);
+    DebugManager::GetInstance()->AddOnScreenMessage(L"AttackType: " + (std::to_wstring(attackTypeNum)), 0.8f);
 
     AABBCollider* curCollider = static_cast<AABBCollider*>(this->GetCollider());
 
@@ -586,13 +594,13 @@ void Character::Attack(CharacterAttackType attackType)
 
 
     DebugBox debugBox(boxCenter, boxWidth, boxHeight, boxRotation, RGB(255, 0, 0), 2.0f);
-    DebugManager::GetInstance().AddDebugBox(debugBox);
+    DebugManager::GetInstance()->AddDebugBox(debugBox);
 
 
     // 자기자신의 Collider는 무시
     CollisionLayer queryMask = DEFAULT_COLLISION_LAYER_MASK & ~CHARACTER_COLLISION_LAYER;
 
-    const auto& colliders = ColliderManager::GetInstance().GetAllColliders();
+    const auto& colliders = ColliderManager::GetInstance()->GetAllColliders();
     for (Collider* collider : colliders) {
 
         if (CollisionQuery::OverlapBox(boxCenter, boxWidth, boxHeight, boxRotation, collider, queryMask)) {
@@ -616,7 +624,7 @@ void Character::Dead()
 
     m_anim->SetState(CharacterAnimState::Death);
     GetCollider()->SetCollisionResponse(CollisionResponse::Ignore);
-    DebugManager::GetInstance().AddOnScreenMessage(L"Character Dead!", 2.0f);
+    DebugManager::GetInstance()->AddOnScreenMessage(L"Character Dead!", 2.0f);
 }
 
 
@@ -628,6 +636,7 @@ void Character::InitCollider(float x, float y, float width, float height)
     Vector2<float> pos = GetTransform().position;
     m_pCollider = new AABBCollider(this, x, y, width, height);
     m_pCollider->SetCollisionLayer(CHARACTER_COLLISION_LAYER);
+    ColliderManager::GetInstance()->AddCollider(GetCollider());
 }
 
 
@@ -645,7 +654,7 @@ void Character::InitAnimation()
 {
     if (!m_spriteManager)
     {
-        DebugManager::GetInstance().AddOnScreenMessage(L"SpriteManager is not initialized in Character::InitAnimation()", 20.0f);
+        DebugManager::GetInstance()->AddOnScreenMessage(L"SpriteManager is not initialized in Character::InitAnimation()", 20.0f);
     }
 
     if (m_anim)
@@ -725,7 +734,7 @@ void Character::InitAnimation()
     // 애니메이션 시퀀스 목록 설정
     m_anim->SetSequences(sequences);
 
-    m_firstAttackEndFrame = m_anim->GetSequence(CharacterAnimState::Attack)->endFrame - 2;
+    m_firstAttackEndFrame = m_anim->GetSequence(CharacterAnimState::Attack)->endFrame - 3;
     m_secondAttackEndFrame = m_firstAttackEndFrame + 2;
     m_DashEndFrame = m_anim->GetSequence(CharacterAnimState::Dash)->endFrame;
     m_DashAttackEndFrame = m_anim->GetSequence(CharacterAnimState::DashAttack)->endFrame;

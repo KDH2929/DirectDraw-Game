@@ -27,11 +27,11 @@ struct CollisionInfo {
 
 class ColliderManager {
 public:
-    // 싱글톤 인스턴스 접근 함수
-    static ColliderManager& GetInstance() {
-        static ColliderManager instance;
-        return instance;
-    }
+    // 포인터 기반 싱글톤 인스턴스 접근 함수
+    static ColliderManager* GetInstance();
+
+    void Initialize();      // Stage 시작 시 호출
+    static void DestroyInstance();      // Stage 종료 시 호출
 
     ColliderManager(const ColliderManager&) = delete;
     ColliderManager& operator=(const ColliderManager&) = delete;
@@ -51,5 +51,8 @@ private:
     ColliderManager();
     ~ColliderManager();
 
+    static ColliderManager* s_instance;
+
     std::vector<Collider*> m_colliders;
+
 };

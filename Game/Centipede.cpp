@@ -67,7 +67,7 @@ void Centipede::Update(float deltaTime) {
         UpdateAnimFSM();
     }
 
-    GameObject::Update(deltaTime);
+    Monster::Update(deltaTime);
 }
 
 void Centipede::Render(CDDrawDevice* pDevice) {
@@ -94,7 +94,7 @@ void Centipede::Render(CDDrawDevice* pDevice) {
         }
     }
 
-    GameObject::Render(pDevice);
+    Monster::Render(pDevice);
 }
 
 
@@ -134,6 +134,7 @@ void Centipede::InitCollider(int x, int y, int width, int height) {
     Vector2<float> pos = GetTransform().position;
     m_pCollider = new AABBCollider(this, x, y, width, height);
     m_pCollider->SetCollisionLayer(MONSTER_COLLISION_LAYER);
+    ColliderManager::GetInstance()->AddCollider(GetCollider());
 }
 
 void Centipede::InitSpriteManager(CImageData* spriteSheet, int frameWidth, int frameHeight) {
@@ -146,7 +147,7 @@ void Centipede::InitSpriteManager(CImageData* spriteSheet, int frameWidth, int f
 
 void Centipede::InitAnimation() {
     if (!m_spriteManager) {
-        DebugManager::GetInstance().AddOnScreenMessage(L"SpriteManager is not initialized in Centipede::InitAnimation()", 20.0f);
+        DebugManager::GetInstance()->AddOnScreenMessage(L"SpriteManager is not initialized in Centipede::InitAnimation()", 20.0f);
     }
 
     if (m_anim)
@@ -254,14 +255,13 @@ void Centipede::UpdateAI(float deltaTime) {
     m_attackDelay = 2.0f * SEC_TO_MS;
 
     // 몬스터가 향하는 방향에 벽이 있는지 판정
-    bool leftWallDetected = (CheckLeftWall() && (GetForwardVector().x < 0.0f));
-    bool rightWallDetected = (CheckRightWall() && (GetForwardVector().x > 0.0f));
+    bool forwardObjectDetected = CheckForwardObject();
 
     /*
-    std::wstring WallDetectMessage = L"LeftWall: " + std::wstring(leftWallDetected ? L"true" : L"false") +
-        L", RightWall: " + std::wstring(rightWallDetected ? L"true" : L"false");
+    std::wstring ObjectDetectMessage = L"LeftObject: " + std::wstring(leftObjectDetected ? L"true" : L"false") +
+        L", RightObject: " + std::wstring(rightObjectDetected ? L"true" : L"false");
 
-    DebugManager::GetInstance().AddOnScreenMessage(WallDetectMessage, 0.03f);
+    DebugManager::GetInstance()->AddOnScreenMessage(ObjectDetectMessage, 0.03f);
     */
  
     if (m_attackDelayTimer <= 0.0f && m_AIState != MonsterAIState::Chase && m_AIState != MonsterAIState::Attack) {
@@ -290,7 +290,7 @@ void Centipede::UpdateAI(float deltaTime) {
             m_currentWaitTimer -= deltaTime;
         }
         else {
-            if (!CheckForwardGround() || leftWallDetected || rightWallDetected) {
+            if (!CheckForwardGround() || forwardObjectDetected) {
                 m_AIState = MonsterAIState::Turn;
             }
             else {
@@ -304,7 +304,7 @@ void Centipede::UpdateAI(float deltaTime) {
     case MonsterAIState::Move:
     {
         // 이동 처리
-        if (!CheckForwardGround() || leftWallDetected || rightWallDetected) {
+        if (!CheckForwardGround() || forwardObjectDetected) {
             m_speed = 0;
             m_AIState = MonsterAIState::Wait;
             m_currentWaitTimer = m_waitTime;        // waitTime만큼 대기
@@ -364,10 +364,10 @@ void Centipede::UpdateAI(float deltaTime) {
         break;
     }
 
-    // 디버그 메시지 출력
+    /*
     std::wstring AIStateMessage = L"MonsterState: " + MonsterAIStateToWString(m_AIState);
-    DebugManager::GetInstance().AddOnScreenMessage(AIStateMessage, 0.03f);
-
+    DebugManager::GetInstance()->AddOnScreenMessage(AIStateMessage, 0.03f);
+    */
 
 }
 
@@ -388,10 +388,10 @@ void Centipede::Attack() {
 
     // 디버그 용 박스
     DebugBox debugBox(boxCenter, boxWidth, boxHeight, boxRotation, RGB(255, 255, 0), 2.0f);
-    DebugManager::GetInstance().AddDebugBox(debugBox);
+    DebugManager::GetInstance()->AddDebugBox(debugBox);
 
     CollisionLayer queryMask = CHARACTER_COLLISION_LAYER & ~MONSTER_COLLISION_LAYER;
-    const auto& colliders = ColliderManager::GetInstance().GetAllColliders();
+    const auto& colliders = ColliderManager::GetInstance()->GetAllColliders();
     for (Collider* collider : colliders) {
         if (collider == curCollider)
             continue;
@@ -465,7 +465,7 @@ void Centipede::Chase()
     // 플레이어의 위치는 pos를 기준으로 업데이트
     Vector2<float> pos = GetPosition();
 
-    if (CheckForwardGround())
+    if (CheckForwardGround() && !CheckForwardObject())
     {
         pos += (m_speed * GetForwardVector());
         SetPosition(pos);
@@ -474,7 +474,7 @@ void Centipede::Chase()
 
     // 디버그: 플레이어와의 거리 출력
     std::wstring chaseMsg = L"Chasing: Distance = " + std::to_wstring(distance);
-    DebugManager::GetInstance().AddOnScreenMessage(chaseMsg, 0.03f);
+    DebugManager::GetInstance()->AddOnScreenMessage(chaseMsg, 0.03f);
 }
 
 
@@ -487,5 +487,5 @@ void Centipede::Dead()
 
     m_anim->SetState(CentipedeAnimState::Death);
     GetCollider()->SetCollisionResponse(CollisionResponse::Ignore);
-    DebugManager::GetInstance().AddOnScreenMessage(L"Centipede Dead!", 2.0f);
+    DebugManager::GetInstance()->AddOnScreenMessage(L"Centipede Dead!", 2.0f);
 }

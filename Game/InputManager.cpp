@@ -100,6 +100,12 @@ void InputManager::Update(float deltaTime) {
         m_prevKeyStates[i] = m_keyStates[i];
     }
 
+    // 이전 프레임의 마우스 상태 저장
+    for (int i = 0; i < 3; ++i)
+    {
+        m_prevMouseButtonStates[i] = m_mouseButtonStates[i];
+    }
+
 }
 
 
@@ -109,4 +115,52 @@ bool InputManager::IsDoublePressedLeft() const {
 
 bool InputManager::IsDoublePressedRight() const {
     return m_rightKeyDoublePressed;
+}
+
+void InputManager::OnMouseMove(int x, int y)
+{
+    m_mouseX = x;
+    m_mouseY = y;
+}
+
+void InputManager::OnMouseDown(MouseButton button)
+{
+    int index = static_cast<int>(button);
+    if (index < 3) {
+        m_mouseButtonStates[index] = true;
+    }
+}
+
+void InputManager::OnMouseUp(MouseButton button)
+{
+    int index = static_cast<int>(button);
+    if (index < 3) {
+        m_mouseButtonStates[index] = false;
+    }
+}
+
+int InputManager::GetMouseX() const
+{
+    return m_mouseX;
+}
+
+int InputManager::GetMouseY() const {
+    return m_mouseY;
+}
+
+bool InputManager::IsMouseButtonDown(MouseButton button) const {
+    int index = static_cast<int>(button);
+    return (index < 3) ? m_mouseButtonStates[index] : false;
+}
+
+bool InputManager::IsMouseButtonUp(MouseButton button) const
+{
+    int index = static_cast<int>(button);
+    return (index < 3) ? !m_mouseButtonStates[index] : false;
+}
+
+bool InputManager::IsMouseButtonReleased(MouseButton button) const
+{
+    int index = static_cast<int>(button);
+    return (index < 3) ? (!m_mouseButtonStates[index] && m_prevMouseButtonStates[index]) : false;
 }

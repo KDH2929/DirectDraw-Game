@@ -7,6 +7,35 @@
 #include <sstream>
 #include <unordered_map>
 
+ColliderManager* ColliderManager::s_instance = nullptr;
+
+
+ColliderManager* ColliderManager::GetInstance() {
+    if (!s_instance) {
+        s_instance = new ColliderManager();
+    }
+    return s_instance;
+}
+
+
+// Scene 클래스의 Initialize에서 호출할 초기화 함수
+void ColliderManager::Initialize()
+{
+    if (s_instance)
+    {
+        delete s_instance;
+        s_instance = nullptr;
+    }
+
+    s_instance = new ColliderManager();
+}
+
+void ColliderManager::DestroyInstance()
+{
+    delete s_instance;
+    s_instance = nullptr;
+}
+
 
 ColliderManager::ColliderManager() {
 }
@@ -14,6 +43,7 @@ ColliderManager::ColliderManager() {
 ColliderManager::~ColliderManager() {
     ClearColliders();
 }
+
 
 void ColliderManager::AddCollider(Collider* collider) {
     m_colliders.push_back(collider);
@@ -27,9 +57,8 @@ void ColliderManager::RemoveCollider(Collider* collider) {
 }
 
 void ColliderManager::ClearColliders() {
-    for (auto collider : m_colliders) {
-        delete collider;
-    }
+
+    // 동적할당 해제는 Collider를 생성한 곳에서 관리할 것
     m_colliders.clear();
 }
 
