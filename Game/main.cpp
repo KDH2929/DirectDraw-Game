@@ -203,7 +203,10 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 			break;
 		case WM_KEYDOWN:
 			{
-				
+				// 0x00ff0000은 스캔 코드를 포함하는 부분
+				// lParam에서 16비트 위치에 스캔 코드가 저장되므로, 0x00ff0000을 & 연산자로 마스크하여 스캔 코드
+				// 스캔 코드가 lParam의 상위 16비트에 위치하고 있기 때문에, 이를 16비트만큼 오른쪽으로 이동시켜서 실제 스캔 코드만 추출
+				// MapVirtualKey : 스캔 코드를 가상 키 코드로 변환하여, 예를 들어 VK_A (가상 키 코드 A)나 VK_SHIFT와 같은 값을 반환
 				UINT	uiScanCode = (0x00ff0000 & lParam) >> 16;
 				UINT	vkCode = MapVirtualKey(uiScanCode, MAPVK_VSC_TO_VK);
 				if (!(lParam & 0x40000000))

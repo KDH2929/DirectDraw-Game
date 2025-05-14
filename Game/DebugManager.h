@@ -40,7 +40,7 @@ struct DebugBox {
     DebugBox(const Vector2<float>& _center, float _width, float _height, float _rotation,
         COLORREF _color = RGB(255, 0, 0), float _duration = 1.0f)
         : center(_center), width(_width), height(_height), rotation(_rotation),
-        color(_color), duration(_duration * 1000.0f), elapsed(0.0f) 
+        color(_color), duration(_duration * 1000.0f), elapsed(0.0f)
     {}
 };
 
@@ -59,7 +59,6 @@ struct DebugLine {
         duration(_duration * 1000.0f), elapsed(0.0f)
     {}
 };
-
 
 
 class DebugManager {
@@ -100,4 +99,3 @@ private:
 
     Vector2<float> m_cameraOffset = Vector2<float>(0.0f, 0.0f);
 };
-

@@ -74,7 +74,7 @@ namespace CollisionQuery {
             txmin = (aabbMin.x - ray.origin.x) / ray.direction.x;       // AABB Box의 x의 최솟값일 때의 t값 
             txmax = (aabbMax.x - ray.origin.x) / ray.direction.x;      // AABB Box의 y의 최솟값일 때의 t값
 
-            // swap에 의해 뒷 부분의 t_enter는 항상 왼쪽에서 시작하는 것으로 고려하면 됨
+            // swap에 의해 뒷 부분의 t_min는 항상 왼쪽에서 시작하는 것으로 고려하면 됨
             if (txmin > txmax)
             {
                 std::swap(txmin, txmax);
@@ -102,7 +102,7 @@ namespace CollisionQuery {
             tymin = (aabbMin.y - ray.origin.y) / ray.direction.y;       // AABB Box의 y의 최솟값일 때의 t값 
             tymax = (aabbMax.y - ray.origin.y) / ray.direction.y;      // AABB Box의 y의 최댓값일 때의 t값 
 
-            // swap에 의해 뒷 부분의 t_enter는 항상 왼쪽에서 시작하는 것으로 고려하면 됨
+            // swap에 의해 뒷 부분의 t_min는 항상 왼쪽에서 시작하는 것으로 고려하면 됨
             if (tymin > tymax) {
                 std::swap(tymin, tymax);
             }
@@ -130,21 +130,21 @@ namespace CollisionQuery {
         // tmin: AABB에 진입하는 순간의 매개변수 t값 (즉, AABB를 처음으로 만나는 지점)
         // tmax: AABB에서 이탈하는 순간의 매개변수 t값 (즉, AABB를 마지막으로 만나는 지점)
 
-        float t_enter, t_exit;
+        float t_min, t_max;
 
         // 최종 tmin, tmax 결정
-        t_enter = std::max<float>(txmin, tymin);
-        t_exit = std::min<float>(txmax, tymax);
+        t_min = std::max<float>(txmin, tymin);
+        t_max = std::min<float>(txmax, tymax);
 
 
         // Ray가 AABB 뒤쪽에서 시작하는 경우
-        if (t_exit < 0)
+        if (t_max < 0)
             return false;
 
 
         // 충돌이 maxDistance 이내인지 확인
-        if (t_enter <= maxDistance) {
-            outDistance = t_enter;
+        if (t_min <= maxDistance) {
+            outDistance = t_min;
             return true;
         }
 
@@ -224,16 +224,16 @@ namespace CollisionQuery {
             return false;
 
         // 최종 진입/이탈 지점 계산
-        float t_enter = std::max<float>(txmin, tymin);
-        float t_exit = std::min<float>(txmax, tymax);
+        float t_min = std::max<float>(txmin, tymin);
+        float t_max = std::min<float>(txmax, tymax);
 
         // Ray가 OBB 뒤쪽에서 시작하는 경우
-        if (t_exit < 0)
+        if (t_max < 0)
             return false;
 
         // 충돌이 maxDistance 이내인지 확인
-        if (t_enter <= maxDistance) {
-            outDistance = t_enter;
+        if (t_min <= maxDistance) {
+            outDistance = t_min;
             return true;
         }
 
