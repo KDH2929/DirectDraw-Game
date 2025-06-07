@@ -69,8 +69,8 @@ BOOL CDDrawDevice::InitializeDDraw(HWND hWnd)
 	// our window is partially obscured by other windows. This is not needed
 	// for apps running in fullscreen mode.
 
-	// Å¬¸®ÆÛ(Clipper)´Â DirectDraw¿¡¼­ À©µµ¿ì ¸ðµå ¾ÖÇÃ¸®ÄÉÀÌ¼ÇÀÌ Ã¢ÀÌ ´Ù¸¥ Ã¢¿¡ ÀÇÇØ ÀÏºÎ °¡·ÁÁ³À» ¶§, ±× °¡·ÁÁø ºÎºÐÀ» ÀÚµ¿À¸·Î Ã³¸®ÇØÁÖ´Â ¿ªÇÒ
-	// ex) È­¸é À§ÀÇ ¸Þ¼¼Áö ¹Ú½º
+	// í´ë¦¬í¼(Clipper)ëŠ” DirectDrawì—ì„œ ìœˆë„ìš° ëª¨ë“œ ì• í”Œë¦¬ì¼€ì´ì…˜ì´ ì°½ì´ ë‹¤ë¥¸ ì°½ì— ì˜í•´ ì¼ë¶€ ê°€ë ¤ì¡Œì„ ë•Œ, ê·¸ ê°€ë ¤ì§„ ë¶€ë¶„ì„ ìžë™ìœ¼ë¡œ ì²˜ë¦¬í•´ì£¼ëŠ” ì—­í• 
+	// ex) í™”ë©´ ìœ„ì˜ ë©”ì„¸ì§€ ë°•ìŠ¤
 
 	hr = m_pDD->CreateClipper(0, &m_pClipper, nullptr);
 	if (FAILED(hr))
@@ -272,20 +272,20 @@ BOOL CDDrawDevice::CalcClipArea(INT_VECTOR2* pivOutSrcStart, INT_VECTOR2* pivOut
 }
 
 BOOL CDDrawDevice::CalcSpriteClipArea(
-	INT_VECTOR2* pivOutSrcStart,      // °è»êµÈ ¼Ò½º ½ÃÀÛ ÁÂÇ¥ (½ºÇÁ¶óÀÌÆ® ½ÃÆ® ³»)
-	INT_VECTOR2* pivOutDestStart,     // °è»êµÈ È­¸é»óÀÇ ½ÃÀÛ ÁÂÇ¥
-	INT_VECTOR2* pivOutDestSize,      // ½ÇÁ¦ ·»´õ¸µÇÒ ¿µ¿ªÀÇ Å©±â
-	const RECT& srcRect,              // ½ºÇÁ¶óÀÌÆ® ½ÃÆ® ³»¿¡¼­ÀÇ ·»´õ¸µ ¿µ¿ª (¿¹: ÇÁ·¹ÀÓ ¿µ¿ª)
-	const INT_VECTOR2* pDestPos,      // È­¸é»óÀÇ ·»´õ¸µ ½ÃÀÛ ÁÂÇ¥ (¿¹: {screenX, screenY})
-	const INT_VECTOR2* pBufferSize)   // È­¸é(¹öÆÛ) Å©±â (¿¹: {width, height})
+	INT_VECTOR2* pivOutSrcStart,      // ê³„ì‚°ëœ ì†ŒìŠ¤ ì‹œìž‘ ì¢Œí‘œ (ìŠ¤í”„ë¼ì´íŠ¸ ì‹œíŠ¸ ë‚´)
+	INT_VECTOR2* pivOutDestStart,     // ê³„ì‚°ëœ í™”ë©´ìƒì˜ ì‹œìž‘ ì¢Œí‘œ
+	INT_VECTOR2* pivOutDestSize,      // ì‹¤ì œ ë Œë”ë§í•  ì˜ì—­ì˜ í¬ê¸°
+	const RECT& srcRect,              // ìŠ¤í”„ë¼ì´íŠ¸ ì‹œíŠ¸ ë‚´ì—ì„œì˜ ë Œë”ë§ ì˜ì—­ (ì˜ˆ: í”„ë ˆìž„ ì˜ì—­)
+	const INT_VECTOR2* pDestPos,      // í™”ë©´ìƒì˜ ë Œë”ë§ ì‹œìž‘ ì¢Œí‘œ (ì˜ˆ: {screenX, screenY})
+	const INT_VECTOR2* pBufferSize)   // í™”ë©´(ë²„í¼) í¬ê¸° (ì˜ˆ: {width, height})
 {
 
-	// 1. srcRect¸¦ ±â¹ÝÀ¸·Î ¿øÇÏ´Â ½ºÇÁ¶óÀÌÆ® ¿µ¿ª Å©±â °è»ê
+	// 1. srcRectë¥¼ ê¸°ë°˜ìœ¼ë¡œ ì›í•˜ëŠ” ìŠ¤í”„ë¼ì´íŠ¸ ì˜ì—­ í¬ê¸° ê³„ì‚°
 	INT_VECTOR2 desiredSize;
 	desiredSize.x = srcRect.right - srcRect.left;
 	desiredSize.y = srcRect.bottom - srcRect.top;
 
-	// 2. È­¸é»óÀÇ ·»´õ¸µ ¿µ¿ª Å¬¸®ÇÎ: destPos¿Í desiredSize¸¦ ÀÌ¿ëÇÏ¿© ½ÇÁ¦ ±×¸± ¿µ¿ª °áÁ¤
+	// 2. í™”ë©´ìƒì˜ ë Œë”ë§ ì˜ì—­ í´ë¦¬í•‘: destPosì™€ desiredSizeë¥¼ ì´ìš©í•˜ì—¬ ì‹¤ì œ ê·¸ë¦´ ì˜ì—­ ê²°ì •
 	int destStartX = std::max<int>(pDestPos->x, 0);
 	int destStartY = std::max<int>(pDestPos->y, 0);
 	int destEndX = std::min<int>(pDestPos->x + desiredSize.x, pBufferSize->x);
@@ -295,10 +295,10 @@ BOOL CDDrawDevice::CalcSpriteClipArea(
 	int clippedHeight = destEndY - destStartY;
 
 	if (clippedWidth <= 0 || clippedHeight <= 0)
-		return FALSE;			// ·»´õ¸µÇÒ ¿µ¿ªÀÌ ¾øÀ½
+		return FALSE;			// ë Œë”ë§í•  ì˜ì—­ì´ ì—†ìŒ
 
-	// 3. ½ºÇÁ¶óÀÌÆ® ½ÃÆ® ³» ¼Ò½º ½ÃÀÛ ÁÂÇ¥ °è»ê:
-	// È­¸é»óÀÇ ½ÃÀÛ ÁÂÇ¥¿Í ¿ø·¡ destPosÀÇ Â÷ÀÌ¸¦ srcRectÀÇ ÁÂÃø/»ó´Ü¿¡ ´õÇÔ
+	// 3. ìŠ¤í”„ë¼ì´íŠ¸ ì‹œíŠ¸ ë‚´ ì†ŒìŠ¤ ì‹œìž‘ ì¢Œí‘œ ê³„ì‚°:
+	// í™”ë©´ìƒì˜ ì‹œìž‘ ì¢Œí‘œì™€ ì›ëž˜ destPosì˜ ì°¨ì´ë¥¼ srcRectì˜ ì¢Œì¸¡/ìƒë‹¨ì— ë”í•¨
 	int srcStartX = destStartX - pDestPos->x + srcRect.left;
 	int srcStartY = destStartY - pDestPos->y + srcRect.top;
 
@@ -443,7 +443,7 @@ lb_return:
 
 }
 
-// sx, sy : DirectX ½ºÅ©¸° ÁÂÇ¥°è»ó¿¡¼­ÀÇ À§Ä¡
+// sx, sy : DirectX ìŠ¤í¬ë¦° ì¢Œí‘œê³„ìƒì—ì„œì˜ ìœ„ì¹˜
 
 BOOL CDDrawDevice::DrawImageData(int sx, int sy, const CImageData* pImgData)
 {
@@ -523,49 +523,49 @@ BOOL CDDrawDevice::DrawSprite(int screenX, int screenY, const CImageData* pImgDa
 		__debugbreak();
 #endif
 
-	// È­¸éÀÇ ³Êºñ (Ãâ·Â ´ë»ó)
+	// í™”ë©´ì˜ ë„ˆë¹„ (ì¶œë ¥ ëŒ€ìƒ)
 	int screenWidth = static_cast<int>(m_dwWidth);
 
-	// ½ºÇÁ¶óÀÌÆ® ÇÁ·¹ÀÓÀÇ Å©±â °è»ê (srcRect ±âÁØ)
+	// ìŠ¤í”„ë¼ì´íŠ¸ í”„ë ˆìž„ì˜ í¬ê¸° ê³„ì‚° (srcRect ê¸°ì¤€)
 	int frameWidth = srcRect.right - srcRect.left;
 	int frameHeight = srcRect.bottom - srcRect.top;
 
-	// ½ºÇÁ¶óÀÌÆ® ½ÃÆ® ÀüÃ¼ ÀÌ¹ÌÁöÀÇ Å©±â
+	// ìŠ¤í”„ë¼ì´íŠ¸ ì‹œíŠ¸ ì „ì²´ ì´ë¯¸ì§€ì˜ í¬ê¸°
 	/*
 	int imageWidth = static_cast<int>(pImgData->GetWidth());
 	int imageHeight = static_cast<int>(pImgData->GetHeight());
 	*/
 
-	// ·»´õ¸µÇÒ ¼Ò½º ½ÃÀÛ ÁÂÇ¥ (½ºÇÁ¶óÀÌÆ® ½ÃÆ® ·ÎÄÃ ÁÂÇ¥°è)
+	// ë Œë”ë§í•  ì†ŒìŠ¤ ì‹œìž‘ ì¢Œí‘œ (ìŠ¤í”„ë¼ì´íŠ¸ ì‹œíŠ¸ ë¡œì»¬ ì¢Œí‘œê³„)
 	INT_VECTOR2 srcStart = { srcRect.left, srcRect.top };
 
-	// È­¸é»óÀÇ ½ÃÀÛ ÁÂÇ¥ (½ºÅ©¸° ÁÂÇ¥°è)
+	// í™”ë©´ìƒì˜ ì‹œìž‘ ì¢Œí‘œ (ìŠ¤í¬ë¦° ì¢Œí‘œê³„)
 	INT_VECTOR2 destStart = { screenX, screenY };
 
-	// º¹»çÇÒ ¿µ¿ªÀÇ Å©±â ÃÊ±â°ªÀº ½ºÇÁ¶óÀÌÆ® ÇÁ·¹ÀÓÀÇ Å©±â·Î ¼³Á¤
+	// ë³µì‚¬í•  ì˜ì—­ì˜ í¬ê¸° ì´ˆê¸°ê°’ì€ ìŠ¤í”„ë¼ì´íŠ¸ í”„ë ˆìž„ì˜ í¬ê¸°ë¡œ ì„¤ì •
 	INT_VECTOR2 spriteSize = { frameWidth, frameHeight };
 	INT_VECTOR2 clippedSize = {};
 
-	// ´ë»ó À§Ä¡¿Í ¹öÆÛ Å©±â
+	// ëŒ€ìƒ ìœ„ì¹˜ì™€ ë²„í¼ í¬ê¸°
 	INT_VECTOR2 destPos = { screenX, screenY };
 	INT_VECTOR2 bufferSize = { screenWidth, static_cast<int>(m_dwHeight) };
 
-	// CalcClipArea() ÇÔ¼ö´Â destStart¿Í spriteSize¸¦ ±â¹ÝÀ¸·Î
-	// ½ÇÁ¦·Î È­¸é¿¡ ±×·ÁÁú ¿µ¿ª(Å¬¸³µÈ ¿µ¿ª)À» °è»ê
+	// CalcClipArea() í•¨ìˆ˜ëŠ” destStartì™€ spriteSizeë¥¼ ê¸°ë°˜ìœ¼ë¡œ
+	// ì‹¤ì œë¡œ í™”ë©´ì— ê·¸ë ¤ì§ˆ ì˜ì—­(í´ë¦½ëœ ì˜ì—­)ì„ ê³„ì‚°
 	if (!CalcSpriteClipArea(&srcStart, &destStart, &clippedSize, srcRect, &destPos, &bufferSize))
 		goto lb_return;
 
 
-	// pImgData¿¡¼­ srcStart.y ÇàÀÇ ¾ÐÃàµÈ µ¥ÀÌÅÍ¸¦ °¡Á®¿À±â
+	// pImgDataì—ì„œ srcStart.y í–‰ì˜ ì••ì¶•ëœ ë°ì´í„°ë¥¼ ê°€ì ¸ì˜¤ê¸°
 	const COMPRESSED_LINE* lineDesc = pImgData->GetCompressedImage(srcStart.y);
 
-	// ´ë»ó ¹öÆÛÀÇ Ã¹ Çà Æ÷ÀÎÅÍ (destStart.y ÇàºÎÅÍ ½ÃÀÛ)
+	// ëŒ€ìƒ ë²„í¼ì˜ ì²« í–‰ í¬ì¸í„° (destStart.y í–‰ë¶€í„° ì‹œìž‘)
 	char* destLinePtr = m_pWriteBuffer + (destStart.y) * m_dwWriteBufferPitch;
 
-	// Å¬¸³µÈ ¿µ¿ªÀÇ ³ôÀÌ¸¸Å­ ¹Ýº¹
+	// í´ë¦½ëœ ì˜ì—­ì˜ ë†’ì´ë§Œí¼ ë°˜ë³µ
 	for (int y = 0; y < clippedSize.y; y++)
 	{
-		// °¢ ÁÙÀÇ ½ºÆ®¸² µ¥ÀÌÅÍ¸¦ ¼øÈ¸
+		// ê° ì¤„ì˜ ìŠ¤íŠ¸ë¦¼ ë°ì´í„°ë¥¼ ìˆœíšŒ
 		for (DWORD i = 0; i < lineDesc->dwStreamNum; i++)
 		{
 			PIXEL_STREAM* pStream = lineDesc->pPixelStream + i;
@@ -576,67 +576,67 @@ BOOL CDDrawDevice::DrawSprite(int screenX, int screenY, const CImageData* pImgDa
 
 
 			/*
-			ÀÌ´Â 0¹ø¾ÐÃà¿¡¼­ ÀüÃ¼ SpriteÀÌ¹ÌÁö Áß Rect¹üÀ§¾È¿¡ ÇØ´çÇÏ´Â ÀÌ¹ÌÁö¸¸ RenderÇÏ±â À§ÇÑ CaseµéÀÓ
-			¸¸¾à ¾Æ·¡ CaseµéÀ» °í·ÁÇÏÁö ¾ÊÀ¸¸é ½ºÇÁ¶óÀÌÆ® ½ÃÆ® ÀüÃ¼°¡ ·»´õ¸µµÊ
+			ì´ëŠ” 0ë²ˆì••ì¶•ì—ì„œ ì „ì²´ Spriteì´ë¯¸ì§€ ì¤‘ Rectë²”ìœ„ì•ˆì— í•´ë‹¹í•˜ëŠ” ì´ë¯¸ì§€ë§Œ Renderí•˜ê¸° ìœ„í•œ Caseë“¤ìž„
+			ë§Œì•½ ì•„ëž˜ Caseë“¤ì„ ê³ ë ¤í•˜ì§€ ì•Šìœ¼ë©´ ìŠ¤í”„ë¼ì´íŠ¸ ì‹œíŠ¸ ì „ì²´ê°€ ë Œë”ë§ë¨
 			
-			pStream->wPosX ´Â ÀüÃ¼ ÀÌ¹ÌÁöÀÇ ·ÎÄÃÁÂÇ¥°è»ó¿¡¼­ÀÇ ¿¬¼ÓµÈ ÇÈ¼¿ÀÌ ½ÃÀÛµÇ´Â XÁÂÇ¥ÀÌ¶ó´Â Á¡À» °í·ÁÇØ¾ßÇÔ
-			Áï {wPosX, wPosX + pixelCount} ¸¸Å­ÀÌ ÇöÀç Line¿¡¼­ ¿¬¼ÓµÈ ±¸°£ÀÌ¶ó´Â°Í
-			±âÁ¸ ÁÂ¿ì Screen¹üÀ§¿¡ ¸ÂÃç ±×·Á¾ßÇÒ ¼ö¸¦ Á¶ÀýÇÏ´Â ·ÎÁ÷À» ¼öÁ¤ÇÏ´ø°¡, ±× Àü¿¡ ÀÛ¾÷À» Ãß°¡ÇØ¼­ Ã³¸®ÇØ¾ßÇÔ
+			pStream->wPosX ëŠ” ì „ì²´ ì´ë¯¸ì§€ì˜ ë¡œì»¬ì¢Œí‘œê³„ìƒì—ì„œì˜ ì—°ì†ëœ í”½ì…€ì´ ì‹œìž‘ë˜ëŠ” Xì¢Œí‘œì´ë¼ëŠ” ì ì„ ê³ ë ¤í•´ì•¼í•¨
+			ì¦‰ {wPosX, wPosX + pixelCount} ë§Œí¼ì´ í˜„ìž¬ Lineì—ì„œ ì—°ì†ëœ êµ¬ê°„ì´ë¼ëŠ”ê²ƒ
+			ê¸°ì¡´ ì¢Œìš° Screenë²”ìœ„ì— ë§žì¶° ê·¸ë ¤ì•¼í•  ìˆ˜ë¥¼ ì¡°ì ˆí•˜ëŠ” ë¡œì§ì„ ìˆ˜ì •í•˜ë˜ê°€, ê·¸ ì „ì— ìž‘ì—…ì„ ì¶”ê°€í•´ì„œ ì²˜ë¦¬í•´ì•¼í•¨
 
-			¿ì¼± ÇöÀç srcRect ¹üÀ§ ¾È¿¡ ¸ÂÃç ½ÃÀÛ X¸¦ Á¤ÇØ¾ßÇÒ °Í °°À½
-			Áï ·ÎÄÃÁÂÇ¥°è °è»êºÎÅÍ ¼öÇàÇÏ±â
+			ìš°ì„  í˜„ìž¬ srcRect ë²”ìœ„ ì•ˆì— ë§žì¶° ì‹œìž‘ Xë¥¼ ì •í•´ì•¼í•  ê²ƒ ê°™ìŒ
+			ì¦‰ ë¡œì»¬ì¢Œí‘œê³„ ê³„ì‚°ë¶€í„° ìˆ˜í–‰í•˜ê¸°
 
-			Case1)   wPosX, wPosX + pixelCount°¡ Rect¹üÀ§ ÁÂÃøÀ» ³Ñ¾î°¬À» ½Ã ´ç¿¬È÷ RenderÇÒ ÇÊ¿ä°¡ ¾øÀ½
-			Case2)   wPosX´Â ³Ñ¾î°¡°í wPosX + pixelCount´Â Rect¹üÀ§ ¾ÈÂÊ¿¡ ÀÖÀ» ½Ã
-					   ÀÌ °æ¿ì, ½ÃÀÛ ÁÂÇ¥´Â Rect.left °¡ µÉÅ×°í, PixelCount¼ö´Â (wPosX + pixelCount - Rect.left) ÀÌ°Ô µÉ °Í
+			Case1)   wPosX, wPosX + pixelCountê°€ Rectë²”ìœ„ ì¢Œì¸¡ì„ ë„˜ì–´ê°”ì„ ì‹œ ë‹¹ì—°ížˆ Renderí•  í•„ìš”ê°€ ì—†ìŒ
+			Case2)   wPosXëŠ” ë„˜ì–´ê°€ê³  wPosX + pixelCountëŠ” Rectë²”ìœ„ ì•ˆìª½ì— ìžˆì„ ì‹œ
+					   ì´ ê²½ìš°, ì‹œìž‘ ì¢Œí‘œëŠ” Rect.left ê°€ ë í…Œê³ , PixelCountìˆ˜ëŠ” (wPosX + pixelCount - Rect.left) ì´ê²Œ ë  ê²ƒ
 
-			Case3)	wPosX, wPosX + pixelCount°¡ Rect¹üÀ§ ¾ÈÂÊÀÏ ½Ã ±×´ë·Î »ç¿ë
-			Case4)	wPosX´Â Rect¾ÈÂÊ, wPosX + pixelCount´Â Rect¹Ù±ùÂÊ
-					    ÀÌ °æ¿ì, ½ÃÀÛÁÂÇ¥´Â wPosX, pixelCount´Â (Rect.Right - wPosX)
+			Case3)	wPosX, wPosX + pixelCountê°€ Rectë²”ìœ„ ì•ˆìª½ì¼ ì‹œ ê·¸ëŒ€ë¡œ ì‚¬ìš©
+			Case4)	wPosXëŠ” Rectì•ˆìª½, wPosX + pixelCountëŠ” Rectë°”ê¹¥ìª½
+					    ì´ ê²½ìš°, ì‹œìž‘ì¢Œí‘œëŠ” wPosX, pixelCountëŠ” (Rect.Right - wPosX)
 
-			Case5)	wPosX, wPosX + pixelCount µÑ ´Ù Rect ¹Ù±ùÂÊÀÏ ½Ã RenderÇÒ ÇÊ¿ä°¡ ¾øÀ½
+			Case5)	wPosX, wPosX + pixelCount ë‘˜ ë‹¤ Rect ë°”ê¹¥ìª½ì¼ ì‹œ Renderí•  í•„ìš”ê°€ ì—†ìŒ
 
-			ÀÌ·¯¸é Rect¾È¿¡¼­ ±×·ÁÁú localRenderStartX, pixelCount¸¦ ±¸ÇØ³½ °Í
-			ÀÌ¸¦ ±â¹ÝÀ¸·Î screenRenderX = screenX + localRenderStartX
-			ÀÌ·±½ÄÀ¸·Î µÎ¸é µÉ °Å °°À½
+			ì´ëŸ¬ë©´ Rectì•ˆì—ì„œ ê·¸ë ¤ì§ˆ localRenderStartX, pixelCountë¥¼ êµ¬í•´ë‚¸ ê²ƒ
+			ì´ë¥¼ ê¸°ë°˜ìœ¼ë¡œ screenRenderX = screenX + localRenderStartX
+			ì´ëŸ°ì‹ìœ¼ë¡œ ë‘ë©´ ë  ê±° ê°™ìŒ
 
-			ÀÌÈÄ ±âÁ¸ screenRenderX°¡ È­¸é ÁÂÃø°æ°è, ¿ìÃø°æ°è¸¦ ¹þ¾î³´À» ½Ã Ã³¸®µµ ¼öÇàÇÏ¸é µÉ °Å °°À½
+			ì´í›„ ê¸°ì¡´ screenRenderXê°€ í™”ë©´ ì¢Œì¸¡ê²½ê³„, ìš°ì¸¡ê²½ê³„ë¥¼ ë²—ì–´ë‚«ì„ ì‹œ ì²˜ë¦¬ë„ ìˆ˜í–‰í•˜ë©´ ë  ê±° ê°™ìŒ
 
-			Ãß°¡·Î Rect±âÁØ Local ÁÂÇ¥°è·Î »ý°¢ÇßÀ» ¶§ (Rect.left¸¦ »©¸éµÊ)
-			Áï (srcStart.x - srcRect.left) °ªÀÌ ¾ç¼öÀÎ °æ¿ì È­¸é°æ°è ÁÂÃø¿¡¼­ clippingÀÌ ÀÏ¾î³­ °ÍÀÌ¹Ç·Î ÀÌ¿¡ ´ëÇÑ Ã³¸®µµ Ãß°¡ÇÔ
+			ì¶”ê°€ë¡œ Rectê¸°ì¤€ Local ì¢Œí‘œê³„ë¡œ ìƒê°í–ˆì„ ë•Œ (Rect.leftë¥¼ ë¹¼ë©´ë¨)
+			ì¦‰ (srcStart.x - srcRect.left) ê°’ì´ ì–‘ìˆ˜ì¸ ê²½ìš° í™”ë©´ê²½ê³„ ì¢Œì¸¡ì—ì„œ clippingì´ ì¼ì–´ë‚œ ê²ƒì´ë¯€ë¡œ ì´ì— ëŒ€í•œ ì²˜ë¦¬ë„ ì¶”ê°€í•¨
 			
 			*/
 
 			
-			// Rect ±âÁØ Local ÁÂÇ¥°è·Î º¯°æÇØ¼­ »ý°¢ÇÏ±â (srcRect.left¸¦ »©ÁÖ´Â °Í)
-			// ÀÌ ¶§ (srcStart.x - srcRect.left) °¡ ¾ç¼öÀÌ¸é clippingÀÌ ÀÏ¾î³­ °ÍÀÌ¹Ç·Î, ±× ºÎºÐÀ» °í·ÁÇÏ¿© localX¿Í frameWidth¸¦ Á¶Àý
-			// localX = (wPosX - srcRect.left) - (srcStart.x - srcRect.left) = wPosX - srcStart.x
-			int localX = static_cast<int>(pStream->wPosX) - srcStart.x;			// À§ÀÇ ¼ö½Ä¿¡ ÀÇÇØ srcRect.left´Â ¼Ò°ÅµÊ
+			// Rect ê¸°ì¤€ Local ì¢Œí‘œê³„ë¡œ ë³€ê²½í•´ì„œ ìƒê°í•˜ê¸° (srcStart.xë¥¼ ë¹¼ì£¼ëŠ” ê²ƒ)
+			// ì´ ë•Œ (srcStart.x - srcRect.left) ê°€ ì–‘ìˆ˜ì´ë©´ clippingì´ ì¼ì–´ë‚œ ê²ƒì´ë¯€ë¡œ, ê·¸ ë¶€ë¶„ì„ ê³ ë ¤í•˜ì—¬ localXì™€ frameWidthë¥¼ ì¡°ì ˆ
+			// localX = wPosX - srcStart.x
+			int localX = static_cast<int>(pStream->wPosX) - srcStart.x;
 			frameWidth = srcRect.right - srcStart.x;
 			
 
-			// Case1, Case5: srcRect ¹üÀ§¸¦ ¹þ¾î³­ °æ¿ì
+			// Case1, Case5: srcRect ë²”ìœ„ë¥¼ ë²—ì–´ë‚œ ê²½ìš°
 			if (localX + pixelCount <= 0 || localX >= frameWidth)
 				continue;
 
 			
-			// Case2: ¿ÞÂÊÀÌ ¹þ¾î³­ °æ¿ì
+			// Case2: ì™¼ìª½ì´ ë²—ì–´ë‚œ ê²½ìš°
 			if (localX < 0) {
-				pixelCount += localX; // localX´Â À½¼ö
+				pixelCount += localX; // localXëŠ” ìŒìˆ˜
 				localX = 0;
 			}
 
-			// Case4: ¿À¸¥ÂÊÀ» ¹þ¾î³­ °æ¿ì
+			// Case4: ì˜¤ë¥¸ìª½ì„ ë²—ì–´ë‚œ ê²½ìš°
 			if (localX + pixelCount > frameWidth) {
 				pixelCount = frameWidth - localX;
 			}
 
 
-			// ÃÖÁ¾ÀûÀ¸·Î È­¸é»óÀÇ x ÁÂÇ¥ = destStart.x + localX
+			// ìµœì¢…ì ìœ¼ë¡œ í™”ë©´ìƒì˜ x ì¢Œí‘œ = destStart.x + localX
 			int drawX = destStart.x + localX;
 
 
-			// È­¸é ÁÂÃø °æ°è¸¦ ¹þ¾î³ª¸é Á¶Á¤
+			// í™”ë©´ ì¢Œì¸¡ ê²½ê³„ë¥¼ ë²—ì–´ë‚˜ë©´ ì¡°ì •
 			
 			if (drawX < 0)
 			{
@@ -645,25 +645,25 @@ BOOL CDDrawDevice::DrawSprite(int screenX, int screenY, const CImageData* pImgDa
 			}
 			
 
-			// È­¸é ¿ìÃø °æ°è¸¦ ¹þ¾î³ª¸é Á¶Á¤
+			// í™”ë©´ ìš°ì¸¡ ê²½ê³„ë¥¼ ë²—ì–´ë‚˜ë©´ ì¡°ì •
 			if (drawX + pixelCount > screenWidth)
 			{
 				pixelCount = screenWidth - drawX;
 			}
 
 
-			// ´ë»ó ¹öÆÛ ³» ÇØ´ç ÇÈ¼¿ À§Ä¡ °è»ê (ÇÈ¼¿´ç 4Byte)
+			// ëŒ€ìƒ ë²„í¼ ë‚´ í•´ë‹¹ í”½ì…€ ìœ„ì¹˜ ê³„ì‚° (í”½ì…€ë‹¹ 4Byte)
 			char* destPixelPtr = destLinePtr + (drawX * 4);
 
-			// ÇØ´ç ½ºÆ®¸²ÀÇ ÇÈ¼¿µéÀ» º¹»ç
+			// í•´ë‹¹ ìŠ¤íŠ¸ë¦¼ì˜ í”½ì…€ë“¤ì„ ë³µì‚¬
 			for (int x = 0; x < pixelCount; x++)
 			{
 				*(DWORD*)destPixelPtr = pixelColor;
 				destPixelPtr += 4;
 			}
 		}
-		lineDesc++; // ´ÙÀ½ ÇàÀÇ ¾ÐÃà µ¥ÀÌÅÍ
-		destLinePtr += m_dwWriteBufferPitch; // ´ë»ó ¹öÆÛÀÇ ´ÙÀ½ Çà Æ÷ÀÎÅÍ
+		lineDesc++; // ë‹¤ìŒ í–‰ì˜ ì••ì¶• ë°ì´í„°
+		destLinePtr += m_dwWriteBufferPitch; // ëŒ€ìƒ ë²„í¼ì˜ ë‹¤ìŒ í–‰ í¬ì¸í„°
 	}
 	bResult = TRUE;
 lb_return:
@@ -680,106 +680,106 @@ BOOL CDDrawDevice::DrawSpriteFlip(int screenX, int screenY, const CImageData* pI
         __debugbreak();
 #endif
 
-    // È­¸éÀÇ ³Êºñ (Ãâ·Â ´ë»ó)
+    // í™”ë©´ì˜ ë„ˆë¹„ (ì¶œë ¥ ëŒ€ìƒ)
     int screenWidth = static_cast<int>(m_dwWidth);
 
-    // ½ºÇÁ¶óÀÌÆ® ÇÁ·¹ÀÓÀÇ Å©±â (srcRect ±âÁØ)
+    // ìŠ¤í”„ë¼ì´íŠ¸ í”„ë ˆìž„ì˜ í¬ê¸° (srcRect ê¸°ì¤€)
     int frameWidth = srcRect.right - srcRect.left;
     int frameHeight = srcRect.bottom - srcRect.top;
 
-    // ·»´õ¸µÇÒ ¼Ò½º ½ÃÀÛ ÁÂÇ¥ (½ºÇÁ¶óÀÌÆ® ½ÃÆ® ·ÎÄÃ ÁÂÇ¥°è)
+    // ë Œë”ë§í•  ì†ŒìŠ¤ ì‹œìž‘ ì¢Œí‘œ (ìŠ¤í”„ë¼ì´íŠ¸ ì‹œíŠ¸ ë¡œì»¬ ì¢Œí‘œê³„)
     INT_VECTOR2 srcStart = { srcRect.left, srcRect.top };
 
-    // È­¸é»óÀÇ ½ÃÀÛ ÁÂÇ¥ (½ºÅ©¸° ÁÂÇ¥°è)
+    // í™”ë©´ìƒì˜ ì‹œìž‘ ì¢Œí‘œ (ìŠ¤í¬ë¦° ì¢Œí‘œê³„)
     INT_VECTOR2 destStart = { screenX, screenY };
 
-    // º¹»çÇÒ ¿µ¿ªÀÇ Å©±â´Â ½ºÇÁ¶óÀÌÆ® ÇÁ·¹ÀÓÀÇ Å©±â·Î ÃÊ±âÈ­
+    // ë³µì‚¬í•  ì˜ì—­ì˜ í¬ê¸°ëŠ” ìŠ¤í”„ë¼ì´íŠ¸ í”„ë ˆìž„ì˜ í¬ê¸°ë¡œ ì´ˆê¸°í™”
     INT_VECTOR2 spriteSize = { frameWidth, frameHeight };
     INT_VECTOR2 clippedSize = {};
 
-    // ´ë»ó À§Ä¡¿Í ¹öÆÛ Å©±â
+    // ëŒ€ìƒ ìœ„ì¹˜ì™€ ë²„í¼ í¬ê¸°
     INT_VECTOR2 destPos = { screenX, screenY };
     INT_VECTOR2 bufferSize = { screenWidth, static_cast<int>(m_dwHeight) };
 
-    // CalcClipArea() ÇÔ¼ö´Â destStart¿Í spriteSize¸¦ ±â¹ÝÀ¸·Î ½ÇÁ¦ È­¸é¿¡ ±×·ÁÁú ¿µ¿ª(Å¬¸³µÈ ¿µ¿ª)À» °è»ê
+    // CalcClipArea() í•¨ìˆ˜ëŠ” destStartì™€ spriteSizeë¥¼ ê¸°ë°˜ìœ¼ë¡œ ì‹¤ì œ í™”ë©´ì— ê·¸ë ¤ì§ˆ ì˜ì—­(í´ë¦½ëœ ì˜ì—­)ì„ ê³„ì‚°
     if (!CalcSpriteClipArea(&srcStart, &destStart, &clippedSize, srcRect, &destPos, &bufferSize))
         goto lb_return;
 
-    // pImgData¿¡¼­ srcStart.y ÇàÀÇ ¾ÐÃà µ¥ÀÌÅÍ¸¦ °¡Á®¿È
+    // pImgDataì—ì„œ srcStart.y í–‰ì˜ ì••ì¶• ë°ì´í„°ë¥¼ ê°€ì ¸ì˜´
     const COMPRESSED_LINE* lineDesc = pImgData->GetCompressedImage(srcStart.y);
 
-    // ´ë»ó ¹öÆÛÀÇ Ã¹ Çà Æ÷ÀÎÅÍ (destStart.y ÇàºÎÅÍ ½ÃÀÛ)
+    // ëŒ€ìƒ ë²„í¼ì˜ ì²« í–‰ í¬ì¸í„° (destStart.y í–‰ë¶€í„° ì‹œìž‘)
     char* destLinePtr = m_pWriteBuffer + (destStart.y) * m_dwWriteBufferPitch;
 
-    // Å¬¸³µÈ ¿µ¿ªÀÇ ³ôÀÌ¸¸Å­ ¹Ýº¹
+    // í´ë¦½ëœ ì˜ì—­ì˜ ë†’ì´ë§Œí¼ ë°˜ë³µ
     for (int y = 0; y < clippedSize.y; y++)
     {
-        // °¢ ÇàÀÇ ¾ÐÃàµÈ ½ºÆ®¸² µ¥ÀÌÅÍ¸¦ ¼øÈ¸
+        // ê° í–‰ì˜ ì••ì¶•ëœ ìŠ¤íŠ¸ë¦¼ ë°ì´í„°ë¥¼ ìˆœíšŒ
         for (DWORD i = 0; i < lineDesc->dwStreamNum; i++)
         {
             PIXEL_STREAM* pStream = lineDesc->pPixelStream + i;
             DWORD pixelColor = pStream->dwPixel;
             int pixelCount = static_cast<int>(pStream->wPixelNum);
 
-			// Rect ÁÂ»ó´ÜÀ» ±âÁØÀ¸·Î ÇÏ´Â ·ÎÄÃÁÂÇ¥°è¸£ ±âÁØÀ¸·Î »ý°¢ÇØ¾ß ·ÎÁ÷Â¥±â°¡ ÆíÇÔ
-			// µû¶ó¼­ srcRect.left¸¦ »©Áà¾ßÇÔ
+			// Rect ì¢Œìƒë‹¨ì„ ê¸°ì¤€ìœ¼ë¡œ í•˜ëŠ” ë¡œì»¬ì¢Œí‘œê³„ë¥´ ê¸°ì¤€ìœ¼ë¡œ ìƒê°í•´ì•¼ ë¡œì§ì§œê¸°ê°€ íŽ¸í•¨
+			// ë”°ë¼ì„œ srcRect.leftë¥¼ ë¹¼ì¤˜ì•¼í•¨
 			int localX = static_cast<int>(pStream->wPosX) - srcRect.left;
-			// frameWidth´Â srcRectÀÇ ³Êºñ
+			// frameWidthëŠ” srcRectì˜ ë„ˆë¹„
 			frameWidth = srcRect.right - srcRect.left;
 
-            // ÇöÀç ½ºÆ®¸²ÀÌ srcRect ¹üÀ§¸¦ ¹þ¾î³ª¸é °Ç³Ê¶Ü
+            // í˜„ìž¬ ìŠ¤íŠ¸ë¦¼ì´ srcRect ë²”ìœ„ë¥¼ ë²—ì–´ë‚˜ë©´ ê±´ë„ˆëœ€
             if (localX + pixelCount <= 0 || localX >= frameWidth)
                 continue;
 
-            // Case2: ¿ÞÂÊÀ» ¹þ¾î³­ °æ¿ì
+            // Case2: ì™¼ìª½ì„ ë²—ì–´ë‚œ ê²½ìš°
             if (localX < 0) {
-                pixelCount += localX; // localX´Â À½¼ö
+                pixelCount += localX; // localXëŠ” ìŒìˆ˜
                 localX = 0;
             }
 
-            // Case4: ¿À¸¥ÂÊÀ» ¹þ¾î³­ °æ¿ì
+            // Case4: ì˜¤ë¥¸ìª½ì„ ë²—ì–´ë‚œ ê²½ìš°
             if (localX + pixelCount > frameWidth) {
                 pixelCount = frameWidth - localX;
             }
 
-            // ÁÂ¿ì ¹ÝÀü Ã³¸®:
-            // ¿ø·¡ ÁÂ¿ì º¹»ç´Â destStart.x + localX·Î °è»êÇÏÁö¸¸,
-            // ¹ÝÀüµÈ °æ¿ì¿£ ÇØ´ç ÇÁ·¹ÀÓÀÇ ¿À¸¥ÂÊ ³¡¿¡¼­ºÎÅÍ localX¸¸Å­ ¶³¾îÁø À§Ä¡·Î º¹»çÇÏ°í,
-            // pixelCount¸¸Å­ ÇÈ¼¿À» Ã¤¿ì¹Ç·Î,
+            // ì¢Œìš° ë°˜ì „ ì²˜ë¦¬:
+            // ì›ëž˜ ì¢Œìš° ë³µì‚¬ëŠ” destStart.x + localXë¡œ ê³„ì‚°í•˜ì§€ë§Œ,
+            // ë°˜ì „ëœ ê²½ìš°ì—” í•´ë‹¹ í”„ë ˆìž„ì˜ ì˜¤ë¥¸ìª½ ëì—ì„œë¶€í„° localXë§Œí¼ ë–¨ì–´ì§„ ìœ„ì¹˜ë¡œ ë³µì‚¬í•˜ê³ ,
+            // pixelCountë§Œí¼ í”½ì…€ì„ ì±„ìš°ë¯€ë¡œ,
             // drawX = destStart.x + (frameWidth - localX - pixelCount)
             int drawX = destStart.x + (frameWidth - localX - pixelCount);
 			
-			// ÀÌ¹ø¿¡´Â ¿©±â¼­ ÃÖÁ¾ ÁÂÇ¥À§Ä¡¸¦ ¿ÞÂÊ¿¡¼­ Clipping µÈ ¸¸Å­ ¿Å°ÜÁà¾ßÇÔ
-			// (srcStart.x - srcRect.left) °¡ ¾ç¼ö¶ó¸é ¿ÞÂÊ¿¡¼­ ClippiingÀÌ ÀÏ¾î³­ »óÈ²
+			// ì´ë²ˆì—ëŠ” ì—¬ê¸°ì„œ ìµœì¢… ì¢Œí‘œìœ„ì¹˜ë¥¼ ì™¼ìª½ì—ì„œ Clipping ëœ ë§Œí¼ ì˜®ê²¨ì¤˜ì•¼í•¨
+			// (srcStart.x - srcRect.left) ê°€ ì–‘ìˆ˜ë¼ë©´ ì™¼ìª½ì—ì„œ Clippiingì´ ì¼ì–´ë‚œ ìƒí™©
 
 			drawX -= (srcStart.x - srcRect.left);
 
-            // È­¸é ÁÂÃø °æ°è Å¬¸®ÇÎ
+            // í™”ë©´ ì¢Œì¸¡ ê²½ê³„ í´ë¦¬í•‘
             if (drawX < 0)
             {
                 pixelCount += drawX;
                 drawX = 0;
             }
 
-            // È­¸é ¿ìÃø °æ°è Å¬¸®ÇÎ
+            // í™”ë©´ ìš°ì¸¡ ê²½ê³„ í´ë¦¬í•‘
             if (drawX + pixelCount > screenWidth)
             {
                 pixelCount = screenWidth - drawX;
             }
 
-            // ´ë»ó ¹öÆÛ ³» ÇØ´ç ÇÈ¼¿ À§Ä¡ °è»ê (ÇÈ¼¿´ç 4Byte)
-            // (¹ÝÀüµÈ ÀÌ¹ÌÁö´Â ¿À¸¥ÂÊ¿¡¼­ºÎÅÍ Ã¤¿öÁö¹Ç·Î, ¿©±â¼­´Â ÀÏ¹ÝÀûÀÎ ¼ø¼­·Î º¹»çÇØµµ µ¿ÀÏÇÑ »ö»ó ¹Ýº¹ º¹»ç ½Ã ¹®Á¦¾øÀ½)
+            // ëŒ€ìƒ ë²„í¼ ë‚´ í•´ë‹¹ í”½ì…€ ìœ„ì¹˜ ê³„ì‚° (í”½ì…€ë‹¹ 4Byte)
+            // (ë°˜ì „ëœ ì´ë¯¸ì§€ëŠ” ì˜¤ë¥¸ìª½ì—ì„œë¶€í„° ì±„ì›Œì§€ë¯€ë¡œ, ì—¬ê¸°ì„œëŠ” ì¼ë°˜ì ì¸ ìˆœì„œë¡œ ë³µì‚¬í•´ë„ ë™ì¼í•œ ìƒ‰ìƒ ë°˜ë³µ ë³µì‚¬ ì‹œ ë¬¸ì œì—†ìŒ)
             char* destPixelPtr = destLinePtr + (drawX * 4);
 
-            // µ¿ÀÏ »ö»óÀÇ ÇÈ¼¿µéÀ» pixelCount¸¸Å­ º¹»ç
+            // ë™ì¼ ìƒ‰ìƒì˜ í”½ì…€ë“¤ì„ pixelCountë§Œí¼ ë³µì‚¬
             for (int x = 0; x < pixelCount; x++)
             {
                 *(DWORD*)destPixelPtr = pixelColor;
                 destPixelPtr += 4;
             }
         }
-        lineDesc++; // ´ÙÀ½ ÇàÀÇ ¾ÐÃà µ¥ÀÌÅÍ
-        destLinePtr += m_dwWriteBufferPitch; // ´ë»ó ¹öÆÛÀÇ ´ÙÀ½ Çà Æ÷ÀÎÅÍ
+        lineDesc++; // ë‹¤ìŒ í–‰ì˜ ì••ì¶• ë°ì´í„°
+        destLinePtr += m_dwWriteBufferPitch; // ëŒ€ìƒ ë²„í¼ì˜ ë‹¤ìŒ í–‰ í¬ì¸í„°
     }
     bResult = TRUE;
 lb_return:
@@ -887,7 +887,7 @@ void CDDrawDevice::WriteText(const WCHAR* wchTxt, DWORD dwLen, int x, int y, DWO
 	textRect.right = textRect.left + iWidth;
 	textRect.bottom = textRect.top + iHeight;
 
-	// texRectSide´Â ÅØ½ºÆ®ÀÇ ¿Ü°û¼±È¿°ú
+	// texRectSideëŠ” í…ìŠ¤íŠ¸ì˜ ì™¸ê³½ì„ íš¨ê³¼
 	texRectSide[0].left = textRect.left - 1;
 	texRectSide[0].top = textRect.top - 1;
 	texRectSide[0].right = textRect.right - 1;
@@ -909,7 +909,7 @@ void CDDrawDevice::WriteText(const WCHAR* wchTxt, DWORD dwLen, int x, int y, DWO
 	texRectSide[3].right = textRect.right - 1;
 	texRectSide[3].bottom = textRect.bottom + 1;
 
-	// ¸ÕÀú ÅØ½ºÆ®ÀÇ ¿Ü°û¼±À» °ËÁ¤»öÀ¸·Î ±×¸²
+	// ë¨¼ì € í…ìŠ¤íŠ¸ì˜ ì™¸ê³½ì„ ì„ ê²€ì •ìƒ‰ìœ¼ë¡œ ê·¸ë¦¼
 	SetTextColor(hDC, 0x00000000);
 	for (DWORD i = 0; i < 4; i++)
 	{
