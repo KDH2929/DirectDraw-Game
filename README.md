@@ -3,7 +3,17 @@
 **개발 기간** : 3주  
 **팀 구성** : 2인팀
 
+<br>
+
+이 프로젝트는 제 동생과 함께 진행한 2D 게임 프로젝트입니다.
+
+동생은 타일맵 제작을 담당하였으며, 그 외 나머지 부분은 제가 구현하였습니다.
+
+<br>
+
 [유튜브 영상](https://youtu.be/iQB3RYAKHIA?si=Pz4x_eIdLN7srZDO)
+[Notion 협업 Tasks](https://shrub-syzygy-318.notion.site/19f325f2d2b280b6a45ec73c74edda11?v=19f325f2d2b280229681000c7a001518)
+
 
 <br>
 
@@ -39,12 +49,5 @@
 
 
 
-<br>
 
-## 관련 링크
 
-- [작성한 DirectDraw 정리 문서](https://wandering-rumba-865.notion.site/DirectDraw-197aba645d3280978479fd0b73652cac)
-- [작성한 2D 충돌처리 문서](https://wandering-rumba-865.notion.site/2D-1b2aba645d3280b19597fb3ae25a0a92)
-- [Notion 협업 Tasks](https://shrub-syzygy-318.notion.site/19f325f2d2b280b6a45ec73c74edda11?v=19f325f2d2b280229681000c7a001518)
-- [주요 버그 2가지 및 해결 과정](https://shrub-syzygy-318.notion.site/1a9325f2d2b2809e85fae47917b4fcf8)
-- [구현 시 겪었던 문제](https://wandering-rumba-865.notion.site/DirectDraw-20baba645d32807d97c6d88b8782d7a2)
