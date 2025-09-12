@@ -12,6 +12,7 @@
 <br>
 
 [유튜브 영상](https://youtu.be/iQB3RYAKHIA?si=Pz4x_eIdLN7srZDO)
+
 [Notion 협업 Tasks](https://shrub-syzygy-318.notion.site/19f325f2d2b280b6a45ec73c74edda11?v=19f325f2d2b280229681000c7a001518)
 
 
