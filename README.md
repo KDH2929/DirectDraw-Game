@@ -32,7 +32,7 @@ https://github.com/megayuchi/PixelHorizon
 - **기본 시스템**
   - DebugManager
   - InputManager
-  - SceneManager (비동기 Scene 전환) 
+  - SceneManager (비동기 Scene 로딩) 
   - 카메라
 
 <br>
