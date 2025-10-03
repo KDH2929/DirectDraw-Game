@@ -572,80 +572,50 @@ BOOL CDDrawDevice::DrawSprite(int screenX, int screenY, const CImageData* pImgDa
 			DWORD pixelColor = pStream->dwPixel;
 			int pixelCount = static_cast<int>(pStream->wPixelNum);
 
-		
-
-
 			/*
-			이는 0번압축에서 전체 Sprite이미지 중 Rect범위안에 해당하는 이미지만 Render하기 위한 Case들임
-			만약 아래 Case들을 고려하지 않으면 스프라이트 시트 전체가 렌더링됨
+			사실 아래 소스코드는 색상값에 대한 Run Length Encoding 을 활용해서 
+			스프라이트 애니메이션을 구현해보려 시도하다보니 소스코드가 아래처럼 되어버렸다..
+
+			그런데 뒤늦게 돌이켜보면 Run Length Encoding을 쓰면 스프라이트상에서 x축 좌표정보가 소실되어버리므로 (압축을 하므로)
+			문제가 발생한다.
 			
-			pStream->wPosX 는 전체 이미지의 로컬좌표계상에서의 연속된 픽셀이 시작되는 X좌표이라는 점을 고려해야함
-			즉 {wPosX, wPosX + pixelCount} 만큼이 현재 Line에서 연속된 구간이라는것
-			기존 좌우 Screen범위에 맞춰 그려야할 수를 조절하는 로직을 수정하던가, 그 전에 작업을 추가해서 처리해야함
 
-			우선 현재 srcRect 범위 안에 맞춰 시작 X를 정해야할 것 같음
-			즉 로컬좌표계 계산부터 수행하기
+			현재 Run Length Encoding 방식에서도 y축은 스프라이트 애니메이션이 시작되는 픽셀위치까지 건너뛴다.
 
-			Case1)   wPosX, wPosX + pixelCount가 Rect범위 좌측을 넘어갔을 시 당연히 Render할 필요가 없음
-			Case2)   wPosX는 넘어가고 wPosX + pixelCount는 Rect범위 안쪽에 있을 시
-					   이 경우, 시작 좌표는 Rect.left 가 될테고, PixelCount수는 (wPosX + pixelCount - Rect.left) 이게 될 것
+			문제는 스프라이트 x축 시작위치부터 렌더를 시작하게해야하는데..
 
-			Case3)	wPosX, wPosX + pixelCount가 Rect범위 안쪽일 시 그대로 사용
-			Case4)	wPosX는 Rect안쪽, wPosX + pixelCount는 Rect바깥쪽
-					    이 경우, 시작좌표는 wPosX, pixelCount는 (Rect.Right - wPosX)
+			위의 문제를 고려하지 않고 처음에 Run Length Encoding 된 이미지 데이터에 대해 구현을 하려다보니
+			스프라이트 상에서 x축에 대해서는 처음부터 끝까지 모든 픽셀에 대해 그리고자 하는 Sprite의 Rect 영역에 속하는지 검사를 하게 되었다.
 
-			Case5)	wPosX, wPosX + pixelCount 둘 다 Rect 바깥쪽일 시 Render할 필요가 없음
 
-			이러면 Rect안에서 그려질 localRenderStartX, pixelCount를 구해낸 것
-			이를 기반으로 screenRenderX = screenX + localRenderStartX
-			이런식으로 두면 될 거 같음
+			 x축은 건너뛰지 못하고, 	if (localX < 0) 조건문을 통해 하나씩 가로픽셀들을 검사하는 상황이 되어버렸다...
 
-			이후 기존 screenRenderX가 화면 좌측경계, 우측경계를 벗어낫을 시 처리도 수행하면 될 거 같음
+			이는 비효율적이다.. 그냥 스프라이트에 대해서는 Run Length Encoding 을 안 쓰고 가는게 훨씬 좋았을 거라 생각한다. 
 
-			추가로 Rect기준 Local 좌표계로 생각했을 때 (Rect.left를 빼면됨)
-			즉 (srcStart.x - srcRect.left) 값이 양수인 경우 화면경계 좌측에서 clipping이 일어난 것이므로 이에 대한 처리도 추가함
-			
 			*/
-
-			
-			// Rect 기준 Local 좌표계로 변경해서 생각하기 (srcStart.x를 빼주는 것)
-			// 이 때 (srcStart.x - srcRect.left) 가 양수이면 clipping이 일어난 것이므로, 그 부분을 고려하여 localX와 frameWidth를 조절
-			// localX = wPosX - srcStart.x
+			 
 			int localX = static_cast<int>(pStream->wPosX) - srcStart.x;
 			frameWidth = srcRect.right - srcStart.x;
-			
-
-			// Case1, Case5: srcRect 범위를 벗어난 경우
+		
 			if (localX + pixelCount <= 0 || localX >= frameWidth)
 				continue;
 
-			
-			// Case2: 왼쪽이 벗어난 경우
 			if (localX < 0) {
-				pixelCount += localX; // localX는 음수
+				pixelCount += localX;
 				localX = 0;
 			}
-
-			// Case4: 오른쪽을 벗어난 경우
 			if (localX + pixelCount > frameWidth) {
 				pixelCount = frameWidth - localX;
 			}
 
-
-			// 최종적으로 화면상의 x 좌표 = destStart.x + localX
 			int drawX = destStart.x + localX;
-
-
-			// 화면 좌측 경계를 벗어나면 조정
 			
 			if (drawX < 0)
 			{
 				pixelCount += drawX;
 				drawX = 0;
 			}
-			
 
-			// 화면 우측 경계를 벗어나면 조정
 			if (drawX + pixelCount > screenWidth)
 			{
 				pixelCount = screenWidth - drawX;
@@ -693,11 +663,9 @@ BOOL CDDrawDevice::DrawSpriteFlip(int screenX, int screenY, const CImageData* pI
     // 화면상의 시작 좌표 (스크린 좌표계)
     INT_VECTOR2 destStart = { screenX, screenY };
 
-    // 복사할 영역의 크기는 스프라이트 프레임의 크기로 초기화
     INT_VECTOR2 spriteSize = { frameWidth, frameHeight };
     INT_VECTOR2 clippedSize = {};
 
-    // 대상 위치와 버퍼 크기
     INT_VECTOR2 destPos = { screenX, screenY };
     INT_VECTOR2 bufferSize = { screenWidth, static_cast<int>(m_dwHeight) };
 
@@ -721,36 +689,26 @@ BOOL CDDrawDevice::DrawSpriteFlip(int screenX, int screenY, const CImageData* pI
             DWORD pixelColor = pStream->dwPixel;
             int pixelCount = static_cast<int>(pStream->wPixelNum);
 
-			// Rect 좌상단을 기준으로 하는 로컬좌표계르 기준으로 생각해야 로직짜기가 편함
-			// 따라서 srcRect.left를 빼줘야함
 			int localX = static_cast<int>(pStream->wPosX) - srcRect.left;
-			// frameWidth는 srcRect의 너비
 			frameWidth = srcRect.right - srcRect.left;
 
-            // 현재 스트림이 srcRect 범위를 벗어나면 건너뜀
+
+			// DrawSprite 와 소스코드는 거의 동일하나 뒤집어서 생각하는 구조로 되어있다.
+
             if (localX + pixelCount <= 0 || localX >= frameWidth)
                 continue;
 
-            // Case2: 왼쪽을 벗어난 경우
             if (localX < 0) {
                 pixelCount += localX; // localX는 음수
                 localX = 0;
             }
 
-            // Case4: 오른쪽을 벗어난 경우
             if (localX + pixelCount > frameWidth) {
                 pixelCount = frameWidth - localX;
             }
 
-            // 좌우 반전 처리:
-            // 원래 좌우 복사는 destStart.x + localX로 계산하지만,
-            // 반전된 경우엔 해당 프레임의 오른쪽 끝에서부터 localX만큼 떨어진 위치로 복사하고,
-            // pixelCount만큼 픽셀을 채우므로,
-            // drawX = destStart.x + (frameWidth - localX - pixelCount)
+            // 좌우 반전 처리
             int drawX = destStart.x + (frameWidth - localX - pixelCount);
-			
-			// 이번에는 여기서 최종 좌표위치를 왼쪽에서 Clipping 된 만큼 옮겨줘야함
-			// (srcStart.x - srcRect.left) 가 양수라면 왼쪽에서 Clippiing이 일어난 상황
 
 			drawX -= (srcStart.x - srcRect.left);
 
@@ -768,7 +726,6 @@ BOOL CDDrawDevice::DrawSpriteFlip(int screenX, int screenY, const CImageData* pI
             }
 
             // 대상 버퍼 내 해당 픽셀 위치 계산 (픽셀당 4Byte)
-            // (반전된 이미지는 오른쪽에서부터 채워지므로, 여기서는 일반적인 순서로 복사해도 동일한 색상 반복 복사 시 문제없음)
             char* destPixelPtr = destLinePtr + (drawX * 4);
 
             // 동일 색상의 픽셀들을 pixelCount만큼 복사

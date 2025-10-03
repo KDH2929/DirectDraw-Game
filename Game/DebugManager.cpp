@@ -6,14 +6,13 @@
 #include <io.h>
 #include <iostream>
 
-// 초기 정적 포인터 선언
 DebugManager* DebugManager::s_instance = nullptr;
 
 
 // 생성자: 로그 파일 할당 및 표준 출력 리다이렉트 (옵션)
 // Log 디렉토리에 현재 날짜/시간을 이름으로 한 텍스트 파일로 리다이렉트
 DebugManager::DebugManager() {
-    // 콘솔 출력 옵션 (필요시 사용, 주석 처리됨)
+    // 콘솔 출력 옵션 (필요시 사용)
     /*
     AllocConsole();
     FILE* fpOut = nullptr;
@@ -67,7 +66,6 @@ void DebugManager::DestroyInstance()
     s_instance = nullptr;
 }
 
-// 화면에 메시지를 표시하는 함수
 void DebugManager::AddOnScreenMessage(const std::wstring& msg, float duration) {
     DebugMessage newMsg;
     newMsg.text = msg;
@@ -76,7 +74,6 @@ void DebugManager::AddOnScreenMessage(const std::wstring& msg, float duration) {
     m_messages.push_back(newMsg);
 }
 
-// 콘솔/디버그 출력에 메시지를 기록하는 함수
 void DebugManager::LogMessage(const std::wstring& msg) {
     std::lock_guard<std::mutex> lock(logMutex);  // 한 번에 하나의 스레드만 실행
 
@@ -157,30 +154,26 @@ void DebugManager::Render(HDC hDC) {
 
         Vector2<float> renderBoxCenter = box.center + m_cameraOffset;
 
-        // 박스의 반 크기
         float halfW = box.width * 0.5f;
         float halfH = box.height * 0.5f;
         float rad = box.rotation * PI / 180.0f;
-        // 회전된 로컬 좌표 (시계 방향 순서)
+
         Vector2<float> axisX(std::cos(rad), std::sin(rad));
         Vector2<float> axisY(-std::sin(rad), std::cos(rad));
 
-        // 각 꼭짓점 계산: center ± axisX*halfW ± axisY*halfH
         Vector2<float> corners[4];
         corners[0] = renderBoxCenter + axisX * halfW + axisY * halfH;
         corners[1] = renderBoxCenter - axisX * halfW + axisY * halfH;
         corners[2] = renderBoxCenter - axisX * halfW - axisY * halfH;
         corners[3] = renderBoxCenter + axisX * halfW - axisY * halfH;
 
-        // GDI의 Polyline 함수로 박스의 테두리 그리기
         POINT points[5];
         for (int i = 0; i < 4; ++i) {
             points[i].x = static_cast<LONG>(corners[i].x);
             points[i].y = static_cast<LONG>(corners[i].y);
         }
-        points[4] = points[0];  // 닫힌 Polygon을 위해 시작점으로 복사
+        points[4] = points[0]; 
 
-        // 색상 설정
         HPEN hPen = CreatePen(PS_SOLID, 2, box.color);
         HPEN hOldPen = (HPEN)SelectObject(hDC, hPen);
 
@@ -191,9 +184,8 @@ void DebugManager::Render(HDC hDC) {
     }
 
 
-    // 디버그 선 렌더링
     for (const auto& line : m_debugLines) {
-        // 카메라 오프셋 적용
+
         Vector2<float> renderStart = line.start + m_cameraOffset;
         Vector2<float> renderEnd = line.end + m_cameraOffset;
 

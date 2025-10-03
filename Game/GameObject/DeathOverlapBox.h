@@ -20,7 +20,7 @@ public:
 
 
 private:
-    void InitCollider(int x, int y, int width, int height);
+    void InitCollider(float x, float y, float width, float height);
 
     bool m_isDeathOverlapBoxActivated = false;
     SceneType m_nextScene = SceneType::Title;

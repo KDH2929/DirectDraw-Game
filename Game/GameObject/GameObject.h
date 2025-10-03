@@ -7,18 +7,19 @@
 
 enum class PhysicsType {
     Static,         // 움직이지 않음 (ex: 벽, 바닥)
-    Dynamic,    // 물리 시뮬레이션에 의해 움직임
+    Dynamic,    // 움직임
 };
 
 
 struct DamageInfo {
-    int damageAmount;
+    float damageAmount;
     GameObject* instigator; 
     Vector2<float> hitLocation;
 
-    DamageInfo(int dmg, GameObject* inst, const Vector2<float>& hitLoc)
+    DamageInfo(float dmg, GameObject* inst, const Vector2<float>& hitLoc)
         : damageAmount(dmg), instigator(inst), hitLocation(hitLoc)
-    {}
+    {
+    }
 };
 
 
@@ -66,11 +67,6 @@ public:
     Vector2<float> GetRenderPosition() const;
     
 
-    // 물리 관련 Getter/Setter
-    void SetMass(float mass);         // 질량을 설정하고, 동시에 역질량을 계산
-    float GetMass() const;
-    float GetInvMass() const;
-
     void SetPhysicsType(PhysicsType type);
     PhysicsType GetPhysicsType() const;
 
@@ -88,9 +84,6 @@ protected:
     Vector2<float> m_InterpolatedPosition;
 
 
-    // 물리 속성
-    float m_mass;         // 질량
-    float m_invMass;      // 역질량 (mass가 0이면 0, 그렇지 않으면 1/mass)
     PhysicsType m_physicsType;
 
 

@@ -1,8 +1,8 @@
 #pragma once
 
 #include "Scene.h"
-#include "UI_Button.h"
-#include "UI_Text.h"
+#include "../UI/UI_Button.h"
+#include "../UI/UI_Text.h"
 #include <windows.h>
 
 class CDDrawDevice;

@@ -127,7 +127,7 @@ void Centipede::TakeDamage(const DamageInfo& damageInfo)
     }
 }
 
-void Centipede::InitCollider(int x, int y, int width, int height) {
+void Centipede::InitCollider(float x, float y, float width, float height) {
     if (m_pCollider)
         delete m_pCollider;
 

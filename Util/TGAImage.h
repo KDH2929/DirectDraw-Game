@@ -1,5 +1,9 @@
 #pragma once
 
+typedef unsigned char  BYTE;
+typedef unsigned short WORD;
+typedef unsigned long  DWORD;
+typedef int            BOOL;
 
 #pragma pack(push,1)
 

@@ -62,7 +62,7 @@ const SceneType DeathOverlapBox::GetNextSceneType()
 }
 
 
-void DeathOverlapBox::InitCollider(int x, int y, int width, int height)
+void DeathOverlapBox::InitCollider(float x, float y, float width, float height)
 {
     if (m_pCollider)
         delete m_pCollider;

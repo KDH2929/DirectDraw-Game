@@ -1,0 +1,13 @@
+[SceneLoader::LoadScene] NewScene (Loading) Memory Allocation Start
+[SceneLoader::LoadScene] NewScene (Loading) Memory Allocation Complete
+[SceneLoader::LoadScene] NewScene (Loading) Initialization Start
+[SceneLoader::LoadScene] NewScene (Loading) Initialization Complete
+[SceneManager::ChangeScene] Changed Scene: Loading
+[CGame::Initialize] Game Initialization Complete
+[SceneLoader::LoadScene] NewScene (Title) Memory Allocation Start
+[SceneLoader::LoadScene] NewScene (Title) Memory Allocation Complete
+[SceneLoader::LoadScene] NewScene (Title) Initialization Start
+[SceneLoader::LoadScene] NewScene (Title) Initialization Complete
+[SceneManager::Update] Changed Scene (Title) AsyncLoad Completed.
+[SceneManager::Update] Previous Scene (Loading) Memory Deallocation Start
+[SceneManager::Update] Previous Scene (Loading) Memory Deallocation Completed

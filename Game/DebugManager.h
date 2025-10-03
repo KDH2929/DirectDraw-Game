@@ -9,11 +9,22 @@
 #include <mutex>
 
 
+inline std::wstring Utf8ToWstring(const char* str)
+{
+    if (!str) return L"";
+    int sizeNeeded = MultiByteToWideChar(CP_UTF8, 0, str, -1, nullptr, 0);
+    std::wstring result(sizeNeeded - 1, 0); // -1: null 제외
+    MultiByteToWideChar(CP_UTF8, 0, str, -1, &result[0], sizeNeeded);
+    return result;
+}
+
+
+
 #define LOG_MESSAGE(msg) \
     DebugManager::GetInstance()->LogMessage( \
-        std::wstring(L"[") + \
-        std::wstring_convert<std::codecvt_utf8_utf16<wchar_t>>().from_bytes(__FUNCTION__) + \
+        std::wstring(L"[") + Utf8ToWstring(__FUNCTION__) + \
         L"] " + std::wstring(msg))
+
 
 
 // 기존 DebugMessage 구조체
@@ -63,7 +74,7 @@ struct DebugLine {
 
 class DebugManager {
 public:
-    // 포인터 기반 싱글톤 인스턴스 접근 함수
+
     static DebugManager* GetInstance();
 
     // 인스턴스 해제 함수
@@ -71,7 +82,6 @@ public:
 
     // 화면에 메시지를 표시하는 함수 (duration은 초 단위)
     void AddOnScreenMessage(const std::wstring& msg, float duration);
-    // 콘솔/디버그 출력에 메시지를 기록하는 함수
     void LogMessage(const std::wstring& msg);
 
     void SetCameraOffset(Vector2<float> cameraOffset);

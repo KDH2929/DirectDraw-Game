@@ -3,7 +3,7 @@
 #include "../Util/QueryPerfCounter.h"
 #include "Game.h"
 #include "InputManager.h"
-#include "SceneManager.h"
+#include "Scene/SceneManager.h"
 
 #include <Windows.h>
 

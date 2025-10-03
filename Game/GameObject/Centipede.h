@@ -9,7 +9,7 @@ class Character;
 
 class Centipede : public Monster {
 public:
-    // 생성자: 시작 좌표와 스프라이트 데이터를 전달함
+    // 생성자: 시작 좌표와 스프라이트 데이터를 전달
     Centipede(CImageData* pMonsterImgData, float startX, float startY);
     virtual ~Centipede();
 
@@ -18,15 +18,15 @@ public:
 
     
     // Component 초기화 관련 함수들
-    void InitCollider(int x, int y, int width, int height);
+    void InitCollider(float x, float y, float width, float height);
     void InitSpriteManager(CImageData* spriteSheet, int frameWidth, int frameHeight);
     void InitAnimation();
 
 
-    int GetHealth() const { return m_health; }
-    void SetHealth(int health) { m_health = health; }
-    int GetSpeed() const { return m_speed; }
-    void SetSpeed(int speed) { m_speed = speed; }
+    float GetHealth() const { return m_health; }
+    void SetHealth(float health) { m_health = health; }
+    float GetSpeed() const { return m_speed; }
+    void SetSpeed(float speed) { m_speed = speed; }
 
     int GetSpriteFrameWidth() const;
     int GetSpriteFrameHeight() const;

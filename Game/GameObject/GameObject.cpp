@@ -10,7 +10,7 @@ GameObject::GameObject()
     m_InterpolatedPosition(m_Transform.position),
     m_RenderPosition(Vector2<float>{0, 0}),
     m_ColliderLocalPosition(Vector2<float>{0, 0}),
-    m_mass(1.0f), m_invMass(1.0f), m_physicsType(PhysicsType::Dynamic)
+    m_physicsType(PhysicsType::Dynamic)
 {
     // m_Transform은 기본 생성자에서 초기화됨.
 }
@@ -125,29 +125,8 @@ Vector2<float> GameObject::GetRenderPosition() const
     return m_RenderPosition;
 }
 
-
-
-void GameObject::SetMass(float mass) {
-    m_mass = mass;
-    // 질량이 0이면 정적 객체로 간주하고, 역질량을 0으로 설정
-    m_invMass = (mass != 0.0f) ? (1.0f / mass) : 0.0f;
-}
-
-float GameObject::GetMass() const {
-    return m_mass;
-}
-
-float GameObject::GetInvMass() const {
-    return m_invMass;
-}
-
 void GameObject::SetPhysicsType(PhysicsType type) {
     m_physicsType = type;
-    // 정적 객체라면 질량은 0으로, 역질량은 0으로 설정
-    if (type == PhysicsType::Static) {
-        m_mass = 0.0f;
-        m_invMass = 0.0f;
-    }
 }
 
 PhysicsType GameObject::GetPhysicsType() const {

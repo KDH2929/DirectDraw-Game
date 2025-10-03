@@ -390,8 +390,8 @@ void Stage2Scene::UpdateCamera(int screenWidth, int screenHeight)
     m_backgroundPosY = -clampedOffsetY;
 
     // 카메라가 맵 끝에 도착하여 더 이상 움직이지 못할 때, 플레이어만 움직이게 처리
-    m_playerRenderX = cameraCenterX - (clampedOffsetX - computedOffsetX);
-    m_playerRenderY = cameraCenterY - (clampedOffsetY - computedOffsetY);
+    m_playerRenderX = static_cast<int>(cameraCenterX - (clampedOffsetX - computedOffsetX));
+    m_playerRenderY = static_cast<int>(cameraCenterY - (clampedOffsetY - computedOffsetY));
 
     m_pPlayer->SetRenderPosition(Vector2<float>{ static_cast<float>(m_playerRenderX), static_cast<float>(m_playerRenderY) });
 

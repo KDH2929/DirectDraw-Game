@@ -53,16 +53,16 @@ private:
     TileMap2D* m_TileMap = nullptr;
 
     // 배경 이미지 크기
-    int m_bgWidth = 0;
-    int m_bgHeight = 0;
+    float m_bgWidth = 0;
+    float m_bgHeight = 0;
 
     // 카메라 처리용 변수들
-    int m_cameraOffsetX = 0;
-    int m_cameraOffsetY = 0;
+    float m_cameraOffsetX = 0;
+    float m_cameraOffsetY = 0;
     int m_playerRenderX = 0;
     int m_playerRenderY = 0;
-    int m_backgroundPosX = 0;
-    int m_backgroundPosY = 0;
+    float m_backgroundPosX = 0;
+    float m_backgroundPosY = 0;
 
 
     // 게임 오브젝트:

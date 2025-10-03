@@ -45,10 +45,10 @@ bool Monster::CheckLeftObject()
     if (curCollider) {
         if (AABBCollider* aabb = dynamic_cast<AABBCollider*>(curCollider)) {
             // 플레이어 콜라이더의 경계 구하기
-            int left = aabb->GetX();
-            int right = aabb->GetX() + aabb->GetWidth();
-            int top = aabb->GetY();
-            int bottom = aabb->GetY() + aabb->GetHeight();
+            float left = aabb->GetX();
+            float right = aabb->GetX() + aabb->GetWidth();
+            float top = aabb->GetY();
+            float bottom = aabb->GetY() + aabb->GetHeight();
 
             Vector2<float> topLeft(static_cast<float>(left), static_cast<float>(top) + ObjectCheckRayOffsetY);
             Vector2<float> bottomLeft(static_cast<float>(left), static_cast<float>(bottom) - ObjectCheckRayOffsetY);
@@ -98,14 +98,14 @@ bool Monster::CheckRightObject()
     if (curCollider) {
         if (AABBCollider* aabb = dynamic_cast<AABBCollider*>(curCollider)) {
             // 플레이어 콜라이더의 경계 구하기
-            int left = aabb->GetX();
-            int right = aabb->GetX() + aabb->GetWidth();
-            int top = aabb->GetY();
-            int bottom = aabb->GetY() + aabb->GetHeight();
+            float left = aabb->GetX();
+            float right = aabb->GetX() + aabb->GetWidth();
+            float top = aabb->GetY();
+            float bottom = aabb->GetY() + aabb->GetHeight();
 
 
-            Vector2<float> topRight(static_cast<float>(right), static_cast<float>(top) + ObjectCheckRayOffsetY);
-            Vector2<float> bottomRight(static_cast<float>(right), static_cast<float>(bottom) - ObjectCheckRayOffsetY);
+            Vector2<float> topRight(right, top + ObjectCheckRayOffsetY);
+            Vector2<float> bottomRight(right, bottom - ObjectCheckRayOffsetY);
 
 
             Ray rightRayFromTop(topRight, Vector2<float>(1.0f, 0.0f));
@@ -168,12 +168,12 @@ bool Monster::CheckGround()
 
     if (curCollider) {
         if (AABBCollider* aabb = dynamic_cast<AABBCollider*>(curCollider)) {
-            int left = aabb->GetX();
-            int right = aabb->GetX() + aabb->GetWidth();
-            int bottom = aabb->GetY() + aabb->GetHeight();
+            float left = aabb->GetX();
+            float right = aabb->GetX() + aabb->GetWidth();
+            float bottom = aabb->GetY() + aabb->GetHeight();
 
-            Vector2<float> leftOrigin(static_cast<float>(left), static_cast<float>(bottom));
-            Vector2<float> rightOrigin(static_cast<float>(right), static_cast<float>(bottom));
+            Vector2<float> leftOrigin(left, bottom);
+            Vector2<float> rightOrigin(right, bottom);
             leftOrigin.x += groundCheckRayOffsetX;
             rightOrigin.x -= groundCheckRayOffsetX;
 
@@ -214,9 +214,9 @@ bool Monster::CheckForwardGround() {
         return false;
 
     // 몬스터의 Collider 경계 구하기
-    int left = aabb->GetX();
-    int right = aabb->GetX() + aabb->GetWidth();
-    int bottom = aabb->GetY() + aabb->GetHeight();
+    float left = aabb->GetX();
+    float right = aabb->GetX() + aabb->GetWidth();
+    float bottom = aabb->GetY() + aabb->GetHeight();
 
     // 이동 방향 (예: 오른쪽 이동이면 (1,0), 왼쪽 이동이면 (-1,0))
     Vector2<float> forward = GetForwardVector();

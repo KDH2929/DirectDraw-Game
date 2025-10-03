@@ -127,7 +127,7 @@ void Portal::InitAnimation()
     m_anim->SetState(PortalAnimState::Idle);
 }
 
-void Portal::InitCollider(int x, int y, int width, int height)
+void Portal::InitCollider(float x, float y, float width, float height)
 {
     if (m_pCollider)
         delete m_pCollider;

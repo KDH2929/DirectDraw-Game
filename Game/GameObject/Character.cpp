@@ -379,13 +379,13 @@ bool Character::CheckLeftWall()
     if (curCollider) {
         if (AABBCollider* aabb = dynamic_cast<AABBCollider*>(curCollider)) {
             // 플레이어 콜라이더의 경계 구하기
-            int left = aabb->GetX();
-            int right = aabb->GetX() + aabb->GetWidth();
-            int top = aabb->GetY();
-            int bottom = aabb->GetY() + aabb->GetHeight();
+            float left = aabb->GetX();
+            float right = aabb->GetX() + aabb->GetWidth();
+            float top = aabb->GetY();
+            float bottom = aabb->GetY() + aabb->GetHeight();
 
-            Vector2<float> topLeft(static_cast<float>(left), static_cast<float>(top) + wallCheckRayOffsetY);
-            Vector2<float> bottomLeft(static_cast<float>(left), static_cast<float>(bottom) - wallCheckRayOffsetY);
+            Vector2<float> topLeft(left, top + wallCheckRayOffsetY);
+            Vector2<float> bottomLeft(left, bottom - wallCheckRayOffsetY);
 
 
             // 좌측의 경우, 좌상단과 좌하단에서 왼쪽으로 Ray를 쏨
@@ -435,10 +435,10 @@ bool Character::CheckRightWall()
     if (curCollider) {
         if (AABBCollider* aabb = dynamic_cast<AABBCollider*>(curCollider)) {
             // 플레이어 콜라이더의 경계 구하기
-            int left = aabb->GetX();
-            int right = aabb->GetX() + aabb->GetWidth();
-            int top = aabb->GetY();
-            int bottom = aabb->GetY() + aabb->GetHeight();
+            float left = aabb->GetX();
+            float right = aabb->GetX() + aabb->GetWidth();
+            float top = aabb->GetY();
+            float bottom = aabb->GetY() + aabb->GetHeight();
 
 
             Vector2<float> topRight(static_cast<float>(right), static_cast<float>(top) + wallCheckRayOffsetY);
@@ -491,12 +491,12 @@ bool Character::CheckGround(float& groundHitDistance)
 
     if (curCollider) {
         if (AABBCollider* aabb = dynamic_cast<AABBCollider*>(curCollider)) {
-            int left = aabb->GetX();
-            int right = aabb->GetX() + aabb->GetWidth();
-            int bottom = aabb->GetY() + aabb->GetHeight();
+            float left = aabb->GetX();
+            float right = aabb->GetX() + aabb->GetWidth();
+            float bottom = aabb->GetY() + aabb->GetHeight();
 
-            Vector2<float> leftOrigin(static_cast<float>(left), static_cast<float>(bottom));
-            Vector2<float> rightOrigin(static_cast<float>(right), static_cast<float>(bottom));
+            Vector2<float> leftOrigin(left, bottom);
+            Vector2<float> rightOrigin(right, bottom);
             leftOrigin.x += groundCheckRayOffsetX;
             rightOrigin.x -= groundCheckRayOffsetX;
 
@@ -540,7 +540,7 @@ void Character::OnCollision(const CollisionInfo& collisionInfo)
 
 void Character::TakeDamage(const DamageInfo& damageInfo)
 {
-    int currentHP = GetHealth();
+    float currentHP = GetHealth();
     SetHealth(currentHP - damageInfo.damageAmount);
 
     CharacterAnimState currentState = m_anim->GetState();

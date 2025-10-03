@@ -27,7 +27,7 @@ public:
 private:
     void InitSpriteManager(CImageData* pPortalImgData, int frameWidth, int frameHeight);
     void InitAnimation();
-    void InitCollider(int x, int y, int width, int height);
+    void InitCollider(float x, float y, float width, float height);
 
     SpriteManager* m_spriteManager;
     PortalAnim* m_anim;
