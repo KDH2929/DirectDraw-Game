@@ -5,10 +5,26 @@
 
 [유튜브 영상](https://youtu.be/iQB3RYAKHIA?si=Pz4x_eIdLN7srZDO)
 
+<br><br>
+
+유영천님의 DirectDraw 엔진 소스코드에는 스프라이트 렌더 기능이 없었기에 아래와 같이 엔진코드를 일부 수정하였습니다. 
+
+<br>
+
+[DirectDraw에서 스프라이트 렌더 구현 시 고려했던 점](https://wandering-rumba-865.notion.site/DirectDraw-Sprite-281aba645d32809caec0e045554bba0a)
 
 <br>
 
 ---
+### std::async 기반 비동기 로딩 과정에서의 문제
+- [비동기 로딩 과정에서 로그 메세지가 깨지던 현상](https://wandering-rumba-865.notion.site/26eaba645d32808ab1ccf49f04927223)
+- [Scene 전환 시 프로그램이 종류되던 문제](https://wandering-rumba-865.notion.site/Scene-1a9aba645d328042a577d510c35a7bf7)
+- [Dangling 포인터 문제](https://wandering-rumba-865.notion.site/1a9aba645d3280d4b8cae88041aa0135)
+
+<br>
+
+---
+
 https://github.com/megayuchi/PixelHorizon
 
 유영천님의 DirectDraw 엔진 소스코드를 기반으로 하여, 아래 목록들을 구현하고자 하였습니다.<br>
