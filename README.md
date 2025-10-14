@@ -5,14 +5,6 @@
 
 [유튜브 영상](https://youtu.be/iQB3RYAKHIA?si=Pz4x_eIdLN7srZDO)
 
-<br><br>
-
-유영천님의 DirectDraw 엔진 소스코드에는 스프라이트 렌더 기능이 없었기에 아래와 같이 엔진코드를 일부 수정하였습니다. 
-
-<br>
-
-[DirectDraw에서 스프라이트 렌더 구현 시 고려했던 점](https://wandering-rumba-865.notion.site/DirectDraw-Sprite-281aba645d32809caec0e045554bba0a)
-
 <br>
 
 ---
@@ -30,8 +22,17 @@ https://github.com/megayuchi/PixelHorizon
 유영천님의 DirectDraw 엔진 소스코드를 기반으로 하여, 아래 목록들을 구현하고자 하였습니다.<br>
 충돌처리부분은 관련된 서적과 인터넷자료들을 참고하였습니다.
 
----
+<br>
 
+유영천님의 DirectDraw 엔진 소스코드에는 스프라이트 렌더 기능이 없었기에 아래와 같이 엔진코드를 일부 수정하였습니다. 
+
+<br>
+
+[DirectDraw에서 스프라이트 렌더 구현 시 고려했던 점](https://wandering-rumba-865.notion.site/DirectDraw-Sprite-281aba645d32809caec0e045554bba0a)
+
+<br>
+
+---
 
 <br>
 
