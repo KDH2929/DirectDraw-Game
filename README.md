@@ -23,7 +23,6 @@ https://github.com/megayuchi/PixelHorizon
 
 - [유영천님 DirectDraw 강의영상](https://www.youtube.com/live/xrYT5l5mYR8?si=bQJBaLkkqmvZMAW9)
 - [DirectDraw 개인공부](https://wandering-rumba-865.notion.site/DirectDraw-197aba645d3280978479fd0b73652cac?pvs=74)
-- [2D 충돌처리 공부](https://wandering-rumba-865.notion.site/2D-1b2aba645d3280b19597fb3ae25a0a92?pvs=74)
 
 <br>
 
