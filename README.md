@@ -18,23 +18,29 @@
 ---
 
 https://github.com/megayuchi/PixelHorizon
+유영천님의 DirectDraw 엔진 소스코드를 기반으로 구현된 프로젝트입니다.<br><br>
 
-유영천님의 DirectDraw 엔진 소스코드를 기반으로 하여, 아래 목록들을 구현하고자 하였습니다.<br><br>
 
+- [유영천님 DirectDraw 강의영상](https://www.youtube.com/live/xrYT5l5mYR8?si=bQJBaLkkqmvZMAW9)
+- [DirectDraw 개인공부](https://wandering-rumba-865.notion.site/DirectDraw-197aba645d3280978479fd0b73652cac?pvs=74)
+- [2D 충돌처리 공부](https://wandering-rumba-865.notion.site/2D-1b2aba645d3280b19597fb3ae25a0a92?pvs=74)
 
+<br>
+
+---
 
 **충돌처리부분은 관련된 서적과 인터넷자료들을 참고**하였습니다.<br>
 
 **DebugManager와 같은 일부 소스코드들은 생성형 AI를 활용**하여 작업효율을 높이고자 하였습니다.
 
 
-<br><br>
+<br>
 
 유영천님의 DirectDraw 엔진 소스코드에는 스프라이트 렌더 기능이 없었기에 아래와 같이 엔진코드를 일부 수정하였습니다. 
 
 <br>
 
-[DirectDraw에서 스프라이트 렌더 구현 시 고려했던 점](https://wandering-rumba-865.notion.site/DirectDraw-Sprite-281aba645d32809caec0e045554bba0a)
+- [DirectDraw에서 스프라이트 렌더 구현 시 고려했던 점](https://wandering-rumba-865.notion.site/DirectDraw-Sprite-281aba645d32809caec0e045554bba0a)
 
 <br>
 
