@@ -30,7 +30,7 @@ https://github.com/megayuchi/PixelHorizon
 
 **충돌처리부분은 관련된 서적과 인터넷자료들을 참고**하였습니다.<br>
 
-**클래스 초안과 일부소스코드(DebugManager, UI)들을 생성형AI를 활용하였습니다.**
+**클래스 초안과 일부소스코드들을 생성형AI를 활용하였습니다.**
 
 ---
 
