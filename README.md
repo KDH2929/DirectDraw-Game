@@ -51,7 +51,6 @@ https://github.com/megayuchi/PixelHorizon
 ## 구현 목록
 
 - **기본 시스템**
-  - DebugManager
   - InputManager
   - SceneManager (비동기 Scene 로딩) 
   - 카메라
