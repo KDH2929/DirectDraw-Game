@@ -1,7 +1,7 @@
 # DirectDraw2D_Game
 
 **개발 기간** : 3주  
-
+**개발 인원** : 2인팀
 
 [유튜브 영상](https://youtu.be/iQB3RYAKHIA?si=Pz4x_eIdLN7srZDO)
 
@@ -29,6 +29,8 @@ https://github.com/megayuchi/PixelHorizon
 ---
 
 **충돌처리부분은 관련된 서적과 인터넷자료들을 참고**하였습니다.<br>
+
+**타일맵 처리 부분은 제 동생이 구현해주었습니다.**
 
 **클래스 초안과 일부소스코드들을 생성형AI를 활용하였습니다.**
 
