@@ -32,7 +32,7 @@ https://github.com/megayuchi/PixelHorizon
 
 - **타일맵 처리 부분은 제 동생이 구현해주었습니다.**
 
-- **클래스 초안과 일부소스코드들을 생성형AI를 활용하였습니다.**
+- **클래스 초안과 일부소스코드(UI, DebugManager 등)들을 생성형AI를 활용하였습니다.**
 
 ---
 
