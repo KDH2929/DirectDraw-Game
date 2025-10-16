@@ -62,7 +62,7 @@ https://github.com/megayuchi/PixelHorizon
 - **게임 오브젝트**
   - 캐릭터 & 몬스터
   - Sprite 애니메이션
-  - FSM (Idle, Move, Jump, Dash, DashAttack, ComboAttack(연속공격)
+  - FSM (Idle, Move, Jump, Dash, DashAttack, ComboAttack(연속공격))
 
 <br>
 
