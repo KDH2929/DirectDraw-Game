@@ -1,7 +1,6 @@
 # DirectDraw2D_Game
 
-**개발 기간** : 2주  
-**개발 인원** : 2인팀
+**개발 기간** : 3주
 
 [유튜브 영상](https://youtu.be/iQB3RYAKHIA?si=Pz4x_eIdLN7srZDO)
 
