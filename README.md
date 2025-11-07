@@ -9,7 +9,7 @@
 ---
 
 https://github.com/megayuchi/PixelHorizon
-유영천님의 DirectDraw 엔진 소스코드를 기반으로 구현된 프로젝트입니다.<br><br>
+유영천님의 DirectDraw 엔진 소스코드를 기반으로 구현된 프로젝트<br><br>
 
 
 - [유영천님 DirectDraw 강의영상](https://www.youtube.com/live/xrYT5l5mYR8?si=bQJBaLkkqmvZMAW9)
