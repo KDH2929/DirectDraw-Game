@@ -33,10 +33,10 @@ https://github.com/megayuchi/PixelHorizon
 ## 구현 목록
 
 - **기본 시스템**
+  - 기존 Game 클래스와 GameObject 클래스 리팩토링
   - InputManager
   - SceneManager (비동기 Scene 로딩) 
   - 카메라
-  - 기존 Game 클래스와 GameObject 클래스 리팩토링
 
 <br>
 
