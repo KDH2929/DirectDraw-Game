@@ -10,9 +10,10 @@ https://github.com/megayuchi/PixelHorizon
 유영천님의 DirectDraw 엔진 소스코드를 기반으로 구현된 프로젝트<br><br>
 
 
+
 - [유영천님 DirectDraw 강의영상](https://www.youtube.com/live/xrYT5l5mYR8?si=bQJBaLkkqmvZMAW9)
 - [DirectDraw 개인공부](https://wandering-rumba-865.notion.site/DirectDraw-197aba645d3280978479fd0b73652cac?pvs=74)
-- [서적, 인터넷 자료들을 보며 공부한 2D 충돌처리](https://wandering-rumba-865.notion.site/2D-1b2aba645d3280b19597fb3ae25a0a92)
+- [공부한 2D 충돌처리](https://wandering-rumba-865.notion.site/2D-1b2aba645d3280b19597fb3ae25a0a92)
 
 <br>
 
@@ -35,6 +36,7 @@ https://github.com/megayuchi/PixelHorizon
   - InputManager
   - SceneManager (비동기 Scene 로딩) 
   - 카메라
+  - 기존 Game 클래스와 GameObject 클래스 리팩토링
 
 <br>
 
