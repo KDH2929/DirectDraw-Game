@@ -51,7 +51,6 @@ https://github.com/megayuchi/PixelHorizon
   - Raycast (Slab Method)
   - AABB 충돌 검출
   - OBB 충돌 검출
-  - Collision Layer
     
 <br>
 
